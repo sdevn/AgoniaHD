@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
+    <string name="app_name">Agonia</string>
+    <string name="blank"> </string>
+	<string name="dlg_ace_title">Pick a suit</string>
+	<string name="dlg_finish_title">Game finished!</string>
+	<string name="dlg_seven_btn_draw">Draw (%d)</string>
+	<string name="dlg_seven_title">Play Seven or draw?</string>
+	<string name="exit">Exit</string>
+	<string name="dlg_finish_btn_play_again">Play again</string>
+    <string name="default_p1_name">Player</string>
+    <string name="default_p2_name">Cpu</string>
+    <string name="key_file_pref">AgoniaPref</string>
+    <string name="key_p1_name">p1_name</string>
+    <string name="key_p2_name">p2_name</string>
+    <string name="key_p1_score">p1_score</string>
+    <string name="key_p2_score">p2_score</string>
+    <string name="key_is_nine_special">nine_special</string>
+    <string name="key_difficult">difficult</string>
+    <string name="key_reset_dlg">reset_dlg</string>
+    <string name="pref_general_title">General</string>
+    <string name="pref_ingame_title">In-game</string>
+    <string name="pref_p1_name_title">Your name</string>
+    <string name="pref_p2_name_title">Opponent\'s name</string>
+    <string name="pref_nine_summ">When Nine played, next player losses his turn</string>
+    <string name="pref_difficult_title">Difficulty</string>
+    <string name="pref_reset_title">Reset scores</string>
+    <string name="pref_reset_dlg_message">Are you sure, you wish to reset both scores?\n<b>This action cannot be undone!</b></string>
+    <string name="mode_monkey">Monkey</string>
+    <string name="mode_easy">Easy</string>
+    <string name="mode_moderate">Moderate</string>
+    <string name="mode_megamind">MegaMind !</string>
+    <string name="dlg_about_message"><![CDATA[<font color="white">Custom buttons made with: <a href="http://www.cooltext.com" target="_blank">cooltext.com</a><br /><br />Cards - Deck icons downloaded from: <a href="http://freeware.esoterica.free.fr/html/freecards.html" target="_blank">freeware.esoterica.free.fr</a><br />(Authors: Jesse Fuchs and Tom Hart)<br /><br />This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by/3.0/gr/deed.en">Creative Commons Attribution 3.0 Greece License</a>.</font><br /> ]]></string>
+    <string name="dlg_comming_soon_message">➤new deck back images\n➤hard mode\n➤better way to choose what card you want to play\n➤more preferences for more special cards\n➤game history when game finished\n➤save / load game\n➤Challenges / achievements</string>
+    <string name="pref_name_aborted_message" formatted="false">Names length should between %d and %d\nwithout any punctuation character or whitespace </string>
+    <string name="menu_btn_new_game">New game</string>
+    <string name="menu_btn_pref">Preferences</string>
+    <string name="menu_btn_how_to_play">How to play</string>
+    <string name="menu_btn_about">About</string>
+</resources>

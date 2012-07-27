@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string-array name="difficult_modes">
+        <item>@string/mode_monkey</item>
+		<item>@string/mode_easy</item>
+<!--	<item>@string/mode_moderate</item>
+        <item>@string/mode_megamind</item>	 -->
+    </string-array>
+    <string-array name="difficult_modes_values">
+        <item>0</item>
+        <item>1</item>
+<!--    <item>2</item>
+        <item>4</item>		 -->
+    </string-array>
+
+</resources>

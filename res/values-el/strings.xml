@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
+	<string name="dlg_ace_title">Διάλεξε χρώμα</string>
+	<string name="dlg_finish_title">Τέλος παχνιδίου!</string>
+	<string name="dlg_seven_btn_draw">Τράβηξε (%d)</string>
+	<string name="dlg_seven_title">Θα παίξεις Εφτά ή θα τραβήξεις;</string>
+	<string name="exit">Έξοδος</string>
+	<string name="dlg_finish_btn_play_again">Παίξε ξανά</string>
+    <string name="default_p1_name">Παίκτης</string>
+    <string name="default_p2_name">Υπολ</string>
+    <string name="pref_general_title">Γενικές</string>
+    <string name="pref_ingame_title">Παιχνιδιού</string>
+    <string name="pref_p1_name_title">Το όνομά σου</string>
+    <string name="pref_p2_name_title">Ονομα του αντιπάλου</string>
+    <string name="pref_nine_summ">Όταν πέφτει Εννιά, ο επόμενος χάνει τη σειρά του</string>
+    <string name="pref_difficult_title">Δυσκολία</string>
+    <string name="pref_reset_title">Μηδενισμός των scores</string>
+    <string name="pref_reset_dlg_message">Είσαι σίγουρος, θες να μηδενίσεις ολα τα scores;\n<b>Αυτη η ενέργεια είναι μη αναστρέψημη!</b></string>
+    <string name="pref_name_aborted_message" formatted="false">Το μήκος του ονόματος πρέπει να είναι μεταξύ %d και %d χαρακτήρων\nχωρίς σημεία στίξης ή κενά</string>
+    <string name="menu_btn_new_game">Νέο παιχνίδι</string>
+    <string name="menu_btn_pref">Προτιμήσεις</string>
+    <string name="menu_btn_how_to_play">Οδηγίες</string>
+
+</resources>

@@ -1,0 +1,22 @@
+algorithm
+
+CPU 7 > CPUalgorithm
+ Handler (CPU)
+  Pl 7 - switch > dialog
+   Handler (Pl)
+    Switch - CPU 7
+     Handler (CPU)
+      Pl 7 - switch > dialog
+       handler (Pl)
+        CPU drawSum()
+
+
+Pl 7 > gameloop
+ Handler (Pl)
+  Switch - CPU 7
+   Handler (CPU)
+    Pl 7 - switch > dialog
+     Handler (Pl)
+      Switch - CPU 7
+       Handler (CPU)
+        Pl drawSum()
