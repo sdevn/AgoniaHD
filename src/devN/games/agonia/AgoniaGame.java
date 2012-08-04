@@ -7,20 +7,29 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.View.OnLongClickListener;
+import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import devN.Test.InfoDisp;
+import devN.etc.dragdrop.DragController;
+import devN.etc.dragdrop.DragSource;
 import devN.games.Card;
+import devN.games.Player;
 import devN.games.UICard;
 import devN.games.UIDeck;
 import devN.games.UIPlayer;
+import devN.games.UIStackTop;
 
-public class AgoniaGame extends Activity
+public class AgoniaGame extends Activity implements OnLongClickListener, DragSource, OnTouchListener
 {
 	public static final int DIALOG_ACE_ID		= 0;
 	public static final int DIALOG_SEVEN_ID		= 1;
@@ -29,17 +38,19 @@ public class AgoniaGame extends Activity
 	public static final int VIEWS_CUSTOM_ID = 0x7fffffff;
 	public static int VIEWS_CURRENT_ID = VIEWS_CUSTOM_ID;
 	
-	InfoDisp i;
-	UICard test;
-
 	protected Agonia game;
 	protected UIPlayer up;
 	protected UIPlayer ucp;
 	protected UICard deckBack;
-	protected UICard stackTop;
+	protected UICard cardToPlay;
+	protected UIStackTop stackTop;
 	protected UIDeck deck;
 	protected int suits[] = new int[3];
 	protected int sevenDraw;
+	protected long cpuDelay;
+	protected boolean dragging = false;
+	protected boolean dragOnLongClick;
+	private DragController dragController;
 	
 	/** Called when the activity is first created. */
 	@Override
@@ -68,7 +79,11 @@ public class AgoniaGame extends Activity
 		String p2Name;
 		int p1score;
 		int p2score;
+		Animation animCpuPlay;
+		Animation animCpuDraw;
 		
+		cpuDelay = 1500;	//TODO: initialize it from a preferences
+		dragOnLongClick = false; //TODO: initialize it from a preferences
 		p1Name = F.getString(F.KEY_P1_NAME, getString(R.string.default_p1_name));
 		p1score = F.getInt(F.KEY_P1_SCORE, 0);
 		p2Name = F.getString(F.KEY_P2_NAME, getString(R.string.default_p2_name));
@@ -80,15 +95,25 @@ public class AgoniaGame extends Activity
 		llPlayer = (LinearLayout) findViewById(R.id.player);
 		llComputer = (LinearLayout) findViewById(R.id.computer);
 		rlTable = (RelativeLayout) findViewById(R.id.table);
-
+		dragController = (DragController) findViewById(R.id.dragLayer);
+		stackTop = (UIStackTop) findViewById(R.id.stackTop);
+		animCpuPlay = AnimationUtils.loadAnimation(this, R.anim.cpu_play);
+		animCpuDraw = AnimationUtils.loadAnimation(this, R.anim.cpu_draw);
+		
 		deck = new UIDeck(tvDeckSize);
 
 		up = new UIPlayer(p1Name, 1, llPlayer, tvPName, true, this);
 		up.addScore(p1score);
-
+		up.setLongClickListener(this);
+		up.setTouchListener(this);
+		
 		ucp = new UIPlayer(p2Name, 2, llComputer, tvCPName, false, this);
 		ucp.addScore(p2score);
-
+		ucp.setLongClickListener(this);
+		ucp.setTouchListener(this);
+		ucp.setOnPlayAnimation(animCpuPlay);
+		ucp.setOnDrawAnimation(animCpuDraw);
+		
 		int diffMode = Integer.parseInt(F.getString(getString(R.string.key_difficult), "0"));
 		
 		l("mode " + diffMode);
@@ -118,33 +143,30 @@ public class AgoniaGame extends Activity
 		ucp.setAI(cpuAI);
 		
 		game = new Agonia(deck, up, ucp);
-
-		RelativeLayout.LayoutParams lpDeck, lpTop, lpDeckInfo, lpTest;
-
+		
+		stackTop.setGame(game);
+		stackTop.setCardRefTo(game.getTop(0));
+		
 		deckBack = new UICard(this, new Card(Card.NULL_CARD), false);
-		stackTop = new UICard(this, game.getTop(0), true);
 		deckBack.setId(--VIEWS_CURRENT_ID);
+		
+		RelativeLayout.LayoutParams lpDeck, lpDeckInfo;
 
-		lpTop = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, 
-		                                        ViewGroup.LayoutParams.WRAP_CONTENT);
-		lpTop.addRule(RelativeLayout.CENTER_IN_PARENT);
-
-		lpDeck = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, 
-		                                         ViewGroup.LayoutParams.WRAP_CONTENT);
+		lpDeck = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
+													ViewGroup.LayoutParams.WRAP_CONTENT);
 		lpDeck.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
 		lpDeck.addRule(RelativeLayout.CENTER_VERTICAL);
 
 		rlTable.addView(deckBack, lpDeck);
-		rlTable.addView(stackTop, lpTop);
 
 		lpDeckInfo = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
-		                                             ViewGroup.LayoutParams.WRAP_CONTENT);
+														ViewGroup.LayoutParams.WRAP_CONTENT);
 		lpDeckInfo.addRule(RelativeLayout.ABOVE, VIEWS_CURRENT_ID);
 		lpDeckInfo.addRule(RelativeLayout.ALIGN_LEFT, VIEWS_CURRENT_ID);
 		lpDeckInfo.leftMargin = (int) (getResources().getDisplayMetrics().density * 20.0f + 0.5f);
 		deck.getTvInfo().setLayoutParams(lpDeckInfo);
 		deck.hideInfo();
-		
+
 		deckBack.setOnClickListener(new OnClickListener(){
 
 			@Override
@@ -169,66 +191,6 @@ public class AgoniaGame extends Activity
 			}
 
 		});
-
-		stackTop.setOnClickListener(new OnClickListener(){
-
-			@Override
-			public void onClick(View v)
-			{
-				/*
-				 * nothing to do when clicked
-				 */
-			}
-
-		});
-
-		i = UICard.getInfoDisp();
-		test = new UICard(this, Card.NULL_CARD, true);
-
-		test.setOnClickListener(new OnClickListener(){
-
-			@Override
-			public void onClick(View v)
-			{
-				if (!game.canPlay(i.c.getCard()))
-				{
-					return;
-				}
-
-				try
-				{
-					game.play(up, i.c.getCard());
-					cpuAutoPlay(); // -> heirizete moni tis ta exceptions tou CPU
-				}
-				catch (AcePlayed e)	// heirizomaste ta exceptions tou User - Player
-				{
-					showDialog(DIALOG_ACE_ID);
-				}
-				catch (SevenPlayed e) 
-				{
-					handleSeven(e.suit);
-				}
-				catch (GameFinished e) 
-				{
-					gameFinished();
-				}
-				finally
-				{
-					stackTop.setImage();
-					test.setVisibility(View.INVISIBLE);
-				}
-				
-			}
-
-		});
-		test.setVisibility(View.INVISIBLE);
-
-		lpTest = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
-		                           				ViewGroup.LayoutParams.WRAP_CONTENT);
-		lpTest.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-		lpTest.addRule(RelativeLayout.CENTER_VERTICAL);
-		rlTable.addView(test, lpTest);
-		i.set(test);
 	}
 
 	/* (non-Javadoc)
@@ -267,7 +229,7 @@ public class AgoniaGame extends Activity
 				}
 				catch (GameFinished e)
 				{  /*
-					* nothing to do
+					* will handled on sevenDraw()
 					*/
 				}
 				sevenDraw();
@@ -279,8 +241,7 @@ public class AgoniaGame extends Activity
 		}
 		finally
 		{
-			stackTop.setImage();
-			test.setVisibility(View.INVISIBLE);
+			stackTop.postSetImage("");
 		}
 	}
 
@@ -319,7 +280,37 @@ public class AgoniaGame extends Activity
 		up.addScore(game.scoreOf(ucp.getHand()));
 		ucp.addScore(game.scoreOf(up.getHand()));
 		saveScores();
-		makeFinishDlg().show();
+		new Handler().postDelayed(new Runnable(){
+			public void run()
+			{
+				showDialog(DIALOG_FINISH_ID);
+			}
+		}, cpuDelay);
+	}
+	
+	public void playerPlay(Player p, Card c)
+	{
+		try
+		{
+			game.play(p, c);
+			stackTop.setImage();
+			cpuAutoPlay(); // -> heirizete moni tis ta exceptions tou CPU
+		}
+		catch (AcePlayed e) // heirizomaste ta exceptions tou User - Player
+		{
+			showDialog(DIALOG_ACE_ID);
+			stackTop.setImage();
+		}
+		catch (SevenPlayed e)
+		{
+			stackTop.setImage();
+			handleSeven(e.suit);
+		}
+		catch (GameFinished e)
+		{
+			gameFinished();
+			stackTop.setImage();
+		}
 	}
 
 	public void cpuAutoPlay()
@@ -327,43 +318,59 @@ public class AgoniaGame extends Activity
 		if (deck.size() > 0)
 		{
 			deck.hideInfo();
-			deckBack.setImage();
+			deckBack.postSetImage("");
 		}
-		
-		while (game.turn.equals(ucp))
-		{
-			if (deck.size() == 0)
-			{
-				deckBack.setImage("btn_paso");
-			}
-			
-			try
-			{
-				game.play(ucp, ucp.willPlay());
-			}
-			catch (AcePlayed e)
-			{
-				int aceSuit = ucp.getAceSuit();
-				
-				stackTop.getCard().setRank(1);
-				stackTop.getCard().setSuit(aceSuit);
-				game.getTop(0).setSuit(aceSuit);
-				
-				game.switchTurn();
-			}
-			catch (SevenPlayed e) 
-			{
-				handleSeven(e.suit);
-				return;
-			}
-			catch (GameFinished e) 
-			{
-				gameFinished();
-			}
 
-			stackTop.setImage();
-			test.setVisibility(View.INVISIBLE);
-		}
+		new Handler().postDelayed(new Runnable(){
+			public void run()
+			{
+				if (game.turn.equals(ucp))
+				{
+					if (deck.size() == 0)
+					{
+						deckBack.postSetImage("btn_paso");
+					}
+
+					try
+					{
+						Card choosed = ucp.willPlay();
+						
+						if (choosed.equals(Card.NULL_CARD) && game.canDraw(ucp))
+						{
+							game.draw(ucp);
+						}
+						else 
+						{
+							game.play(ucp, choosed);
+						}
+						if (game.turn.equals(ucp))
+						{
+							cpuAutoPlay();
+						}
+					}
+					catch (AcePlayed e)
+					{
+						int aceSuit = ucp.getAceSuit();
+
+						game.getTop(0).setSuit(aceSuit);
+
+						game.switchTurn();
+					}
+					catch (SevenPlayed e)
+					{
+						stackTop.postSetImage("");
+						handleSeven(e.suit);
+						return;
+					}
+					catch (GameFinished e)
+					{
+						gameFinished();
+					}
+
+					stackTop.postSetImage("");
+				}
+			}
+		}, cpuDelay);
 	}
 
 	/*
@@ -406,9 +413,9 @@ public class AgoniaGame extends Activity
 			}
 			break;
 			
-		case DIALOG_FINISH_ID:	// TODO: unused, prepei na heirizomaste tin allagi
-			{					//			ton periehomenon tou dialogou, kata to runtime
-			dialog = makeFinishDlg();	//	vlepe, TODO sto makeSevenDlg()
+		case DIALOG_FINISH_ID:
+			{					
+			dialog = makeFinishDlg();
 			}
 			break;
 			
@@ -455,13 +462,19 @@ public class AgoniaGame extends Activity
 			{
 				if (which == DialogInterface.BUTTON_POSITIVE) 
 				{
-					recreate();
-			//		finish();
-			//		startActivity(getIntent());
+					startActivity(getIntent());
+					finish();
 				}
 			}
 		})
-		.setCancelable(false);
+		.setOnCancelListener(new DialogInterface.OnCancelListener(){
+			
+			@Override
+			public void onCancel(DialogInterface dialog)
+			{
+				finish();
+			}
+		});
 		return builder.create();
 	}
 
@@ -531,5 +544,91 @@ public class AgoniaGame extends Activity
 	public static void l(String msg) 
 	{
 		Log.d("dbg", msg);
+	}
+
+	@Override
+	public void onDropCompleted(View target, boolean success)
+	{
+		if (success)
+		{
+			playerPlay(up, cardToPlay.getCard());
+		}
+		else 
+		{
+			l(cardToPlay.getCard() + " is not accepted!");
+		}
+		dragging = false;
+	}
+
+	@Override
+	public boolean onLongClick(View v)
+	{
+		if (!dragOnLongClick || dragging || game.turn.equals(ucp))
+		{
+			return false;
+		}
+		
+		if (!(v instanceof UICard)
+			|| v instanceof UIStackTop)
+		{
+			return false;
+		}
+		cardToPlay = (UICard) v;
+		
+		if (!cardToPlay.isVisible())
+		{
+			return false;
+		}
+//		l("im long-dragging " + cardToPlay.getCard());
+		dragging = true;
+		dragController.startDrag(v, this, v, DragController.DRAG_ACTION_MOVE);
+		
+		return true;
+	}
+
+	@Override
+	public boolean onTouch(View v, MotionEvent event)
+	{
+		if (dragOnLongClick || game.turn.equals(ucp))
+		{
+			return false;
+		}
+		
+		switch (event.getAction())
+		{
+		case MotionEvent.ACTION_MOVE:
+			break;
+
+		case MotionEvent.ACTION_DOWN:
+			if (dragging)
+			{
+				return false;
+			}
+
+			if (!(v instanceof UICard) || v instanceof UIStackTop)
+			{
+				return false;
+			}
+			cardToPlay = (UICard) v;
+
+			if (!cardToPlay.isVisible())
+			{
+				return false;
+			}
+//			l("im touch-dragging " + cardToPlay.getCard());
+			dragging = true;
+			dragController.startDrag(v, this, v, DragController.DRAG_ACTION_MOVE);
+			break;
+
+		case MotionEvent.ACTION_CANCEL:
+		case MotionEvent.ACTION_UP:
+			dragging = false;
+			break;
+
+		default:
+			break;
+		}
+
+		return dragging;
 	}
 }

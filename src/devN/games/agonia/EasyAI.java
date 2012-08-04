@@ -39,21 +39,12 @@ public class EasyAI implements AgoniaAI
 				return new Card(c);
 			}
 		}
-		
-		me.getGame().draw(me);
-
-		Card c = me.getHand().get(me.getHand().size() - 1);
-		Log.d("AI", "drawed " + c);
-		if (me.getGame().canPlay(c))
-		{
-			Log.d("AI", "choosed " + c);
-			return new Card(c);
-		}
-		Log.d("AI", "nullCard -_-");
 		return Card.NULL_CARD;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see devN.games.Player#getAceSuit()
 	 */
 	@Override
@@ -62,25 +53,24 @@ public class EasyAI implements AgoniaAI
 		int suitsCount[] = new int[Card.MAX_SUIT];
 		int temp[] = new int[Card.MAX_SUIT];
 		int i;
-		
-if (me.getHand().size() == 0)
-{
-return rand.nextInt(Card.MAX_SUIT);
-}
+
+		if (me.getHand().size() == 0)
+		{
+			return rand.nextInt(Card.MAX_SUIT);
+		}
 		for (Card c : me.getHand())
 		{
 			suitsCount[c.getSuit()]++;
 		}
-		
-		Log.d("AI", Card.pszSUITS[0] + suitsCount[0] + " " + 
-					Card.pszSUITS[1] + suitsCount[1] + " " + 
-					Card.pszSUITS[2] + suitsCount[2] + " " + 
-					Card.pszSUITS[3] + suitsCount[3]);
-		
+
+		Log.d("AI", Card.pszSUITS[0] + suitsCount[0] + " " + Card.pszSUITS[1]
+					+ suitsCount[1] + " " + Card.pszSUITS[2] + suitsCount[2] + " "
+					+ Card.pszSUITS[3] + suitsCount[3]);
+
 		System.arraycopy(suitsCount, 0, temp, 0, Card.MAX_SUIT);
 
 		Arrays.sort(temp);
-		
+
 		for (i = 0; i < suitsCount.length; i++)
 		{
 			if (suitsCount[i] == temp[3])
@@ -89,7 +79,7 @@ return rand.nextInt(Card.MAX_SUIT);
 			}
 		}
 		Log.d("AI", "will set to A" + Card.pszSUITS[i]);
-		
+
 		return i;
 	}
 

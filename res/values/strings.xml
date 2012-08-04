@@ -31,7 +31,7 @@
     <string name="mode_moderate">Moderate</string>
     <string name="mode_megamind">MegaMind !</string>
     <string name="dlg_about_message"><![CDATA[<font color="white">Custom buttons made with: <a href="http://www.cooltext.com" target="_blank">cooltext.com</a><br /><br />Cards - Deck icons downloaded from: <a href="http://freeware.esoterica.free.fr/html/freecards.html" target="_blank">freeware.esoterica.free.fr</a><br />(Authors: Jesse Fuchs and Tom Hart)<br /><br />This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by/3.0/gr/deed.en">Creative Commons Attribution 3.0 Greece License</a>.</font><br /> ]]></string>
-    <string name="dlg_comming_soon_message">➤new deck back images\n➤hard mode\n➤better way to choose what card you want to play\n➤more preferences for more special cards\n➤game history when game finished\n➤save / load game\n➤Challenges / achievements</string>
+    <string name="dlg_comming_soon_message">➤new deck back images\n➤hard mode\n➤more preferences for more special cards\n➤game history when game finished\n➤save / load game\n➤Challenges / achievements</string>
     <string name="pref_name_aborted_message" formatted="false">Names length should between %d and %d\nwithout any punctuation character or whitespace </string>
     <string name="menu_btn_new_game">New game</string>
     <string name="menu_btn_pref">Preferences</string>

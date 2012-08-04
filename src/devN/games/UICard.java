@@ -1,20 +1,48 @@
 package devN.games;
 
-import devN.Test.InfoDisp;
+import devN.games.agonia.R;
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.graphics.Color;
-import android.view.View;
-import android.view.View.OnClickListener;
+import android.util.AttributeSet;
+import android.util.Log;
 import android.widget.ImageButton;
 import android.widget.LinearLayout.LayoutParams;
 
-public class UICard extends ImageButton implements OnClickListener
+public class UICard extends ImageButton
 {
+	private final static String tag = "dbg";
+
 	protected Card card;
 	protected boolean visible;
 	
-	protected static InfoDisp i = new InfoDisp();
+	public UICard(Context context, AttributeSet attrs, int defStyle)
+	{
+		super(context, attrs, defStyle);	
+	}
 
+	public UICard(Context context, AttributeSet attrs)
+	{
+		super(context, attrs);
+		TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.UICard);
+		visible = a.getBoolean(R.styleable.UICard_visible, false);
+		int suit, rank;
+		
+		suit = a.getInt(R.styleable.UICard_cardSuit, -1);
+		rank = a.getInt(R.styleable.UICard_cardRank, -1);
+		
+		card = new Card(suit, rank);
+		
+		setImage();
+		
+		a.recycle();
+	}
+
+	public UICard(Context context)
+	{
+		super(context);
+	}
+	
 	public UICard(Context context, Card c, boolean visible)
 	{
 		super(context);
@@ -26,17 +54,11 @@ public class UICard extends ImageButton implements OnClickListener
 		this.setBackgroundColor(Color.TRANSPARENT);
 		LayoutParams lp = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
 		this.setLayoutParams(lp);
-		this.setOnClickListener(this);
 	}
 	
 	public UICard(UICard c)
 	{
 		this(c.getContext(), new Card(c.card), c.visible);
-	}
-	
-	public static InfoDisp getInfoDisp()
-	{
-		return i;
 	}
 
 	public Card getCard()
@@ -46,8 +68,23 @@ public class UICard extends ImageButton implements OnClickListener
 
 	public void setCard(Card card)
 	{
-		this.card = card;
+		if (this.card != null)
+		{
+			this.card.setRank(card.getRank());
+			this.card.setSuit(card.getSuit());
+		}
+		else
+		{
+			this.card = card;
+		}
+		
 		setImage();
+	}
+	
+	public void setCardRefTo(Card card)
+	{
+		this.card = null;
+		setCard(card);
 	}
 
 	public boolean isVisible()
@@ -63,7 +100,6 @@ public class UICard extends ImageButton implements OnClickListener
 	public void setImage()
 	{
 		String img;
-		int id;
 		
 		if (visible)
 		{
@@ -74,13 +110,7 @@ public class UICard extends ImageButton implements OnClickListener
 			img = "card_back_blue_1";
 		}
 
-		id = getResources().getIdentifier(img, "drawable", getContext().getPackageName());
-		
-		if (id != 0)
-		{
-			super.setImageResource(id);
-		}
-		
+		setImage(img);
 	}
 
 	public void setImage(String resName)
@@ -95,16 +125,32 @@ public class UICard extends ImageButton implements OnClickListener
 			requestLayout();
 		}
 		
+		setTag(card);
 	}
-	@Override
-	public void onClick(View v)
+	
+	public void postSetImage(final String resName)
 	{
-		if (visible)
+		if (resName.length() == 0)
 		{
-			i.change(card);
-			i.c.setVisibility(VISIBLE);
+			post(new Runnable(){
+				
+				@Override
+				public void run()
+				{
+					setImage();
+				}
+			});
 		}
-		
+		else 
+		{
+			post(new Runnable(){
+				
+				@Override
+				public void run()
+				{
+					setImage(resName);
+				}
+			});
+		}
 	}
-
 }

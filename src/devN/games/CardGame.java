@@ -2,6 +2,7 @@ package devN.games;
 
 import java.util.ArrayList;
 import java.util.List;
+import devN.games.agonia.AgoniaGame;
 
 public abstract class CardGame
 {
@@ -166,7 +167,12 @@ public abstract class CardGame
 	
 	public void play(Player p, Card c)
 	{
-		if (p.hasCards() && canPlay(c))
+		boolean has, can;
+		
+		has = p.hasCards();
+		can = canPlay(c);
+		
+		if (has && can)
 		{
 			p.playCard(c);
 		}

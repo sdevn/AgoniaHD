@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="UICard">
+        <attr name="visible" format="boolean" />
+        <attr name="cardRank" format="integer" />
+        <attr name="cardSuit" format="integer" />
+    </declare-styleable>
+</resources>

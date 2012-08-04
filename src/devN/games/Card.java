@@ -207,6 +207,11 @@ public class Card implements Comparable<Card>
 	{
 		String rank;
 		
+		if (equals(NULL_CARD))
+		{
+			return "[NC]";
+		}
+		
 		switch (this.rank)
 		{
 			case 1:

@@ -25,15 +25,6 @@ public class MonkeyAI implements AgoniaAI
 			}
 		}
 
-		me.getGame().draw(me);
-
-		Card c = me.getHand().get(me.getHand().size() - 1);	// i karta pou molis travikse
-		
-		if (me.getGame().canPlay(c))
-		{
-			return new Card(c);
-		}
-
 		return Card.NULL_CARD;
 	}
 

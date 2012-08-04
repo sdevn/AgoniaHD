@@ -42,7 +42,7 @@ public class Agonia extends CardGame
 		{
 			return true;
 		}
-
+	
 		return false;
 	}
 

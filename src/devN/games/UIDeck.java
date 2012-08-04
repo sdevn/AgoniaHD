@@ -16,7 +16,14 @@ public class UIDeck extends Deck
 	
 	private void refreshInfo()
 	{
-		tvInfo.setText(Integer.toString(super.size()));
+		tvInfo.post(new Runnable(){
+			
+			@Override
+			public void run()
+			{
+				tvInfo.setText(Integer.toString(size()));
+			}
+		});
 	}
 
 	/* (non-Javadoc)
