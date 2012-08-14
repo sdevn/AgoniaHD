@@ -16,13 +16,16 @@ public class Player implements AgoniaAI
 	protected int score;
 	protected int team;
 	protected int id;
-	
 	protected AgoniaAI ai;
-
-	public Player(String name, int team, Deck deck)
+	
+	public Player()
 	{
-		this(name, team);
-		this.deck = deck;
+		this.name = "Uknown";
+		this.id = ++cIDs;
+		this.score = 0;
+		this.team = -1;
+		this.hand = new ArrayList<Card>();
+		this.owned = new ArrayList<Card>(); 
 	}
 	
 	public Player(String name, int team)
@@ -35,33 +38,33 @@ public class Player implements AgoniaAI
 		this.owned = new ArrayList<Card>(); 
 	}
 	
-	public Player(String name, int team, CardGame game)
-	{
-		this(name, team);
-		this.game = game;
-	}
-
 	public void addScore(int points)
 	{
 		this.score += points;
 	}
 
-	public void draw()
+	public List<Card> draw()
 	{
-		if (deck.hasCards())
-		{
-			hand.addAll(deck.draw());
-		}
+		List<Card> drawed = deck.draw();
+		hand.addAll(drawed);
+		
+		return drawed;
 	}
 	
-	public void draw(int n)
+	public List<Card> draw(int n)
 	{
-		hand.addAll(deck.draw(n));
+		List<Card> drawed = deck.draw(n); 
+		hand.addAll(drawed);
+		
+		return drawed;
 	}
 	
-	public void draw(List<Card> cards)
+	public List<Card> draw(List<Card> cards)
 	{
-		hand.addAll(deck.draw(cards));
+		List<Card> drawed = deck.draw(cards);
+		hand.addAll(drawed);
+		
+		return drawed;
 	}
 	
 	public boolean playCard(List<Card> cards)
@@ -84,6 +87,11 @@ public class Player implements AgoniaAI
 			return true;
 		}
 		return false;
+	}
+	
+	public boolean isRealPlayer()
+	{
+		return ai == null;
 	}
 	
 	/**
@@ -147,6 +155,26 @@ public class Player implements AgoniaAI
 		return game;
 	}
 
+	public void setName(String name)
+	{
+		this.name = name;
+	}
+
+	public void setHand(List<Card> hand)
+	{
+		this.hand = hand;
+	}
+
+	public void setScore(int score)
+	{
+		this.score = score;
+	}
+
+	public void setTeam(int team)
+	{
+		this.team = team;
+	}
+
 	/**
 	 * @param deck the deck to set
 	 */
@@ -196,7 +224,7 @@ public class Player implements AgoniaAI
 	@Override
 	public String toString()
 	{
-		return name + " | " + hand.size() + " cards | score: " + this.score;
+		return name + " \n " + hand.size() + " cards";
 	}
 	
 	public String handString()

@@ -16,8 +16,6 @@
 
 package devN.etc.dragdrop;
 
-import android.graphics.Rect;
-
 /**
  * Interface defining an object that can receive a drag.
  *

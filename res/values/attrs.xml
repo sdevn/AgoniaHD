@@ -5,4 +5,14 @@
         <attr name="cardRank" format="integer" />
         <attr name="cardSuit" format="integer" />
     </declare-styleable>
+    
+    <declare-styleable name="UIInfo" >        
+        <attr name="info" format="reference" />
+	</declare-styleable>
+    
+    <declare-styleable name="UIPlayer">
+        <attr name="team" format="integer" />
+        <attr name="playCardAnimation" format="reference" />
+        <attr name="drawCardAnimation" format="reference" />
+    </declare-styleable>
 </resources>

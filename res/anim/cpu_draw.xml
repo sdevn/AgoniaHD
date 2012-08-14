@@ -2,7 +2,7 @@
 <set xmlns:android="http://schemas.android.com/apk/res/android"
     android:fillBefore="true"
     android:fillEnabled="true"
-    android:interpolator="@android:anim/decelerate_interpolator" >
+    android:interpolator="@android:anim/linear_interpolator" >
 
     <scale
         android:duration="1500"

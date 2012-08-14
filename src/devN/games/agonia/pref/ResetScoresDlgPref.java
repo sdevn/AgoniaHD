@@ -1,5 +1,7 @@
-package devN.games.agonia;
+package devN.games.agonia.pref;
 
+import devN.games.agonia.F;
+import devN.games.agonia.R;
 import android.app.AlertDialog.Builder;
 import android.content.Context;
 import android.content.DialogInterface;

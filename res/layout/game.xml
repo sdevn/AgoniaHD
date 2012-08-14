@@ -1,86 +1,95 @@
 <?xml version="1.0" encoding="utf-8"?>
-<devN.etc.dragdrop.DragLayer 
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<devN.etc.dragdrop.DragLayer xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:devn="http://schemas.android.com/apk/res/devN.games.agonia"
     android:id="@+id/dragLayer"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:background="@color/tsoha" xmlns:app="http://schemas.android.com/apk/res/devN.games.agonia">
+    android:background="@color/tsoha" >
 
     <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:orientation="vertical" >
+        android:clipChildren="false"
+        android:orientation="vertical"
+        android:weightSum="3.0" >
 
-        <RelativeLayout
+        <devN.games.UIPlayer
+            android:id="@+id/computer"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
-            android:layout_weight="2" >
-
-            <TextView
-                android:id="@+id/cpName"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentTop="true"
-                android:text="@string/default_p2_name"
-                android:textAppearance="?android:attr/textAppearanceLarge" />
-
-            <LinearLayout
-                android:id="@+id/computer"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_alignParentLeft="true"
-                android:layout_below="@+id/cpName" >
-            </LinearLayout>
-        </RelativeLayout>
-
+            android:layout_weight="1"
+            android:clipChildren="false"
+            android:gravity="top"
+            android:layoutAnimation="@anim/cpu_in"
+            devn:playCardAnimation="@anim/cpu_play"
+			devn:drawCardAnimation="@anim/cpu_draw"
+            devn:team="2"
+            devn:visible="false" >
+        </devN.games.UIPlayer>
+        
         <RelativeLayout
             android:id="@+id/table"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
-            android:layout_weight="2" >
-            
+			android:clipChildren="false"
+            android:layout_weight="1" >
+
+            <devN.games.UIDeck
+                android:id="@+id/deck"
+                style="@style/UICard"
+                android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"
+                devn:cardRank="-1"
+                devn:cardSuit="-1"
+                devn:visible="false" />
+
             <devN.games.UIStackTop
                 android:id="@+id/stackTop"
-                android:layout_centerInParent="true"
                 style="@style/UICard"
-                devn:visible="true"
+                android:layout_centerInParent="true"
+                devn:cardRank="-1"
                 devn:cardSuit="-1"
-                devn:cardRank="-1" />
+                devn:visible="true" />
 
             <TextView
                 android:id="@+id/deckSize"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentTop="true"
-                android:text="DeckInfo"
+                android:layout_above="@id/deck"
+                android:layout_alignLeft="@id/deck"
+                android:text="@string/blank"
                 android:textAppearance="?android:attr/textAppearanceLarge" />
-        </RelativeLayout>
 
-        <RelativeLayout
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:layout_weight="2" >
+            <TextView
+                android:id="@+id/cpName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_marginTop="4dp"
+                android:text="@string/default_p2_name"
+                android:textAppearance="?android:attr/textAppearanceLarge" />
 
             <TextView
                 android:id="@+id/pName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentTop="true"
+                android:layout_alignParentRight="true"
+                android:layout_below="@+id/cpName"
                 android:text="@string/default_p1_name"
                 android:textAppearance="?android:attr/textAppearanceLarge" />
-
-            <LinearLayout
-                android:id="@+id/player"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_alignParentLeft="true"
-                android:layout_below="@+id/pName" >
-            </LinearLayout>
         </RelativeLayout>
+
+        <devN.games.UIPlayer
+            android:id="@+id/player"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_weight="1"
+            android:clipChildren="false"
+            android:gravity="bottom"
+            android:layoutAnimation="@anim/player_in"
+            devn:team="1"
+            devn:visible="true" >
+        </devN.games.UIPlayer>
     </LinearLayout>
 
 </devN.etc.dragdrop.DragLayer>

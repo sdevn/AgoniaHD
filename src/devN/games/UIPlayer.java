@@ -1,268 +1,198 @@
 package devN.games;
 
-import java.util.ArrayList;
+import static android.util.Log.d;
+import java.util.LinkedList;
 import java.util.List;
-import android.app.Activity;
-import android.util.DisplayMetrics;
-import android.util.Log;
+import android.content.Context;
+import android.content.res.Resources.NotFoundException;
+import android.content.res.TypedArray;
+import android.util.AttributeSet;
 import android.view.View;
-import android.view.View.OnLongClickListener;
-import android.view.View.OnTouchListener;
-import android.view.ViewGroup;
-import android.widget.TextView;
-import android.widget.LinearLayout.LayoutParams;
-import android.view.ViewGroup.OnHierarchyChangeListener;
 import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
+import android.view.animation.AnimationUtils;
+import android.widget.LinearLayout;
+import android.widget.TextView;
+import devN.etc.dragdrop.DragSource;
+import devN.etc.dragdrop.DropTarget;
+import devN.games.agonia.AgoniaAI;
+import devN.games.agonia.R;
 
-public class UIPlayer extends Player implements AnimationListener
+public class UIPlayer extends LinearLayout implements AnimationListener, DropTarget,
+											AgoniaAI
 {
-	private static final String tag = "anim";
+	private static final String tag = "dbg";
 	private Animation animOnRemove = null;
-	private List<View> toRemove = new ArrayList<View>();
+	private Animation animOnAdd = null;
+	private List<View> toRemove = new LinkedList<View>();
+	private InnerPlayer player = new InnerPlayer();
+	private TextView tvInfo;
+	private boolean visible;
+	private boolean layoutAnimFinisdhed = false; 
+	private LayoutParams lpCards = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+	private OnTouchListener onTouchListener;
 	
-	private class HandManager implements OnHierarchyChangeListener
+	private int infoId;
+	
+	private static int childWidth;
+	private static int parentWidth;
+	@SuppressWarnings("unused")
+	private static int childHeight;
+	@SuppressWarnings("unused")
+	private static int parentHeight;
+	
+	public UIPlayer(Context context, AttributeSet attrs)
 	{
-		private int childWidth;
-		private int parentWidth;
-		private LayoutParams lpCards;
-		private OnLongClickListener longClickListener;
-		private OnTouchListener touchListener;
-		private Animation animOnAdd;
-
-		public HandManager()
-		{
-			DisplayMetrics metrics = new DisplayMetrics(); 
-			act.getWindowManager().getDefaultDisplay().getMetrics(metrics);
-			parentWidth = metrics.widthPixels;
-			
-			UICard c = new UICard(act, new Card(-1, -1), false);
-			c.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
-			childWidth = c.getMeasuredWidth();
-			
-			lpCards = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-		}
-
-		private int getRightMarg(int cChilds)
-		{
-			int marg = 0, 
-				width; 
-
-			width = cChilds * childWidth - parentWidth;
-			
-			if (width > 0 && cChilds > 1)
-			{
-				marg = -(width) / (cChilds - 1);
-			}
-
-			return marg;
-		}
-
-		@Override
-		public void onChildViewAdded(View parent, View child)
-		{
-			lpCards.rightMargin = getRightMarg(container.getChildCount());
-			child.setLayoutParams(lpCards);
-			child.setOnLongClickListener(longClickListener);
-			child.setOnTouchListener(touchListener);
-			final View v = child;
-			if (animOnAdd != null)
-			{
-				child.post(new Runnable(){
-
-					public void run()
-					{
-						v.startAnimation(animOnAdd);
-					}
-				});
-			}
-		}
-
-		@Override
-		public void onChildViewRemoved(View parent, View child)
-		{
-			lpCards.rightMargin = getRightMarg(container.getChildCount() - 1);
-			child.setLayoutParams(lpCards);
-		}
-
-		public OnLongClickListener getLongClickListener()
-		{
-			return longClickListener;
-		}
-
-		public void setLongClickListener(OnLongClickListener longClickListener)
-		{
-			this.longClickListener = longClickListener;
-		}
-
-		/**
-		 * @return the touchListener
-		 */
-		public OnTouchListener getTouchListener()
-		{
-			return touchListener;
-		}
-
-		/**
-		 * @param touchListener the touchListener to set
-		 */
-		public void setTouchListener(OnTouchListener touchListener)
-		{
-			this.touchListener = touchListener;
-		}
-
-		public Animation getAnimOnAdd()
-		{
-			return animOnAdd;
-		}
-
-		public void setAnimOnAdd(Animation animOnAdd)
-		{
-			this.animOnAdd = animOnAdd;
-		}		
+		super(context, attrs);
+		initAttrs(context, attrs);
 	}
 	
-	protected Activity act;
-	protected ViewGroup container;
-	protected TextView tvInfo;
-	protected HandManager handManager;
-	protected boolean visible;
-	
-	public UIPlayer(String name, int team, ViewGroup vg, TextView tv, boolean visible)
+	public void initAttrs(Context context, AttributeSet attrs)
 	{
-		super(name, team);
-		this.visible = visible;
-		container = vg; 
-		tvInfo = tv;
-	}
-	
-	public UIPlayer(String name, int team, ViewGroup vg, TextView tv, boolean visible, Activity a)
-	{
-		this(name, team, vg, tv, visible);
-		act = a;
-		handManager = new HandManager();
-		container.setOnHierarchyChangeListener(handManager);
-	}
+		TypedArray taCard = context.obtainStyledAttributes(attrs, R.styleable.UICard);
+		visible = taCard.getBoolean(R.styleable.UICard_visible, false);
+		taCard.recycle();
 
-	public UIPlayer(Player p, ViewGroup vg, TextView tv, boolean visible, Activity a)
-	{
-		this(p.getName(), p.getTeam(), vg, tv, visible, a);
-		this.setAI(p.getAI());
+		TypedArray taInfo = context.obtainStyledAttributes(attrs, R.styleable.UIInfo);
+		infoId = taInfo.getResourceId(R.styleable.UIInfo_info, 0);
+		if (infoId != 0)
+		{
+			tvInfo = (TextView) findViewById(infoId);
+			taInfo.recycle();
+		}
+
+		TypedArray taPlayer = context.obtainStyledAttributes(attrs, R.styleable.UIPlayer);
+		int team = taPlayer.getInt(R.styleable.UIPlayer_team, -1); 
+		player.setTeam(team);
+
+		int animAddId = taPlayer.getResourceId(R.styleable.UIPlayer_drawCardAnimation, -1);
+		int animRemoveId = taPlayer.getResourceId(R.styleable.UIPlayer_playCardAnimation, -1);
+		try
+		{
+			animOnAdd = AnimationUtils.loadAnimation(context, animAddId);
+		}
+		catch (NotFoundException e)
+		{
+//			d("anim", "onAdd not found! " + animAddId);
+		}
+		try
+		{
+			animOnRemove = AnimationUtils.loadAnimation(context, animRemoveId);
+		}
+		catch (NotFoundException e)
+		{
+//			d("anim", "onRemv not found! " + animRemoveId);
+		}
+		taPlayer.recycle();
 	}
 	
-	private void refreshInfo()
+	public static void initDimensions(Context context, int width, int height)
 	{
-		final String info = toString();
+		parentHeight = height;
+		parentWidth = width;
 		
-		tvInfo.post(new Runnable(){
+		UICard c = new UICard(context, new Card(-1, -1), false);
+		c.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
+		childWidth = c.getMeasuredWidth();
+		childHeight = c.getMeasuredHeight();
+		
+		d(tag, childWidth + " / " + parentWidth);
+	}
+	
+	private int getRightMarg(int cChilds)
+	{
+		int marg = 0, width;
+
+		width = cChilds * childWidth - parentWidth;
+
+		if (width > 0 && cChilds > 1)
+		{
+			marg = -(width) / (cChilds - 1);
+		}
+		
+		return marg - getPaddingRight();
+	}
+
+	@Override
+	protected void onFinishInflate()
+	{
+		super.onFinishInflate();
+		
+		if (getLayoutAnimation() == null)
+		{
+			return;
+		}
+		
+		new Runnable(){
 			
 			@Override
 			public void run()
 			{
-				tvInfo.setText(info);
+				while (!getLayoutAnimation().isDone())
+				{
+					try
+					{
+						Thread.sleep(300);
+					}
+					catch (InterruptedException ex)
+					{
+
+					}
+				}
+				layoutAnimFinisdhed = true;
 			}
-		});
+		}.run();
 	}
 
-	/* (non-Javadoc)
-	 * @see devN.games.Player#draw()
-	 */
-	@Override
-	public void draw()
+	private void addToContainer(List<Card> viewsToAdd)
 	{
-		super.draw();
-		addToContainer(1);
-		refreshInfo();
-	}
-
-	/* (non-Javadoc)
-	 * @see devN.games.Player#draw(int)
-	 */
-	@Override
-	public void draw(int n)
-	{
-		super.draw(n);
-		addToContainer(n);
-		refreshInfo();
-	}
-
-	/* (non-Javadoc)
-	 * @see devN.games.Player#draw(java.util.List)
-	 */
-	@Override
-	public void draw(List<Card> cards)
-	{
-		super.draw(cards);
-		addToContainer(cards.size());
-		refreshInfo();
-	}
-
-	/* (non-Javadoc)
-	 * @see devN.games.Player#playCard(devN.games.Card)
-	 */
-	@Override
-	public boolean playCard(Card c)
-	{
-		boolean b = super.playCard(c);
-		removeFromContainer(c, b, 1);
-		refreshInfo();
+		boolean shouldAnimate = animOnAdd != null && layoutAnimFinisdhed;
 		
-		return b;
-	}
-
-	/* (non-Javadoc)
-	 * @see devN.games.Player#playCard(int)
-	 */
-	@Override
-	public boolean playCard(int i) 
-	{
-		boolean b = super.playCard(i);
-		removeFromContainer(i, b);
-		refreshInfo();
-
-		return b;
-	}
-	
-	private void addToContainer(int n)
-	{
-		int size = getHand().size();
-		final List<Card> hand = getHand();
+		lpCards.rightMargin = getRightMarg(getChildCount() + viewsToAdd.size());
+		requestLayout();
 		
-		Log.d(tag, "trying to add " + n + " > " + hand.get(size - n));
-
-		for (int i = size - n; i < size; i++)
+		for (Card c : viewsToAdd)
 		{
-			container.addView(new UICard(act, hand.get(i), visible));
-			Log.d(tag, "added " + hand.get(i));
+			UICard child = new UICard(getContext(), c, visible);
+			child.setOnTouchListener(onTouchListener);
+			child.setLayoutParams(lpCards);
+			addView(child);
+			if (shouldAnimate)
+			{
+				child.startAnimation(animOnAdd);	
+			}
 		}
 	}
 
 	/**
 	 * 
-	 * @param c karta pou tha petaksei
-	 * @param success an petahtike ap ta heria tou
-	 * @param atMost mehri poses kartes idies me ti c tha petaksei
+	 * @param c
+	 *            karta pou tha petaksei
+	 * @param success
+	 *            an petahtike ap ta heria tou (false simainei NULL_CARD)
+	 * @param atMost
+	 *            mehri poses kartes idies me ti c tha petaksei
 	 * @return
 	 */
 	private boolean removeFromContainer(Card c, boolean success, int atMost)
 	{
 		if (!success)
 		{
-			return false; 
+			return false;
 		}
-		
-		int childs = container.getChildCount();
-		boolean willStartAnimate = toRemove.isEmpty() && animOnRemove != null; 
+
+		int childs = getChildCount();
+		boolean willStartAnimate = toRemove.isEmpty() && animOnRemove != null;
 		View v;
-				
+
 		for (int i = 0; i < childs && atMost > 0; i++)
 		{
-			v = container.getChildAt(i);
+			v = getChildAt(i);
 			if (v.getTag().equals(c))
 			{
 				if (animOnRemove == null)
 				{
-					container.removeView(v);
+					removeView(v);
 				}
 				else
 				{
@@ -271,81 +201,53 @@ public class UIPlayer extends Player implements AnimationListener
 				atMost--;
 			}
 		}
-		
+
 		if (willStartAnimate)
 		{
-			Log.d(tag, "tried to remove" + c + " atmost = " + atMost);
 			v = toRemove.get(0);
 			v.startAnimation(animOnRemove);
 		}
-		return childs > container.getChildCount();
+		return childs > getChildCount();
 	}
-	
+
 	private boolean removeFromContainer(int index, boolean success)
 	{
 		if (!success)
 		{
-			return false; 
+			return false;
 		}
-		
-		int childs = container.getChildCount();
-		View v = container.getChildAt(index);
-		
+
+		int childs = getChildCount();
+		View v = getChildAt(index);
+
 		if (animOnRemove == null)
 		{
-			container.removeView(v);
+			removeView(v);
 		}
 		else
 		{
 			toRemove.add(v);
 			v.startAnimation(animOnRemove);
 		}
-		
-		return childs > container.getChildCount();
+
+		return childs > getChildCount();
 	}
-	
-	/* (non-Javadoc)
-	 * @see devN.games.Player#addScore(int)
-	 */
+
 	@Override
-	public void addScore(int points)
+	public void removeView(View view)
 	{
-		super.addScore(points);
-		refreshInfo();
+		super.removeView(view);
+		
+		lpCards.rightMargin = getRightMarg(getChildCount());
+		requestLayout();
 	}
 
-	public OnLongClickListener getLongClickListener()
-	{
-		return handManager.getLongClickListener();
-	}
-
-	public void setLongClickListener(OnLongClickListener longClickListener)
-	{
-		handManager.setLongClickListener(longClickListener);
-	}
-	
-	/**
-	 * @return the touchListener
-	 */
-	public OnTouchListener getTouchListener()
-	{
-		return handManager.getTouchListener();
-	}
-
-	/**
-	 * @param touchListener the touchListener to set
-	 */
-	public void setTouchListener(OnTouchListener touchListener)
-	{
-		handManager.setTouchListener(touchListener);
-	}
-	
 	public void setOnPlayAnimation(Animation anim)
 	{
 		this.animOnRemove = anim;
 		this.animOnRemove.setAnimationListener(this);
 	}
-	
+
 	public Animation getOnPlayAnimation()
 	{
 		return animOnRemove;
@@ -353,51 +255,327 @@ public class UIPlayer extends Player implements AnimationListener
 	
 	public void setOnDrawAnimation(Animation anim)
 	{
-		handManager.setAnimOnAdd(anim);
-	}
-	
-	public Animation getOnDrawAnimation()
-	{
-		return handManager.getAnimOnAdd();
+		this.animOnAdd = anim;
 	}
 
+	public Animation getOnDrawAnimation()
+	{
+		return animOnAdd;
+	}
+
+	public InnerPlayer getPlayer()
+	{
+		return player;
+	}
+
+	public TextView getInfo()
+	{
+		return tvInfo;
+	}
+
+	public boolean isVisible()
+	{
+		return visible;
+	}
+
+	public void setInfo(TextView tvInfo)
+	{
+		this.tvInfo = tvInfo;
+	}
+
+	public void setVisible(boolean visible)
+	{
+		this.visible = visible;
+	}
+
+	private void refreshInfo()
+	{
+		final String info = player.toString();
+		
+//		getHandler().post(new Runnable(){
+//
+//			@Override
+//			public void run()
+//			{
+				tvInfo.setText(info);
+//			}
+//		});
+	}
+
+	public OnTouchListener getOnTouchListener()
+	{
+		return onTouchListener;
+	}
+
+	public void setOnTouchListener(OnTouchListener onTouchListener)
+	{
+		this.onTouchListener = onTouchListener;
+	}
+	
 	@Override
-	public void onAnimationEnd(Animation animation)
+	public void onAnimationEnd(final Animation animation)
 	{
 		final View v;
 		v = toRemove.remove(0);
 
-		container.post(new Runnable(){
+		post(new Runnable(){
 
 			@Override
 			public void run()
 			{
-				v.clearAnimation();
-				container.removeView(v);
-				Log.d(tag, "removed " + v.getTag());
+				removeView(v);
 			}
 		});
 		if (!toRemove.isEmpty())
 		{
 			final View next = toRemove.get(0);
 			next.post(new Runnable(){
+				
+				@Override
 				public void run()
-				{					
-					next.startAnimation(animOnRemove);
+				{
+					next.postDelayed(new Runnable(){
+
+						@Override
+						public void run()
+						{
+							next.startAnimation(animation);
+						}
+						
+					}, 200);
 				}
 			});
 		}
 	}
-
+	
 	@Override
 	public void onAnimationRepeat(Animation animation)
 	{
-		
+
 	}
 
 	@Override
 	public void onAnimationStart(Animation animation)
 	{
+
+	}
+
+	@Override
+	public void onDrop(DragSource source, int x, int y, int xOffset, int yOffset,
+						Object dragInfo)
+	{
+	}
+
+	@Override
+	public void onDragEnter(DragSource source, int x, int y, int xOffset, int yOffset,
+							Object dragInfo)
+	{
+	}
+
+	@Override
+	public void onDragOver(DragSource source, int x, int y, int xOffset, int yOffset,
+							Object dragInfo)
+	{
+
+	}
+
+	@Override
+	public void onDragExit(DragSource source, int x, int y, int xOffset, int yOffset,
+							Object dragInfo)
+	{
+	
+	}
+
+	@Override
+	public boolean acceptDrop(DragSource source, int x, int y, int xOffset, int yOffset,
+								Object dragInfo)
+	{
+		UICard card = (UICard) dragInfo;
 		
+		boolean b = player.game.canDraw(player) 
+					&& player.isRealPlayer() 
+					&& card.getCard().equals(Card.NULL_CARD);
+		
+		return b;
+	}
+	
+	public List<Card> draw()
+	{
+		return player.draw();
+	}
+
+	public List<Card> draw(int n)
+	{
+		return player.draw(n);
+	}
+
+	public List<Card> draw(List<Card> cards)
+	{
+		return player.draw(cards);
+	}
+
+	public boolean playCard(Card c)
+	{
+		return player.playCard(c);
+	}
+
+	public boolean playCard(int i)
+	{
+		return player.playCard(i);
+	}
+
+	public void addScore(int points)
+	{
+		player.addScore(points);
+	}
+	
+	public void setName(String name)
+	{
+		player.setName(name);
+	}
+
+	public int getScore()
+	{
+		return player.getScore();
+	}
+	
+	public void setAI(AgoniaAI ai)
+	{
+		player.setAI(ai);
+	}
+	
+	@Override
+	public Card willPlay()
+	{
+		return player.willPlay();
+	}
+
+	@Override
+	public int getAceSuit()
+	{
+		return player.getAceSuit();
+	}
+
+	@Override
+	public Card playSeven()
+	{
+		return player.playSeven();
+	}
+	
+	public List<Card> getHand()
+	{
+		return player.getHand();
+	}
+	
+	public String getName()
+	{
+		return player.getName();
+	}
+	
+	public String handString()
+	{
+		return player.handString();
+	}
+	
+	private class InnerPlayer extends Player
+	{
+
+		public InnerPlayer()
+		{
+			super();
+		}
+
+		@SuppressWarnings("unused")
+		public InnerPlayer(String name, int team)
+		{
+			super(name, team);
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see devN.games.Player#draw()
+		 */
+		@Override
+		public List<Card> draw()
+		{
+			List<Card> drawed = super.draw();
+			addToContainer(drawed);
+			refreshInfo();
+
+			return drawed;
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see devN.games.Player#draw(int)
+		 */
+		@Override
+		public List<Card> draw(int n)
+		{
+			List<Card> drawed = super.draw(n);
+			addToContainer(drawed);
+			refreshInfo();
+
+			return drawed;
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see devN.games.Player#draw(java.util.List)
+		 */
+		@Override
+		public List<Card> draw(List<Card> cards)
+		{
+			List<Card> drawed = super.draw(cards);
+			addToContainer(drawed);
+			refreshInfo();
+
+			return drawed;
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see devN.games.Player#playCard(devN.games.Card)
+		 */
+		@Override
+		public boolean playCard(Card c)
+		{
+			boolean b = super.playCard(c);
+			removeFromContainer(c, b, 1);
+			refreshInfo();
+
+			return b;
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see devN.games.Player#playCard(int)
+		 */
+		@Override
+		public boolean playCard(int i)
+		{
+			boolean b = super.playCard(i);
+			removeFromContainer(i, b);
+			refreshInfo();
+
+			return b;
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see devN.games.Player#addScore(int)
+		 */
+		@Override
+		public void addScore(int points)
+		{
+			super.addScore(points);
+			refreshInfo();
+		}
 	}
 }

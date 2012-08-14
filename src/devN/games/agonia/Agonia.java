@@ -16,6 +16,7 @@ public class Agonia extends CardGame
 	protected Player lastDraw; // Last player who draw card (non-Special draw)
 	protected Player turn;
 	protected boolean isNineSpecial;
+	private boolean isGameFinished = false;
 	
 	public Agonia(Deck d, Player p, Player cp)
 	{
@@ -32,6 +33,11 @@ public class Agonia extends CardGame
 	public boolean canPlay(Card c)
 	{
 		Card top = getTop(0);
+		
+		if (isGameFinished)
+		{
+			return false;
+		}
 
 		if (top.getRank() == 1 && c.getRank() == 1)
 		{
@@ -40,10 +46,11 @@ public class Agonia extends CardGame
 
 		if (c.sameSuit(top) || c.sameRank(top) || c.getRank() == 1)
 		{
-			return true;
+			return turn.getHand().size() != 1 
+					|| c.getRank() != 1;	// Den mporeis na vgeis me Ace!
 		}
 	
-		return false;
+		return false;	// NULL_CARD ?
 	}
 
 	private void handleAce(Card c)
@@ -110,7 +117,7 @@ public class Agonia extends CardGame
 	@Override
 	public boolean canDraw(Player p)
 	{
-		return !p.equals(lastDraw) && p.equals(turn);
+		return !p.equals(lastDraw) && p.equals(turn) && !isGameFinished;
 	}
 
 	@Override
@@ -167,9 +174,9 @@ public class Agonia extends CardGame
 		//TODO: Other exception should throwed here (in the end of methode)
 		if (p.getHand().isEmpty()
 		&& getTop(0).getRank() != 8
-		&& (getTop(0).getRank() != 9 || !isNineSpecial)
-		&& getTop(0).getRank() != 1)
+		&& (getTop(0).getRank() != 9 || !isNineSpecial))
 		{
+			isGameFinished = true;
 			throw new GameFinished();
 		}
 	}

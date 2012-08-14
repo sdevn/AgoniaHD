@@ -43,7 +43,7 @@ public class AgoniaMenu extends Activity
 	protected void onStart()
 	{
 		super.onStart();
-//TODO: if screen not long hide exit button
+
 		Button pref = (Button) findViewById(R.id.btPref);
 		Button game = (Button) findViewById(R.id.btGame);
 		Button how = (Button) findViewById(R.id.btHow);

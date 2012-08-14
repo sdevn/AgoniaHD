@@ -26,7 +26,6 @@ import android.graphics.Paint;
 import android.graphics.PorterDuffColorFilter;
 import android.graphics.PorterDuff;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -37,11 +36,8 @@ import android.widget.FrameLayout;
  * A ViewGroup that coordinated dragging across its descendants
  */
 public class DragLayer extends FrameLayout implements DragController {
-//    private static final int VIBRATE_DURATION = 35;
-    private static final String TAG = "dragdrop";
-    
-    // Number of pixels to add to the dragged item for scaling
-    private static final float DRAG_ALPHA = 191.0f;
+
+	private static final float DRAG_ALPHA = 191.0f;
 
     private boolean mDragging = false;
     private boolean mShouldDrop;
@@ -324,14 +320,12 @@ public class DragLayer extends FrameLayout implements DragController {
 
             mLastDropTarget = dropTarget;
 
-            boolean inDragRegion = false;
             if (mDragRegion != null) {
                 final RectF region = mDragRegion;
                 final boolean inRegion = region.contains(ev.getRawX(), ev.getRawY());
                 if (!mEnteredRegion && inRegion) {
                     mDragPaint = mTrashPaint;
                     mEnteredRegion = true;
-                    inDragRegion = true;
                 } else if (mEnteredRegion && !inRegion) {
                     mDragPaint = null;
                     mEnteredRegion = false;
@@ -431,7 +425,6 @@ public class DragLayer extends FrameLayout implements DragController {
         mListener = l;
     }
 
-    @SuppressWarnings({"UnusedDeclaration"})
     public void removeDragListener(DragListener l) {
         mListener = null;
     }
@@ -454,6 +447,4 @@ public class DragLayer extends FrameLayout implements DragController {
     void setDeleteRegion(RectF region) {
         mDragRegion = region;
     }
-
-  
 }

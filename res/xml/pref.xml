@@ -1,8 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" 
-    android:title="TiTle"
-    android:summary="suMM"
-    android:theme="@android:style/Theme">
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
 
     <PreferenceCategory
         android:key="general"
@@ -18,7 +15,7 @@
             android:key="@string/key_p2_name"
             android:title="@string/pref_p2_name_title" />
 
-        <devN.games.agonia.ResetScoresDlgPref
+        <devN.games.agonia.pref.ResetScoresDlgPref
             android:dialogIcon="@android:drawable/ic_dialog_alert"
             android:key="@string/key_reset_dlg"
             android:title="@string/pref_reset_title" /> 

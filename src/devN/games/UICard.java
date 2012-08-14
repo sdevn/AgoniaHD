@@ -5,25 +5,17 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.widget.ImageButton;
 import android.widget.LinearLayout.LayoutParams;
 
 public class UICard extends ImageButton
 {
-	private final static String tag = "dbg";
-
 	protected Card card;
 	protected boolean visible;
 	
 	public UICard(Context context, AttributeSet attrs, int defStyle)
 	{
-		super(context, attrs, defStyle);	
-	}
-
-	public UICard(Context context, AttributeSet attrs)
-	{
-		super(context, attrs);
+		super(context, attrs, defStyle);
 		TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.UICard);
 		visible = a.getBoolean(R.styleable.UICard_visible, false);
 		int suit, rank;
@@ -36,6 +28,11 @@ public class UICard extends ImageButton
 		setImage();
 		
 		a.recycle();
+	}
+
+	public UICard(Context context, AttributeSet attrs)
+	{
+		this(context, attrs, 0);
 	}
 
 	public UICard(Context context)
@@ -151,6 +148,32 @@ public class UICard extends ImageButton
 					setImage(resName);
 				}
 			});
+		}
+	}
+	
+	public void postSetImage(final String resName, long delay)
+	{
+		if (resName.length() == 0)
+		{
+			postDelayed(new Runnable(){
+				
+				@Override
+				public void run()
+				{
+					setImage();
+				}
+			}, delay);
+		}
+		else 
+		{
+			postDelayed(new Runnable(){
+				
+				@Override
+				public void run()
+				{
+					setImage(resName);
+				}
+			}, delay);
 		}
 	}
 }

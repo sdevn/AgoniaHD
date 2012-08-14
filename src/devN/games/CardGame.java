@@ -2,7 +2,6 @@ package devN.games;
 
 import java.util.ArrayList;
 import java.util.List;
-import devN.games.agonia.AgoniaGame;
 
 public abstract class CardGame
 {

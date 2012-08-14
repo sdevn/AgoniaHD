@@ -2,5 +2,5 @@
 <layoutAnimation xmlns:android="http://schemas.android.com/apk/res/android"
     android:animationOrder="reverse"
     android:delay="85%"
-    android:animation="@anim/left_to_original_pos" > 
+    android:animation="@anim/right_to_original_pos" > 
 </layoutAnimation>
