@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- hrisimopoieite os long!! -->
+    <integer name="cpu_delay">1500</integer>
+
+</resources>

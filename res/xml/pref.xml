@@ -30,6 +30,13 @@
             android:entryValues="@array/difficult_modes_values"
             android:key="@string/key_difficult"
             android:title="@string/pref_difficult_title" />
+        
+        <devN.etc.pref.ComboBoxPreference
+            android:defaultValue="0"
+            android:entries="@array/deck_finish_options"
+            android:entryValues="@array/deck_finish_values"
+            android:key="@string/key_deck_finish"
+            android:title="@string/pref_deck_finish_title" />
 
         <CheckBoxPreference
             android:defaultValue="true"

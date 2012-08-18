@@ -11,10 +11,7 @@ public class AgoniaPref extends PreferenceActivity
 	private final static int NAME_MAX_LENGTH = 9;
 	private final static int NAME_MIN_LENGTH = 3;
 	private final static String REGEX_NAME_FILTER = "(^[a-zA-Z0-9\\p{InGreek}]{" + NAME_MIN_LENGTH + "," + NAME_MAX_LENGTH + "}$)";
-	
-	/* (non-Javadoc)
-	 * @see android.preference.PreferenceActivity#onCreate(android.os.Bundle)
-	 */
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
 	{
@@ -23,13 +20,10 @@ public class AgoniaPref extends PreferenceActivity
 		addPreferencesFromResource(R.xml.pref);
 	}
 
-	/* (non-Javadoc)
-	 * @see android.app.Activity#onResume()
-	 */
 	@Override
-	protected void onResume()
+	protected void onStart()
 	{
-		super.onResume();
+		super.onStart();
 		
 		Preference.OnPreferenceChangeListener namesOnSumm = new Preference.OnPreferenceChangeListener(){
 			
@@ -84,6 +78,7 @@ public class AgoniaPref extends PreferenceActivity
 		ListPreference lp = (ListPreference) findPreference(getString(R.string.key_difficult));
 		lp.setSummary(lp.getEntry());
 		lp.setOnPreferenceChangeListener(namesOnSumm);
+
 	}
 	
 }

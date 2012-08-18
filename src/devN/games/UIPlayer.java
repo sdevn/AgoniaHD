@@ -21,6 +21,7 @@ import devN.games.agonia.R;
 public class UIPlayer extends LinearLayout implements AnimationListener, DropTarget,
 											AgoniaAI
 {
+	@SuppressWarnings("unused")
 	private static final String tag = "dbg";
 	private Animation animOnRemove = null;
 	private Animation animOnAdd = null;
@@ -49,41 +50,42 @@ public class UIPlayer extends LinearLayout implements AnimationListener, DropTar
 	
 	public void initAttrs(Context context, AttributeSet attrs)
 	{
-		TypedArray taCard = context.obtainStyledAttributes(attrs, R.styleable.UICard);
-		visible = taCard.getBoolean(R.styleable.UICard_visible, false);
-		taCard.recycle();
+		TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.UICard, 0, 0);
+		visible = a.getBoolean(R.styleable.UICard_visible, false);
+		a.recycle();
 
-		TypedArray taInfo = context.obtainStyledAttributes(attrs, R.styleable.UIInfo);
-		infoId = taInfo.getResourceId(R.styleable.UIInfo_info, 0);
+		a = context.obtainStyledAttributes(attrs, R.styleable.UIInfo, 0, 0);
+		infoId = a.getResourceId(R.styleable.UIInfo_info, 0);
 		if (infoId != 0)
 		{
 			tvInfo = (TextView) findViewById(infoId);
-			taInfo.recycle();
 		}
-
-		TypedArray taPlayer = context.obtainStyledAttributes(attrs, R.styleable.UIPlayer);
-		int team = taPlayer.getInt(R.styleable.UIPlayer_team, -1); 
+		a.recycle();
+		
+		a = context.obtainStyledAttributes(attrs, R.styleable.UIPlayer, 0, 0);
+		int team = a.getInt(R.styleable.UIPlayer_team, -1); 
 		player.setTeam(team);
 
-		int animAddId = taPlayer.getResourceId(R.styleable.UIPlayer_drawCardAnimation, -1);
-		int animRemoveId = taPlayer.getResourceId(R.styleable.UIPlayer_playCardAnimation, -1);
+		int animAddId = a.getResourceId(R.styleable.UIPlayer_drawCardAnimation, -1);
+		int animRemoveId = a.getResourceId(R.styleable.UIPlayer_playCardAnimation, -1);
 		try
 		{
 			animOnAdd = AnimationUtils.loadAnimation(context, animAddId);
 		}
 		catch (NotFoundException e)
 		{
-//			d("anim", "onAdd not found! " + animAddId);
+			d("anim", "onAdd not found! " + animAddId);
 		}
 		try
 		{
 			animOnRemove = AnimationUtils.loadAnimation(context, animRemoveId);
+			animOnRemove.setAnimationListener(this);
 		}
 		catch (NotFoundException e)
 		{
-//			d("anim", "onRemv not found! " + animRemoveId);
+			d("anim", "onRemv not found! " + animRemoveId);
 		}
-		taPlayer.recycle();
+		a.recycle();
 	}
 	
 	public static void initDimensions(Context context, int width, int height)
@@ -96,7 +98,20 @@ public class UIPlayer extends LinearLayout implements AnimationListener, DropTar
 		childWidth = c.getMeasuredWidth();
 		childHeight = c.getMeasuredHeight();
 		
-		d(tag, childWidth + " / " + parentWidth);
+//		d(tag, childWidth + " / " + parentWidth);
+	}
+	
+	public void setAnimationsDuration(long durationMillis)
+	{
+		if (animOnAdd != null)
+		{
+			animOnAdd.setDuration(durationMillis);
+		}
+		
+		if (animOnRemove != null)
+		{
+			animOnRemove.setDuration(durationMillis);
+		}
 	}
 	
 	private int getRightMarg(int cChilds)
@@ -476,7 +491,7 @@ public class UIPlayer extends LinearLayout implements AnimationListener, DropTar
 	{
 		return player.handString();
 	}
-	
+		
 	private class InnerPlayer extends Player
 	{
 

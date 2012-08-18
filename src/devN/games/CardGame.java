@@ -25,6 +25,13 @@ public abstract class CardGame
 		SPECIAL_CARDS = new ArrayList<Card>();
 		setSpecialCards();
 
+//		List<Card> debugDraw = new ArrayList<Card>();
+//		int rank = 7;
+//		debugDraw.add(new Card(0, rank));
+//		debugDraw.add(new Card(1, rank));
+//		debugDraw.add(new Card(2, rank));
+//		debugDraw.add(new Card(3, rank));
+		
 		START_DEAL_COUNT = startDeal;
 		STACK_TOP_COUNT = stackTopSize;
 		deck = d;
@@ -36,10 +43,23 @@ public abstract class CardGame
 		this.p2.setGame(this);
 		
 		deck.shuffle();
-		
-		p1.draw(START_DEAL_COUNT);
-		p2.draw(START_DEAL_COUNT);
-		stackTop = deck.draw(STACK_TOP_COUNT);		
+
+		if (startDeal > 0)
+		{
+			p1.draw(START_DEAL_COUNT);
+			p2.draw(START_DEAL_COUNT);
+			
+			stackTop = deck.draw(STACK_TOP_COUNT);	
+		}
+		else 
+		{
+			stackTop = new ArrayList<Card>();
+			for (int i = 0; i < stackTopSize; i++)
+			{
+				stackTop.add(new Card(Card.NULL_CARD));
+			}
+		}
+	
 	}
 
 	/**
@@ -79,6 +99,8 @@ public abstract class CardGame
 	public abstract boolean canDraw(Player p);
 	
 	public abstract void draw(Player p);
+	
+	public abstract void draw(Player p, int n);
 	
 	public abstract void setSpecialCards();
 	

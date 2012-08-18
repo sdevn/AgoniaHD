@@ -1,23 +1,37 @@
 package devN.games.agonia;
 
+import static android.content.res.Configuration.SCREENLAYOUT_LONG_MASK;
+import static android.content.res.Configuration.SCREENLAYOUT_LONG_YES;
+import static devN.games.Card.NULL_CARD;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
+import android.content.DialogInterface.OnCancelListener;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnLongClickListener;
 import android.view.View.OnTouchListener;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
+import android.view.WindowManager.BadTokenException;
 import android.widget.TextView;
+import android.widget.Toast;
 import devN.etc.dragdrop.DragController;
 import devN.etc.dragdrop.DragSource;
 import devN.games.Card;
@@ -31,7 +45,13 @@ public class AgoniaGame extends Activity implements DragSource, OnTouchListener
 {
 	public static final int DIALOG_ACE_ID		= 0;
 	public static final int DIALOG_SEVEN_ID		= 1;
-	public static final int DIALOG_FINISH_ID	= 2; 	//game finished
+	public static final int DIALOG_FINISH_ID	= 2; 	// game finished
+	public static final int DIALOG_SAVE_ID		= 3;	// save game
+	public static final int DIALOG_LOAD_ID		= 4;	// save game
+
+	public static final String SAVE_FILE = "agonia.sav";
+	public static final String PREF_SAVE = "save.pref";
+	public static final String KEY_SAVE = "save";
 	
 	protected Agonia game;
 	protected UIPlayer up;
@@ -51,15 +71,6 @@ public class AgoniaGame extends Activity implements DragSource, OnTouchListener
 	{
 		super.onCreate(savedInstanceState);
        	setContentView(R.layout.game);
-	}
-
-	/* (non-Javadoc)
-	 * @see android.app.Activity#onStart()
-	 */
-	@Override
-	protected void onStart()
-	{
-		super.onStart();
 
 		AgoniaAI cpuAI;
 		String p1Name;
@@ -69,15 +80,14 @@ public class AgoniaGame extends Activity implements DragSource, OnTouchListener
 		TextView upInfo;
 		TextView ucpInfo;
 		TextView deckInfo;
-		Animation animCpuPlay;
-		Animation animCpuDraw;
 		boolean isWideScreen;
+		Resources res = getResources();
 		
-		Configuration conf = getResources().getConfiguration();
-		isWideScreen = Configuration.SCREENLAYOUT_LONG_YES 
-				== (conf.screenLayout & Configuration.SCREENLAYOUT_LONG_MASK);
+		Configuration conf = res.getConfiguration();
+		isWideScreen = SCREENLAYOUT_LONG_YES == (conf.screenLayout & SCREENLAYOUT_LONG_MASK);
 		
-		cpuDelay = 1500;	//TODO: initialize it from a preferences
+		cpuDelay = res.getInteger(R.integer.cpu_delay);
+
 		p1Name = F.getString(F.KEY_P1_NAME, getString(R.string.default_p1_name));
 		p1score = F.getInt(F.KEY_P1_SCORE, 0);
 		p2Name = F.getString(F.KEY_P2_NAME, getString(R.string.default_p2_name));
@@ -97,6 +107,7 @@ public class AgoniaGame extends Activity implements DragSource, OnTouchListener
 		ucp.setInfo(ucpInfo);
 		ucp.setName(p2Name);
 		ucp.addScore(p2score);
+		ucp.setAnimationsDuration(cpuDelay);
 		ucp.setOnTouchListener(this);
 
 		dragController = (DragController) findViewById(R.id.dragLayer);
@@ -107,23 +118,14 @@ public class AgoniaGame extends Activity implements DragSource, OnTouchListener
 		deck.setInfo(deckInfo);
 		deck.setWideScreen(isWideScreen);
 		deck.setOnTouchListener(this);
-		
-		animCpuPlay = AnimationUtils.loadAnimation(this, R.anim.cpu_play);
-		animCpuDraw = AnimationUtils.loadAnimation(this, R.anim.cpu_draw);
 
-		animCpuDraw.setDuration(cpuDelay);
-		animCpuPlay.setDuration(cpuDelay);
-
-		ucp.setOnPlayAnimation(animCpuPlay);
-		ucp.setOnDrawAnimation(animCpuDraw);
-		
 		DisplayMetrics displayMetrics = new DisplayMetrics();
 		getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
 		UIPlayer.initDimensions(this, displayMetrics.widthPixels, displayMetrics.heightPixels);
 		
 		int diffMode = Integer.parseInt(F.getString(getString(R.string.key_difficult), "0"));
 		
-		l("mode " + diffMode);
+//		l("mode " + diffMode);
 		
 		switch (diffMode)
 		{
@@ -149,11 +151,6 @@ public class AgoniaGame extends Activity implements DragSource, OnTouchListener
 		}
 		ucp.setAI(cpuAI);
 		
-		game = new Agonia(deck.getDeck(), up.getPlayer(), ucp.getPlayer());
-		
-		stackTop.setGame(game);
-		stackTop.setCardRefTo(game.getTop(0));
-		
 		deck.hideInfo();
 
 		deck.setOnLongClickListener(new OnLongClickListener(){
@@ -166,36 +163,65 @@ public class AgoniaGame extends Activity implements DragSource, OnTouchListener
 					return false;
 				}
 				
-				if (game.canDraw(up.getPlayer()) && deck.size() > 0)
+				if (game.canDraw(up.getPlayer()))
 				{
 					return false;
 				}
 				else
 				{
+					deck.hideInfo();
+					deck.setImage();
 					game.switchTurn();
 					cpuAutoPlay();  // -> heirizete moni tis ta exceptions tou CPU
 					return true;
 				}
 			}
 		});
+		
+		if (checkLoadGame())
+		{
+			showDialog(DIALOG_LOAD_ID);
+		}
+		else 
+		{
+			newGame();
+		}
 	}
 
-	/* (non-Javadoc)
-	 * @see android.app.Activity#onBackPressed()
-	 */
+	private boolean checkLoadGame()
+	{
+		SharedPreferences pref = getSharedPreferences(PREF_SAVE, MODE_PRIVATE);
+		
+		return pref.getBoolean(KEY_SAVE, false);
+	}
+	
+	private void newGame()
+	{
+		game = new Agonia(deck.getDeck(), up.getPlayer(), ucp.getPlayer());
+
+		stackTop.setGame(game);
+		stackTop.setCardRefTo(game.getTop(0));
+	}
+	
 	@Override
 	public void onBackPressed()
 	{
-		// TODO save game
-		super.onBackPressed();
+		if (!game.isGameFinished() && game.turn.equals(up.getPlayer()))
+		{
+			showDialog(DIALOG_SAVE_ID);
+		}
 	}
 
 	private void saveScores()
 	{
+		// @formatter:off
+
 		F.edit()
 		.putInt(F.KEY_P1_SCORE, up.getScore())
 		.putInt(F.KEY_P2_SCORE, ucp.getScore())
 		.commit();
+		
+		// @formatter:on
 	}
 
 	public void handleSeven(int suit)
@@ -212,7 +238,7 @@ public class AgoniaGame extends Activity implements DragSource, OnTouchListener
 					}
 				}, cpuDelay + 200);
 			}
-			else
+			else if (game.turn.equals(up.getPlayer()))
 			{
 				game.switchTurn();
 				try
@@ -226,6 +252,10 @@ public class AgoniaGame extends Activity implements DragSource, OnTouchListener
 				}
 				sevenDraw();
 			}
+			else
+			{
+				throw new ArrayIndexOutOfBoundsException("pehtike lathos...");
+			}
 		}
 		catch (SevenPlayed e)
 		{
@@ -238,17 +268,9 @@ public class AgoniaGame extends Activity implements DragSource, OnTouchListener
 	{
 		game.switchTurn();
 		game.turn.draw(sevenDraw);
-		
-		if (deck.size() == 0)
-		{
-			deck.showInfo();
-			deck.setImage("btn_paso");
-		}
-		else 
-		{
-			deck.hideInfo();
-			deck.setImage();
-		}
+
+		deck.hideInfo();
+		deck.setImage();
 		
 		sevenDraw = 0;
 		
@@ -272,13 +294,27 @@ public class AgoniaGame extends Activity implements DragSource, OnTouchListener
 		new Handler().postDelayed(new Runnable(){
 			public void run()
 			{
-				showDialog(DIALOG_FINISH_ID);
+				try
+				{
+					showDialog(DIALOG_FINISH_ID);
+				}
+				catch (BadTokenException ex)
+				{
+					/*
+					 * ean patisei back button prin vgei o dialogos
+					 * petiete exeption epeidi i parent activity tou dialogou
+					 * den trehei
+					 */
+				}
 			}
 		}, cpuDelay * 2);
 	}
 	
 	public void playerPlay(Player p, Card c)
 	{
+		deck.hideInfo();
+		deck.setImage();
+		
 		try
 		{
 			game.play(p, c);
@@ -304,75 +340,76 @@ public class AgoniaGame extends Activity implements DragSource, OnTouchListener
 
 	public void cpuAutoPlay()
 	{
-		if (deck.size() > 0)
+		if (!game.turn.equals(ucp.getPlayer()))
 		{
-			deck.hideInfo();
-			deck.postSetImage("");
+			return;
 		}
-		
+
 		new Handler().postDelayed(new Runnable(){
 			public void run()
 			{
-				if (game.turn.equals(ucp.getPlayer()))
+				try
 				{
-					if (deck.size() == 0)
-					{
-						deck.postSetImage("btn_paso");
-					}
+					Card choosed = ucp.willPlay();
 
-					try
+					if (choosed.equals(NULL_CARD))
 					{
-						Card choosed = ucp.willPlay();
-						
-						if (choosed.equals(Card.NULL_CARD) && game.canDraw(ucp.getPlayer()))
+						if (game.canDraw(ucp.getPlayer()))
 						{
 							game.draw(ucp.getPlayer());
 						}
-						else 
+						else
 						{
 							game.play(ucp.getPlayer(), choosed);
-						}
-						if (game.turn.equals(ucp.getPlayer()))
-						{
-							// gia na emfanizonte ola ta fila otan paizei sunehomenes fores
-							// px 8 - 6, tha fenotan mono to 6
-							stackTop.postSetImage("", cpuDelay - 200);
-							cpuAutoPlay();
-						}
-						else 
-						{
-							stackTop.postSetImage("", cpuDelay);
+							// TODO customize it
+							Toast t = Toast.makeText(getApplicationContext(),
+									"Passo",
+									Toast.LENGTH_SHORT);
+							t.setGravity(Gravity.TOP, t.getXOffset(), 30);
+							t.show();
 						}
 					}
-					catch (AcePlayed e)
+					else
 					{
-						int aceSuit = ucp.getAceSuit();
-
-						game.getTop(0).setSuit(aceSuit);
+						game.play(ucp.getPlayer(), choosed);
+					}
+					if (game.turn.equals(ucp.getPlayer()))
+					{
+						// gia na emfanizonte ola ta fila otan paizei
+						// sunehomenes fores
+						// px 8 - 6, tha fenotan mono to 6
+						stackTop.postSetImage("", cpuDelay - 200);
+						cpuAutoPlay();
+					}
+					else
+					{
 						stackTop.postSetImage("", cpuDelay);
-						game.switchTurn();
-					}
-					catch (SevenPlayed e)
-					{
-						stackTop.postSetImage("", cpuDelay);
-						handleSeven(e.suit);
-						return;
-					}
-					catch (GameFinished e)
-					{
-						stackTop.postSetImage("");
-						gameFinished();
 					}
 				}
+				catch (AcePlayed e)
+				{
+					int aceSuit = ucp.getAceSuit();
+
+					game.getTop(0).setSuit(aceSuit);
+					stackTop.postSetImage("", cpuDelay);
+					game.switchTurn();
+				}
+				catch (SevenPlayed e)
+				{
+					stackTop.postSetImage("", cpuDelay);
+					handleSeven(e.suit);
+					return;
+				}
+				catch (GameFinished e)
+				{
+					stackTop.postSetImage("");
+					gameFinished();
+				}
 			}
+
 		}, cpuDelay + 200);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see android.app.Activity#onCreateDialog(int)
-	 */
 	@Override
 	protected Dialog onCreateDialog(int id)
 	{
@@ -382,21 +419,7 @@ public class AgoniaGame extends Activity implements DragSource, OnTouchListener
 		{
 		case DIALOG_ACE_ID:
 			{
-			AlertDialog.Builder builder = new AlertDialog.Builder(this)
-			.setTitle(getString(R.string.dlg_ace_title))
-			.setCancelable(false)
-			.setItems(Card.pszSUITS, new DialogInterface.OnClickListener(){
-				public void onClick(DialogInterface dialog, int item)
-				{
-					stackTop.getCard().setSuit(item);
-					stackTop.postSetImage("");
-					game.switchTurn();
-					cpuAutoPlay();
-				}
-			})
-			;
-			dialog = builder.create();
-			
+			dialog = makeAceDlg();
 			}
 			break;
 												
@@ -412,6 +435,18 @@ public class AgoniaGame extends Activity implements DragSource, OnTouchListener
 			}
 			break;
 			
+		case DIALOG_SAVE_ID:
+			{
+			dialog = makeSaveGameDlg();
+			}
+			break;
+			
+		case DIALOG_LOAD_ID:
+			{
+			dialog = makeLoadGameDlg();
+			}
+			break;
+			
 		default:
 			{
 			dialog = null;
@@ -421,9 +456,31 @@ public class AgoniaGame extends Activity implements DragSource, OnTouchListener
 
 		return dialog;
 	}
+
+	private Dialog makeAceDlg()
+	{
+		// @formatter:off
+		AlertDialog.Builder builder = new AlertDialog.Builder(this)
+		.setTitle(getString(R.string.dlg_ace_title))
+		.setCancelable(false)
+		.setItems(Card.pszSUITS, new DialogInterface.OnClickListener(){
+			public void onClick(DialogInterface dialog, int item)
+			{
+				stackTop.getCard().setSuit(item);
+				stackTop.postSetImage("");
+				game.switchTurn();
+				cpuAutoPlay();
+			}
+		})
+		;
+		// @formatter:on
+		return builder.create();
+	}
 	
 	private Dialog makeFinishDlg()
 	{
+		// @formatter:off
+		
 		//TODO: replace message with a linearlayout(vertical)
 		//			.add {TextView(up.getName(), up.handString(), game.scoreOf(up.getHand())}
 		//			.add {View(R.drawable.numberpicker_selection_divider)}
@@ -468,6 +525,7 @@ public class AgoniaGame extends Activity implements DragSource, OnTouchListener
 				finish();
 			}
 		});
+		// @formatter:on
 		return builder.create();
 	}
 
@@ -487,6 +545,7 @@ public class AgoniaGame extends Activity implements DragSource, OnTouchListener
 		
 		CharSequence[] css = new CharSequence[sevens.size()];
 		
+		// @formatter:off
 		AlertDialog.Builder builder = new AlertDialog.Builder(this)
 		.setTitle(getString(R.string.dlg_seven_title))
 		.setNegativeButton(getString(R.string.dlg_seven_btn_draw, sevenDraw), 
@@ -503,6 +562,14 @@ public class AgoniaGame extends Activity implements DragSource, OnTouchListener
 			}
 		})
 		.setCancelable(true)
+		.setOnCancelListener(new OnCancelListener(){
+			
+			@Override
+			public void onCancel(DialogInterface dialog)
+			{
+				sevenDraw();				
+			}
+		})
 		.setItems(sevens.toArray(css), new DialogInterface.OnClickListener(){
 			public void onClick(DialogInterface dialog, int item)
 			{
@@ -516,7 +583,8 @@ public class AgoniaGame extends Activity implements DragSource, OnTouchListener
 					handleSeven(e.suit);
 				}
 			}
-		});
+		})
+		;
 //		
 //		AlertDialog alertDialog = builder.create();
 //		
@@ -531,42 +599,216 @@ public class AgoniaGame extends Activity implements DragSource, OnTouchListener
 //			}
 //			
 //		});
-		
+		// @formatter:on
 		return builder.create();
 	}
 	
-	public static void l(String msg) 
+	private Dialog makeSaveGameDlg()
 	{
-		Log.d("dbg", msg);
+		// @formatter:off
+		DialogInterface.OnClickListener dlgOnClick = new DialogInterface.OnClickListener(){
+
+			@Override
+			public void onClick(DialogInterface dialog, int which)
+			{
+				switch (which)
+				{
+				case DialogInterface.BUTTON_POSITIVE:
+					// Save game
+					{
+					try
+					{
+						FileOutputStream fos = openFileOutput(SAVE_FILE, MODE_PRIVATE);
+						
+						Editor pref = getSharedPreferences(PREF_SAVE, MODE_PRIVATE).edit();
+						pref.putBoolean(KEY_SAVE, true)
+						.commit();
+						
+						saveGame(fos);
+						fos.close();
+						finish();
+					}
+					catch (FileNotFoundException ex)
+					{
+						
+					}
+					catch (IOException ex)
+					{
+
+					}
+
+					}
+					break;
+				
+				case DialogInterface.BUTTON_NEUTRAL:
+					// Finish game
+					{
+					game.isGameFinished = true;
+					gameFinished();
+					}
+					break;
+				
+				case DialogInterface.BUTTON_NEGATIVE:
+					// Exit without save
+					{
+					finish();
+					}
+					break;
+
+				default:
+					break;
+				}
+			}
+		};
+		AlertDialog.Builder builder = new AlertDialog.Builder(this)
+		.setTitle(getString(R.string.dlg_save_title))
+		.setMessage(getString(R.string.dlg_save_message))
+		.setPositiveButton(R.string.dlg_save_btn_save, dlgOnClick)
+		.setNegativeButton(R.string.dlg_save_btn_exit, dlgOnClick)
+		.setNeutralButton(R.string.dlg_save_btn_finish_game, dlgOnClick)
+		.setCancelable(true)
+		;
+		// @formatter:on
+		return builder.create();
+	}
+	
+	private void saveGame(FileOutputStream f) throws IOException
+	{
+		DataOutputStream dos = new DataOutputStream(f);
+		
+		List<Card> list = up.getHand();
+		list.add(NULL_CARD);
+		list.addAll(ucp.getHand());
+		list.add(NULL_CARD);
+		list.add(stackTop.getCard());
+		list.addAll(game.getDeck().deck());
+		list.add(NULL_CARD);
+		
+		for (Card c : list)
+		{
+			dos.writeInt(c.getSuit());
+			dos.writeInt(c.getRank());
+		}
 	}
 
-	@Override
-	public void onDropCompleted(View target, boolean success)
+	private Dialog makeLoadGameDlg()
 	{
-		if (success)
-		{
-			if (target.equals(up))
+		// @formatter:off
+		DialogInterface.OnClickListener dlgOnClick = new DialogInterface.OnClickListener(){
+
+			@Override
+			public void onClick(DialogInterface dialog, int which)
 			{
-				game.draw(up.getPlayer());
-				deck.showInfo();
-				deck.setImage("btn_paso");
+				switch (which)
+				{
+				case DialogInterface.BUTTON_POSITIVE:
+					// Load game
+					{
+					try
+					{
+						FileInputStream fis = openFileInput(SAVE_FILE);
+						loadGame(fis);
+						fis.close();
+					}
+					catch (FileNotFoundException ex)
+					{
+						
+					}
+					catch (IOException ex)
+					{
+
+					}
+
+					}
+					break;
+
+				case DialogInterface.BUTTON_NEGATIVE:
+					// Start new game
+					{
+					startActivity(getIntent());
+					finish();
+					}
+					break;
+
+				default:
+					break;
+				}
+				Editor pref = getSharedPreferences(PREF_SAVE, MODE_PRIVATE).edit();
+				pref.putBoolean(KEY_SAVE, false)
+				.commit();
+				deleteFile(SAVE_FILE);
 			}
-			else 
-			{
-				playerPlay(up.getPlayer(), draggedCard.getCard());
-			}			
-		}
-		else 
+		};
+		AlertDialog.Builder builder = new AlertDialog.Builder(this)
+		.setTitle(getString(R.string.dlg_load_title))
+		.setMessage(getString(R.string.dlg_load_message))
+		.setPositiveButton(R.string.dlg_load_btn_load, dlgOnClick)
+		.setNegativeButton(R.string.dlg_load_btn_new_game, dlgOnClick)
+		.setCancelable(false)
+		;
+		// @formatter:on
+		return builder.create();
+	}
+	
+	private void loadGame(FileInputStream f) throws IOException
+	{
+		DataInputStream dis = new DataInputStream(f);
+		game = new Agonia(deck.getDeck(), up.getPlayer(), ucp.getPlayer(), 0);
+		
+		List<Card> hand = new ArrayList<Card>(); 
+		Card c = new Card(dis.readInt(), dis.readInt());
+		
+		// Diavazoume ta hartia pou eihe o player sto heri
+		// Uparhei periptosi na min kratouse tipota! (px petakse 8)
+		while (!c.equals(NULL_CARD))
 		{
-			l(draggedCard.getCard() + " is not accepted!");
+			hand.add(c);
+			c = new Card(dis.readInt(), dis.readInt());
 		}
-		dragging = false;
+		
+		up.draw(new ArrayList<Card>(hand));
+		hand.clear();
+		
+		// Diavazoume ta hartia pou eihe o cpu sto heri
+		c = new Card(dis.readInt(), dis.readInt());
+		
+		do
+		{
+			hand.add(c);
+			c = new Card(dis.readInt(), dis.readInt());
+		} while (!c.equals(NULL_CARD));
+		
+		ucp.draw(new ArrayList<Card>(hand));
+		hand.clear();
+		
+		// Diavazoume to stackTop
+		c = new Card(dis.readInt(), dis.readInt());
+		hand.add(c);
+		deck.draw(new ArrayList<Card>(hand));
+		hand.clear();
+		
+		stackTop.setGame(game);
+		stackTop.setCardRefTo(game.getTop(0));
+		stackTop.setCard(c);
+		stackTop.postSetImage("");
+		
+		// Diavazoume to deck
+		c = new Card(dis.readInt(), dis.readInt());
+		
+		do
+		{
+			hand.add(c);
+			c = new Card(dis.readInt(), dis.readInt());
+		} while (!c.equals(NULL_CARD));
+		
+		deck.draw(deck.size());
+		deck.put(hand, true);
 	}
 
 	@Override
 	public boolean onTouch(View v, MotionEvent event)
 	{
-		if (game.turn.equals(ucp.getPlayer()))
+		if (game.turn.equals(ucp.getPlayer()) || game.isGameFinished())
 		{
 			return false;
 		}		
@@ -578,26 +820,26 @@ public class AgoniaGame extends Activity implements DragSource, OnTouchListener
 
 		case MotionEvent.ACTION_DOWN:
 			if (dragging)
-			{
+			{// Den epitrepete multidragging
 				return false;
 			}
 
-			if (v.equals(deck) && !game.canDraw(up.getPlayer()))
-			{
+			if (v.equals(deck) && (!game.canDraw(up.getPlayer()) || !deck.hasCards()))
+			{// travaei mono an mas epitrepei to game kai ean to deck ehei fila
 				return false;
 			}
 			
 			if (!(v instanceof UICard) || v instanceof UIStackTop)
-			{
+			{// kanoume drag mono ta UICards ki ohi to StackTop
 				return false;
 			}
 			draggedCard = (UICard) v;
 			
-			if (!draggedCard.isVisible() && !draggedCard.getCard().equals(Card.NULL_CARD))
-			{
+			if (!draggedCard.isVisible() && !draggedCard.getCard().equals(NULL_CARD))
+			{// den kanomue drag ta fila tou cpu 
 				return false;
 			}
-//			l("im touch-dragging " + cardToPlay.getCard());
+
 			dragging = true;
 			dragController.startDrag(v, this, v, DragController.DRAG_ACTION_MOVE);
 			break;
@@ -612,5 +854,40 @@ public class AgoniaGame extends Activity implements DragSource, OnTouchListener
 		}
 
 		return dragging;
+	}
+
+	@Override
+	public void onDropCompleted(View target, boolean success)
+	{
+		if (success)
+		{
+			if (target.equals(up))
+			{
+				try
+				{
+					game.draw(up.getPlayer());
+					deck.showInfo();
+					deck.setImage("btn_paso");
+				}
+				catch (GameFinished ex)
+				{
+					gameFinished();
+				}
+			}
+			else 
+			{
+				playerPlay(up.getPlayer(), draggedCard.getCard());
+			}			
+		}
+		else 
+		{
+			l(draggedCard.getCard() + " is not accepted!");
+		}
+		dragging = false;
+	}
+
+	public static void l(String msg) 
+	{
+		Log.d("dbg", msg);
 	}
 }

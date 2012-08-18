@@ -1,5 +1,7 @@
 package devN.games.agonia;
 
+import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import devN.games.Card;
@@ -7,26 +9,46 @@ import devN.games.CardGame;
 import devN.games.Deck;
 import devN.games.Player;
 
-public class Agonia extends CardGame
+public class Agonia extends CardGame implements Serializable
 {
+	private static final long serialVersionUID = 5007865192211492281L;
 	protected final static int DRAW_WITH_SEVEN = 2;
 	public final static int START_DEAL_COUNT = 7;
-	protected final static int ACE_SCORE = 20;
+	private final static int ACE_SCORE = 20;
+	private final static int DECK_FINISH_RECYCLE = 0;
+	private final static int DECK_FINISH_PICK_NEW = 1; 
+	private final static int DECK_FINISH_FINISH_GAME = 2;
 	
 	protected Player lastDraw; // Last player who draw card (non-Special draw)
 	protected Player turn;
 	protected boolean isNineSpecial;
-	private boolean isGameFinished = false;
+	protected boolean isGameFinished = false;
+	private int deckFinishOption;
 	
 	public Agonia(Deck d, Player p, Player cp)
 	{
 		super(d, p, cp, 
 		      START_DEAL_COUNT, 	
 		      1); 	// STACK_TOP_COUNT
-		
-		turn = p;
+	
+		init();
+	}
+	
+	public Agonia(Deck d, Player p, Player cp, int customInitDeal)
+	{
+		super(d, p, cp, 
+			customInitDeal, 	
+			1); 	// STACK_TOP_COUNT
+
+		init();
+	}
+
+	private void init()
+	{
+		turn = p1;
 		lastDraw = null;
 		isNineSpecial = F.getBoolean(F.KEY_IS_NINE_SPECIAl, true);
+		deckFinishOption = Integer.parseInt(F.getString(F.KEY_DECK_FINISH, "0"));
 	}
 
 	@Override
@@ -39,15 +61,14 @@ public class Agonia extends CardGame
 			return false;
 		}
 
-		if (top.getRank() == 1 && c.getRank() == 1)
-		{
+		if (c.getRank() == 1 && (top.getRank() == 1 || turn.getHand().size() == 1))
+		{// ohi Ace se Ace kai ohi Ace os teleutaio filo
 			return false;
 		}
 
 		if (c.sameSuit(top) || c.sameRank(top) || c.getRank() == 1)
 		{
-			return turn.getHand().size() != 1 
-					|| c.getRank() != 1;	// Den mporeis na vgeis me Ace!
+			return true;
 		}
 	
 		return false;	// NULL_CARD ?
@@ -150,6 +171,52 @@ public class Agonia extends CardGame
 	{
 		lastDraw = p;
 		p.draw();
+		onDrawFromDeck();
+	}
+	
+	@Override
+	public void draw(Player p, int n)
+	{
+		lastDraw = p;
+		p.draw(n);
+		onDrawFromDeck();
+	}
+	
+	private void onDrawFromDeck()
+	{
+		if (deck.isEmpty())
+		{
+			switch (deckFinishOption)
+			{
+			case DECK_FINISH_RECYCLE:
+				{
+				Deck recycled = new Deck();
+				List<Card> top = new ArrayList<Card>(1);
+				top.add(getTop(0));
+				recycled.draw(p1.getHand());
+				recycled.draw(p2.getHand());
+				recycled.draw(top);
+				
+				deck.put(recycled.deck(), true);
+				}
+				break;
+
+			case DECK_FINISH_PICK_NEW:
+				{
+				deck.put(new Deck().deck(), true);	
+				}
+				break;
+			
+			case DECK_FINISH_FINISH_GAME:
+				{
+				finishGame();
+				}
+				break;
+
+			default:
+				break;
+			}
+		}
 	}
 
 	/* (non-Javadoc)
@@ -176,11 +243,16 @@ public class Agonia extends CardGame
 		&& getTop(0).getRank() != 8
 		&& (getTop(0).getRank() != 9 || !isNineSpecial))
 		{
-			isGameFinished = true;
-			throw new GameFinished();
+			finishGame();
 		}
 	}
 	
+	private void finishGame()
+	{
+		isGameFinished = true;
+		throw new GameFinished();		
+	}
+
 	public Player whoPlayNext()
 	{
 		if (turn.equals(super.p1))
@@ -214,5 +286,10 @@ public class Agonia extends CardGame
 		
 		return score;
 		
+	}
+
+	public boolean isGameFinished()
+	{
+		return isGameFinished;
 	}
 }

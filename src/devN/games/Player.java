@@ -115,7 +115,7 @@ public class Player implements AgoniaAI
 	 */
 	public List<Card> getHand()
 	{
-		return new ArrayList<Card>(this.hand);
+		return hand;
 	}
 
 	/**

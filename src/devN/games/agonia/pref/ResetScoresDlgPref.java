@@ -22,9 +22,6 @@ public class ResetScoresDlgPref extends DialogPreference
 		refreshSummury();
 	}
 
-	/* (non-Javadoc)
-	 * @see android.preference.DialogPreference#onClick(android.content.DialogInterface, int)
-	 */
 	@Override
 	public void onClick(DialogInterface dialog, int which)
 	{
@@ -51,9 +48,6 @@ public class ResetScoresDlgPref extends DialogPreference
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see android.preference.DialogPreference#onPrepareDialogBuilder(android.app.AlertDialog.Builder)
-	 */
 	@Override
 	protected void onPrepareDialogBuilder(Builder builder)
 	{

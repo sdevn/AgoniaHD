@@ -98,6 +98,11 @@ public class Deck
 	{
 		return this.deck.size() > n;
 	}
+	
+	public boolean isEmpty()
+	{
+		return deck.isEmpty();
+	}
 
 	public int size()
 	{

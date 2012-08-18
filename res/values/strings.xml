@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
+
     <string name="app_name">Agonia</string>
     <string name="blank"> </string>
-	<string name="dlg_ace_title">Pick a suit</string>
-	<string name="dlg_finish_title">Game finished!</string>
-	<string name="dlg_seven_btn_draw">Draw (%d)</string>
-	<string name="dlg_seven_title">Play Seven or draw?</string>
-	<string name="exit">Exit</string>
-	<string name="dlg_finish_btn_play_again">Play again</string>
+    <string name="dlg_ace_title">Pick a suit</string>
+    <string name="dlg_finish_title">Game finished!</string>
+    <string name="dlg_seven_btn_draw">Draw (%d)</string>
+    <string name="dlg_seven_title">Play Seven or draw?</string>
+    <string name="exit">Exit</string>
+    <string name="dlg_finish_btn_play_again">Play again</string>
     <string name="default_p1_name">Player</string>
     <string name="default_p2_name">Cpu</string>
-    <string name="key_file_pref">AgoniaPref</string>
     <string name="key_p1_name">p1_name</string>
     <string name="key_p2_name">p2_name</string>
     <string name="key_p1_score">p1_score</string>
@@ -18,6 +18,7 @@
     <string name="key_is_nine_special">nine_special</string>
     <string name="key_difficult">difficult</string>
     <string name="key_reset_dlg">reset_dlg</string>
+    <string name="key_deck_finish">deck_finish</string>
     <string name="pref_general_title">General</string>
     <string name="pref_ingame_title">In-game</string>
     <string name="pref_p1_name_title">Your name</string>
@@ -31,10 +32,24 @@
     <string name="mode_moderate">Moderate</string>
     <string name="mode_megamind">MegaMind !</string>
     <string name="dlg_about_message"><![CDATA[<font color="white">Custom buttons made with: <a href="http://www.cooltext.com" target="_blank">cooltext.com</a><br /><br />Cards - Deck icons downloaded from: <a href="http://freeware.esoterica.free.fr/html/freecards.html" target="_blank">freeware.esoterica.free.fr</a><br />(Authors: Jesse Fuchs and Tom Hart)<br /><br />This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by/3.0/gr/deed.en">Creative Commons Attribution 3.0 Greece License</a>.</font><br /> ]]></string>
-    <string name="dlg_comming_soon_message">➤new deck back images\n➤hard mode\n➤more preferences for more special cards\n➤game history when game finished\n➤save / load game\n➤Challenges / achievements</string>
+    <string name="dlg_comming_soon_message">➤new deck back images\n➤hard mode\n➤more preferences for more special cards\n➤game history when game finished\n➤Challenges / achievements</string>
     <string name="pref_name_aborted_message" formatted="false">Names length should between %d and %d\nwithout any punctuation character or whitespace </string>
     <string name="menu_btn_new_game">New game</string>
     <string name="menu_btn_pref">Preferences</string>
     <string name="menu_btn_how_to_play">How to play</string>
     <string name="menu_btn_about">About</string>
+    <string name="pref_deck_finish_title">When deck is finished</string>
+    <string name="deck_finish_recycle">Use already played cards as deck</string>
+    <string name="deck_finish_pick_new">Pick a new deck</string>
+    <string name="deck_finish_finish_game">Finish the game</string>
+    <string name="dlg_save_title">Save game</string>
+    <string name="dlg_save_message">The game is not finished!\nWhat do you want to do?\n(press back button again to continue play)</string>
+    <string name="dlg_save_btn_save">Save and exit</string>
+    <string name="dlg_save_btn_exit">Don\'t save</string>
+    <string name="dlg_save_btn_finish_game">Finish the game</string>
+    <string name="dlg_load_title">Load game</string>
+    <string name="dlg_load_message">There is a saved game!\nDo you want to continue it?</string>
+    <string name="dlg_load_btn_load">Continue last game</string>
+    <string name="dlg_load_btn_new_game">Start new game</string>
+
 </resources>

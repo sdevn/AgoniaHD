@@ -104,6 +104,11 @@ public class UIDeck extends UICard
 	{
 		this.isWideScreen = isWideScreen;
 	}
+	
+	public boolean hasCards()
+	{
+		return deck.hasCards();
+	}
 
 	private void refreshInfo()
 	{

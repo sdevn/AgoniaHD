@@ -1,18 +1,19 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
-	<string name="dlg_ace_title">Διάλεξε χρώμα</string>
-	<string name="dlg_finish_title">Τέλος παχνιδίου!</string>
-	<string name="dlg_seven_btn_draw">Τράβηξε (%d)</string>
-	<string name="dlg_seven_title">Θα παίξεις Εφτά ή θα τραβήξεις;</string>
-	<string name="exit">Έξοδος</string>
-	<string name="dlg_finish_btn_play_again">Παίξε ξανά</string>
+
+    <string name="dlg_ace_title">Διάλεξε χρώμα</string>
+    <string name="dlg_finish_title">Τέλος παχνιδίου!</string>
+    <string name="dlg_seven_btn_draw">Τράβηξε (%d)</string>
+    <string name="dlg_seven_title">Θα παίξεις Εφτά ή θα τραβήξεις;</string>
+    <string name="exit">Έξοδος</string>
+    <string name="dlg_finish_btn_play_again">Παίξε ξανά</string>
     <string name="default_p1_name">Παίκτης</string>
     <string name="default_p2_name">Υπολ</string>
     <string name="pref_general_title">Γενικές</string>
     <string name="pref_ingame_title">Παιχνιδιού</string>
     <string name="pref_p1_name_title">Το όνομά σου</string>
     <string name="pref_p2_name_title">Ονομα του αντιπάλου</string>
-    <string name="pref_nine_summ">Όταν πέφτει Εννιά, ο επόμενος χάνει τη σειρά του</string>
+    <string name="pref_nine_summ">Όταν πέφτει Εννιά, ο επόμενος παίκτης χάνει τη σειρά του</string>
     <string name="pref_difficult_title">Δυσκολία</string>
     <string name="pref_reset_title">Μηδενισμός των scores</string>
     <string name="pref_reset_dlg_message">Είσαι σίγουρος, θες να μηδενίσεις ολα τα scores;\n<b>Αυτη η ενέργεια είναι μη αναστρέψημη!</b></string>
@@ -20,5 +21,18 @@
     <string name="menu_btn_new_game">Νέο παιχνίδι</string>
     <string name="menu_btn_pref">Προτιμήσεις</string>
     <string name="menu_btn_how_to_play">Οδηγίες</string>
+    <string name="pref_deck_finish_title">Οταν τελειώσει η τράπουλα</string>
+    <string name="deck_finish_recycle">Χρησημοποιησε τις ήδη πεταμένες κάρτες για τράπουλα</string>
+    <string name="deck_finish_pick_new">Βάλε μια νέα τράπουλα</string>
+    <string name="deck_finish_finish_game">Τελείωσε το πααιχνίδι</string>
+    <string name="dlg_save_title">Αποθήκευση παιχνιδιού</string>
+    <string name="dlg_save_message">Το παιχνίδι δεν τελείωσε!\nΤί θέλεις να κάνεις;\n(πάτα το κουμπί πίσω για να συνεχίσεις να παίζεις)</string>
+    <string name="dlg_save_btn_save">Αποθήκευση και έξοδος</string>
+    <string name="dlg_save_btn_exit">Εξοδος χωρίς αποθήκευση</string>
+    <string name="dlg_save_btn_finish_game">Τέλος παιχνιδιού</string>
+    <string name="dlg_load_title">Επαναφορά παιχνιδιού</string>
+    <string name="dlg_load_message">Υπάρχει αποθηκευμένο παιχνίδι!\nΘες να το σνεχίσεις;</string>
+    <string name="dlg_load_btn_load">Σύνέχεια αποθηκευμένου</string>
+    <string name="dlg_load_btn_new_game">Νέο παιχνίδι</string>
 
 </resources>

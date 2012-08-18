@@ -9,42 +9,29 @@ import android.preference.PreferenceManager;
 
 public class F
 {
-	public static String KEY_FILE_SETTINGS;
 	public static String KEY_P1_NAME;
 	public static String KEY_P2_NAME;
 	public static String KEY_P1_SCORE;
 	public static String KEY_P2_SCORE;
 	public static String KEY_IS_NINE_SPECIAl;
 	public static String KEY_DIFFICULT_MODE;
+	public static String KEY_DECK_FINISH;
 	
 	public static SharedPreferences settings;
 	
 	public F(Activity a)
 	{
-		KEY_FILE_SETTINGS = a.getString(R.string.key_file_pref);
 		KEY_P1_NAME = a.getString(R.string.key_p1_name);
 		KEY_P2_NAME = a.getString(R.string.key_p2_name);
 		KEY_P1_SCORE = a.getString(R.string.key_p1_score);
 		KEY_P2_SCORE = a.getString(R.string.key_p2_score);
 		KEY_IS_NINE_SPECIAl = a.getString(R.string.key_is_nine_special);
 		KEY_DIFFICULT_MODE = a.getString(R.string.key_difficult);
+		KEY_DECK_FINISH = a.getString(R.string.key_deck_finish);
 		
 		settings = PreferenceManager.getDefaultSharedPreferences(a);
 	}
 	
-	public F(Activity a, SharedPreferences sharedPref)
-	{
-		KEY_FILE_SETTINGS = a.getString(R.string.key_file_pref);
-		KEY_P1_NAME = a.getString(R.string.key_p1_name);
-		KEY_P2_NAME = a.getString(R.string.key_p2_name);
-		KEY_P1_SCORE = a.getString(R.string.key_p1_score);
-		KEY_P2_SCORE = a.getString(R.string.key_p2_score);
-		KEY_IS_NINE_SPECIAl = a.getString(R.string.key_is_nine_special);
-		KEY_DIFFICULT_MODE = a.getString(R.string.key_difficult);
-		
-		settings = sharedPref;
-	}
-
 	public static boolean contains(String key)
 	{
 		return settings.contains(key);
@@ -52,43 +39,36 @@ public class F
 
 	public static Editor edit()
 	{
-		
 		return settings.edit();
 	}
 
 	public static Map<String, ?> getAll()
 	{
-		
 		return settings.getAll();
 	}
 
 	public static boolean getBoolean(String key, boolean defValue)
 	{
-		
 		return settings.getBoolean(key, defValue);
 	}
 
 	public static float getFloat(String key, float defValue)
 	{
-		
 		return settings.getFloat(key, defValue);
 	}
 
 	public static int getInt(String key, int defValue)
 	{
-		
 		return settings.getInt(key, defValue);
 	}
 
 	public static long getLong(String key, long defValue)
 	{
-		
 		return settings.getLong(key, defValue);
 	}
 
 	public static String getString(String key, String defValue)
 	{
-		
 		return settings.getString(key, defValue);
 	}
 
@@ -100,8 +80,5 @@ public class F
 	public static void unregisterOnSharedPreferenceChangeListener(OnSharedPreferenceChangeListener listener)
 	{
 		settings.unregisterOnSharedPreferenceChangeListener(listener);
-		
-	}
-	
-	
+	}	
 }

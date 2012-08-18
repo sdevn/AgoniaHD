@@ -2,16 +2,37 @@
 <resources>
 
     <string-array name="difficult_modes">
+        
         <item>@string/mode_monkey</item>
 		<item>@string/mode_easy</item>
 <!--	<item>@string/mode_moderate</item>
         <item>@string/mode_megamind</item>	 -->
+        
     </string-array>
+    
     <string-array name="difficult_modes_values">
+        
         <item>0</item>
         <item>1</item>
 <!--    <item>2</item>
-        <item>4</item>		 -->
+        <item>3</item>		 -->
+        
+    </string-array>
+    
+    <string-array name="deck_finish_options">
+    
+	    <item>@string/deck_finish_recycle</item>
+		<item>@string/deck_finish_pick_new</item>
+		<item>@string/deck_finish_finish_game</item>
+		
+	</string-array>	
+    
+    <string-array name="deck_finish_values">
+        
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        
     </string-array>
 
 </resources>
