@@ -25,11 +25,13 @@ import android.os.Handler;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnLongClickListener;
 import android.view.View.OnTouchListener;
 import android.view.WindowManager.BadTokenException;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import devN.etc.dragdrop.DragController;
@@ -77,6 +79,8 @@ public class AgoniaGame extends Activity implements DragSource, OnTouchListener
 		String p2Name;
 		int p1score;
 		int p2score;
+		int p1wins;
+		int p2wins;
 		TextView upInfo;
 		TextView ucpInfo;
 		TextView deckInfo;
@@ -90,9 +94,12 @@ public class AgoniaGame extends Activity implements DragSource, OnTouchListener
 
 		p1Name = F.getString(F.KEY_P1_NAME, getString(R.string.default_p1_name));
 		p1score = F.getInt(F.KEY_P1_SCORE, 0);
+		p1wins = F.getInt(F.KEY_P1_WINS, 0);
+		
 		p2Name = F.getString(F.KEY_P2_NAME, getString(R.string.default_p2_name));
 		p2score = F.getInt(F.KEY_P2_SCORE, 0);
-
+		p2wins = F.getInt(F.KEY_P2_WINS, 0);
+		
 		upInfo = (TextView) findViewById(R.id.pName);
 		ucpInfo = (TextView) findViewById(R.id.cpName);
 		deckInfo = (TextView) findViewById(R.id.deckSize);
@@ -100,12 +107,14 @@ public class AgoniaGame extends Activity implements DragSource, OnTouchListener
 		up = (UIPlayer) findViewById(R.id.player);
 		up.setInfo(upInfo);
 		up.setName(p1Name);
+		up.setWins(p1wins);
 		up.addScore(p1score);
 		up.setOnTouchListener(this);
 		
 		ucp = (UIPlayer) findViewById(R.id.computer);
 		ucp.setInfo(ucpInfo);
 		ucp.setName(p2Name);
+		ucp.setWins(p2wins);
 		ucp.addScore(p2score);
 		ucp.setAnimationsDuration(cpuDelay);
 		ucp.setOnTouchListener(this);
@@ -212,18 +221,6 @@ public class AgoniaGame extends Activity implements DragSource, OnTouchListener
 		}
 	}
 
-	private void saveScores()
-	{
-		// @formatter:off
-
-		F.edit()
-		.putInt(F.KEY_P1_SCORE, up.getScore())
-		.putInt(F.KEY_P2_SCORE, ucp.getScore())
-		.commit();
-		
-		// @formatter:on
-	}
-
 	public void handleSeven(int suit)
 	{
 		sevenDraw += Agonia.DRAW_WITH_SEVEN;
@@ -288,8 +285,23 @@ public class AgoniaGame extends Activity implements DragSource, OnTouchListener
 	
 	protected void gameFinished() 
 	{
-		up.addScore(game.scoreOf(ucp.getHand()));
-		ucp.addScore(game.scoreOf(up.getHand()));
+		int p1HandScore = game.scoreOf(up.getHand());
+		int p2HandScore = game.scoreOf(ucp.getHand());
+		
+		up.addScore(p2HandScore);
+		ucp.addScore(p1HandScore);
+		if (p1HandScore > p2HandScore)
+		{
+			ucp.win();
+		}
+		else if (p2HandScore > p1HandScore) 
+		{
+			up.win();
+		}
+		else 
+		{
+			/* Draw */
+		}
 		saveScores();
 		new Handler().postDelayed(new Runnable(){
 			public void run()
@@ -308,6 +320,20 @@ public class AgoniaGame extends Activity implements DragSource, OnTouchListener
 				}
 			}
 		}, cpuDelay * 2);
+	}
+	
+	private void saveScores()
+	{
+		// @formatter:off
+
+		F.edit()
+		.putInt(F.KEY_P1_SCORE, up.getScore())
+		.putInt(F.KEY_P2_SCORE, ucp.getScore())
+		.putInt(F.KEY_P1_WINS, up.getWins())
+		.putInt(F.KEY_P2_WINS, ucp.getWins())
+		.commit();
+		
+		// @formatter:on
 	}
 	
 	public void playerPlay(Player p, Card c)
@@ -480,19 +506,71 @@ public class AgoniaGame extends Activity implements DragSource, OnTouchListener
 	private Dialog makeFinishDlg()
 	{
 		// @formatter:off
+
+		int p1TotalScore = up.getScore();
+		int p2TotalScore = ucp.getScore();
+		int p1Wins = up.getWins();
+		int p2Wins = ucp.getWins();
+		int p1HandScore = game.scoreOf(up.getHand());
+		int p2HandScore = game.scoreOf(ucp.getHand());
+		String p1Name = up.getName();
+		String p2Name = ucp.getName();
+		String p1Hand = up.handString();
+		String p2Hand = ucp.handString();
+		String winnerText;
 		
-		//TODO: replace message with a linearlayout(vertical)
-		//			.add {TextView(up.getName(), up.handString(), game.scoreOf(up.getHand())}
-		//			.add {View(R.drawable.numberpicker_selection_divider)}
-		//			.add {TextView(ucp.getName(), ucp.handString(), game.scoreOf(ucp.getHand())}
+		LayoutInflater inflater = getLayoutInflater();
 		
-		String message = String.format("%s: { %s} = %d points\n\n%s: { %s} = %d points", 
-								up.getName(), up.handString(), game.scoreOf(up.getHand()),
-								ucp.getName(), ucp.handString(), game.scoreOf(ucp.getHand()));
+		LinearLayout dlgContent = (LinearLayout) inflater.inflate(R.layout.dlg_finish, null);
+		
+		TextView p1name = (TextView) dlgContent.findViewById(R.id.dlg_finish_p1_name);
+		p1name.setText(p1Name);
+		
+		TextView p2name = (TextView) dlgContent.findViewById(R.id.dlg_finish_p2_name);
+		p2name.setText(p2Name);
+		
+		TextView p1name_border = (TextView) dlgContent.findViewById(R.id.dlg_finish_border_p1_name);
+		p1name_border.setText(p1Name);
+		
+		TextView p2name_border = (TextView) dlgContent.findViewById(R.id.dlg_finish_border_p2_name);
+		p2name_border.setText(p2Name);
+		
+		TextView p1hand = (TextView) dlgContent.findViewById(R.id.dlg_finish_p1_hand);
+		p1hand.setText(getString(R.string.hand_and_score, p1Hand, p1HandScore, getString(R.string.points)));
+		
+		TextView p2hand = (TextView) dlgContent.findViewById(R.id.dlg_finish_p2_hand);
+		p2hand.setText(getString(R.string.hand_and_score, p2Hand, p2HandScore, getString(R.string.points)));
+		
+		TextView p1wins = (TextView) dlgContent.findViewById(R.id.dlg_finish_border_p1_wins);
+		p1wins.setText(Integer.toString(p1Wins));
+		
+		TextView p2wins = (TextView) dlgContent.findViewById(R.id.dlg_finish_border_p2_wins);
+		p2wins.setText(Integer.toString(p2Wins));
+		
+		TextView p1points = (TextView) dlgContent.findViewById(R.id.dlg_finish_border_p1_points);
+		p1points.setText(Integer.toString(p1TotalScore));
+		
+		TextView p2points = (TextView) dlgContent.findViewById(R.id.dlg_finish_border_p2_points);
+		p2points.setText(Integer.toString(p2TotalScore));
+
+		TextView winner = (TextView) dlgContent.findViewById(R.id.dlg_finish_winner);
+		if (p1HandScore > p2HandScore)
+		{
+			winnerText = p2Name;
+		}
+		else if (p2HandScore > p1HandScore) 
+		{
+			winnerText = p1Name;
+		}
+		else 
+		{
+			winnerText = getString(R.string.draw);
+		}
+		winner.setText(getString(R.string.winner, winnerText));
 		
 		AlertDialog.Builder builder = new AlertDialog.Builder(this)
 		.setTitle(getString(R.string.dlg_finish_title))
-		.setMessage(message)	//TODO: replace with .addView, vlepe todo pio pano
+		.setView(dlgContent)
 		.setNegativeButton(getString(R.string.exit), new DialogInterface.OnClickListener(){
 			
 			@Override

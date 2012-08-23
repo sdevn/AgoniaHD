@@ -38,6 +38,8 @@ public class ResetScoresDlgPref extends DialogPreference
 			F.edit()
 			.putInt(F.KEY_P1_SCORE, 0)
 			.putInt(F.KEY_P2_SCORE, 0)
+			.putInt(F.KEY_P1_WINS, 0)
+			.putInt(F.KEY_P2_WINS, 0)
 			.commit();
 			refreshSummury();
 			}
@@ -57,10 +59,10 @@ public class ResetScoresDlgPref extends DialogPreference
 
 	public void refreshSummury()
 	{
-		StringBuilder sb = new StringBuilder(10)
-		.append(F.getInt(F.KEY_P1_SCORE, 0) + " - ")
-		.append(F.getInt(F.KEY_P2_SCORE, 0));
-
-		setSummary(sb.toString());
+//		StringBuilder sb = new StringBuilder(10)
+//		.append(F.getInt(F.KEY_P1_SCORE, 0) + " - ")
+//		.append(F.getInt(F.KEY_P2_SCORE, 0));
+//
+//		setSummary(sb.toString());
 	}
 }

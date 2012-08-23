@@ -491,6 +491,21 @@ public class UIPlayer extends LinearLayout implements AnimationListener, DropTar
 	{
 		return player.handString();
 	}
+	
+	public int getWins()
+	{
+		return player.getWins();
+	}
+	
+	public void setWins(int wins)
+	{
+		player.setWins(wins);
+	}
+	
+	public void win()
+	{
+		player.win();
+	}
 		
 	private class InnerPlayer extends Player
 	{

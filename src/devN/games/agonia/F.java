@@ -13,6 +13,8 @@ public class F
 	public static String KEY_P2_NAME;
 	public static String KEY_P1_SCORE;
 	public static String KEY_P2_SCORE;
+	public static String KEY_P1_WINS;
+	public static String KEY_P2_WINS;
 	public static String KEY_IS_NINE_SPECIAl;
 	public static String KEY_DIFFICULT_MODE;
 	public static String KEY_DECK_FINISH;
@@ -25,6 +27,8 @@ public class F
 		KEY_P2_NAME = a.getString(R.string.key_p2_name);
 		KEY_P1_SCORE = a.getString(R.string.key_p1_score);
 		KEY_P2_SCORE = a.getString(R.string.key_p2_score);
+		KEY_P1_WINS = a.getString(R.string.key_p1_wins);
+		KEY_P2_WINS = a.getString(R.string.key_p2_wins);
 		KEY_IS_NINE_SPECIAl = a.getString(R.string.key_is_nine_special);
 		KEY_DIFFICULT_MODE = a.getString(R.string.key_difficult);
 		KEY_DECK_FINISH = a.getString(R.string.key_deck_finish);

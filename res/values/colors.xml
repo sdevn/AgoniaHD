@@ -2,6 +2,7 @@
 <resources>
 
     <color name="tsoha">#284632</color>
+    <color name="total_divider">#00FA9A</color>
     <color name="delete_color_filter">#A5FF0000</color>
     <color name="snag_callout_color">#F444</color>
     

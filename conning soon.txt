@@ -1,8 +1,0 @@
-Coming soon in next version:
-4 new deck back images
-hard mode
-better way to choose what card you want to play
-more preferences for more special cards
-game history when game finished
-save/load game
-Challenges / achievements

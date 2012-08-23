@@ -34,5 +34,12 @@
     <string name="dlg_load_message">Υπάρχει αποθηκευμένο παιχνίδι!\nΘες να το σνεχίσεις;</string>
     <string name="dlg_load_btn_load">Σύνέχεια αποθηκευμένου</string>
     <string name="dlg_load_btn_new_game">Νέο παιχνίδι</string>
+    
+    <string name="points">Πόντοι</string>
+    <string name="draw">Ισσοπαλία</string>
+    <string name="wins">Νίκες</string>
+	<string name="winner">Νικητής: %s</string>
+	<string name="total">Σύνολο</string>
+	<string name="hand_and_score" formatted="false"> %s= %d %s</string>
 
 </resources>

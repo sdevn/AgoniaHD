@@ -16,6 +16,7 @@ public class Player implements AgoniaAI
 	protected int score;
 	protected int team;
 	protected int id;
+	protected int wins;
 	protected AgoniaAI ai;
 	
 	public Player()
@@ -24,18 +25,16 @@ public class Player implements AgoniaAI
 		this.id = ++cIDs;
 		this.score = 0;
 		this.team = -1;
+		this.wins = 0;
 		this.hand = new ArrayList<Card>();
 		this.owned = new ArrayList<Card>(); 
 	}
 	
 	public Player(String name, int team)
 	{
-		this.id = ++cIDs;
+		this();
 		this.name = name;
-		this.score = 0;
 		this.team = team;
-		this.hand = new ArrayList<Card>();
-		this.owned = new ArrayList<Card>(); 
 	}
 	
 	public void addScore(int points)
@@ -108,6 +107,11 @@ public class Player implements AgoniaAI
 	public String getName()
 	{
 		return this.name;
+	}
+	
+	public int getWins()
+	{
+		return wins;
 	}
 
 	/**
@@ -189,6 +193,16 @@ public class Player implements AgoniaAI
 	public void setGame(CardGame game)
 	{
 		this.game = game;
+	}
+	
+	public void setWins(int wins)
+	{
+		this.wins = wins;
+	}
+	
+	public void win()
+	{
+		wins++;
 	}
 
 	public boolean playCard(int i)

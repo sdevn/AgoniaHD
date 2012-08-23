@@ -2,7 +2,8 @@
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
 
     <string name="app_name">Agonia</string>
-    <string name="blank"> </string>
+    <string name="blank">_</string>
+    <string name="divider">divider</string>
     <string name="dlg_ace_title">Pick a suit</string>
     <string name="dlg_finish_title">Game finished!</string>
     <string name="dlg_seven_btn_draw">Draw (%d)</string>
@@ -15,6 +16,8 @@
     <string name="key_p2_name">p2_name</string>
     <string name="key_p1_score">p1_score</string>
     <string name="key_p2_score">p2_score</string>
+    <string name="key_p1_wins">p1_wins</string>
+    <string name="key_p2_wins">p2_wins</string>
     <string name="key_is_nine_special">nine_special</string>
     <string name="key_difficult">difficult</string>
     <string name="key_reset_dlg">reset_dlg</string>
@@ -51,5 +54,11 @@
     <string name="dlg_load_message">There is a saved game!\nDo you want to continue it?</string>
     <string name="dlg_load_btn_load">Continue last game</string>
     <string name="dlg_load_btn_new_game">Start new game</string>
-
+    
+    <string name="points">Points</string>
+    <string name="draw">Draw</string>
+    <string name="wins">Wins</string>
+	<string name="winner">Winner: %s</string>
+	<string name="total">Total</string>
+	<string name="hand_and_score" formatted="false"> %s= %d %s</string>
 </resources>
