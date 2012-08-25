@@ -273,6 +273,7 @@ public class AgoniaGame extends Activity implements DragSource, OnTouchListener
 		
 		if (game.whoPlayNext().getHand().isEmpty())
 		{
+			game.isGameFinished = true;
 			gameFinished();
 			return;
 		}
