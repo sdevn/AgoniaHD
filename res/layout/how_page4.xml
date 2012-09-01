@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:devn="http://schemas.android.com/apk/res/devN.games.agonia"
+    android:id="@+id/how_page4"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/tsoha" >
+
+    <devN.games.UIDeck
+        android:id="@+id/uIDeck1"
+        style="@style/UICard"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_centerVertical="true"
+        android:src="@drawable/card_back_blue_1"
+        devn:cardRank="-1"
+        devn:cardSuit="-1"
+        devn:visible="false" />
+
+    <devN.games.UICard
+        android:id="@+id/uICard1"
+        style="@style/UICard"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:src="@drawable/card_3_5" 
+        devn:cardRank="5"
+        devn:cardSuit="3"
+        devn:visible="true" />
+
+    <devN.games.UICard
+        android:id="@+id/uICard3"
+        style="@style/UICard"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_toRightOf="@+id/uICard1"
+        android:src="@drawable/card_1_3" 
+        devn:cardRank="3"
+        devn:cardSuit="1"
+        devn:visible="true" />
+
+    <devN.games.UICard
+        android:id="@+id/uICard2"
+        style="@style/UICard"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_toLeftOf="@+id/uICard1"
+        android:src="@drawable/card_0_4" 
+        devn:cardRank="4"
+        devn:cardSuit="0"
+        devn:visible="true" />
+
+    <devN.games.UICard
+        android:id="@+id/uICard4"
+        style="@style/UICard"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_toLeftOf="@+id/uICard1"
+        android:src="@drawable/card_back_blue_1" 
+        devn:cardRank="-1"
+        devn:cardSuit="-1"
+        devn:visible="false" />
+
+    <devN.games.UICard
+        android:id="@+id/uICard6"
+        style="@style/UICard"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_toRightOf="@+id/uICard4"
+        android:src="@drawable/card_back_blue_1" 
+        devn:cardRank="-1"
+        devn:cardSuit="-1"
+        devn:visible="false" />
+
+    <devN.games.UICard
+        android:id="@+id/uICard5"
+        style="@style/UICard"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/uICard3"
+        android:layout_alignParentTop="true"
+        android:src="@drawable/card_back_blue_1" 
+        devn:cardRank="-1"
+        devn:cardSuit="-1"
+        devn:visible="false" />
+
+    <TextView
+        android:id="@+id/how_tv_cpu"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="@dimen/how_tv_margin"
+        android:background="@color/tsoha"
+        android:text="@string/how_cpu_cards"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
+
+    <TextView
+        android:id="@+id/how_tv_player"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@id/uICard2"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="@dimen/how_tv_margin"
+        android:background="@color/tsoha"
+        android:text="@string/how_your_cards"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
+
+    <TextView
+        android:id="@+id/how_tv_deck"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_centerVertical="true"
+        android:background="@color/tsoha"
+        android:text="@string/how_deck"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
+
+</RelativeLayout>

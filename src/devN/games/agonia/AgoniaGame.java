@@ -28,7 +28,7 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.View.OnLongClickListener;
+import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
 import android.view.WindowManager.BadTokenException;
 import android.widget.LinearLayout;
@@ -162,19 +162,19 @@ public class AgoniaGame extends Activity implements DragSource, OnTouchListener
 		
 		deck.hideInfo();
 
-		deck.setOnLongClickListener(new OnLongClickListener(){
+		deck.setOnClickListener(new OnClickListener(){
 
 			@Override
-			public boolean onLongClick(View v)
+			public void onClick(View v)
 			{
 				if (!game.turn.equals(up.getPlayer()))
 				{
-					return false;
+					return;
 				}
 				
 				if (game.canDraw(up.getPlayer()))
 				{
-					return false;
+					return;
 				}
 				else
 				{
@@ -182,7 +182,6 @@ public class AgoniaGame extends Activity implements DragSource, OnTouchListener
 					deck.setImage();
 					game.switchTurn();
 					cpuAutoPlay();  // -> heirizete moni tis ta exceptions tou CPU
-					return true;
 				}
 			}
 		});

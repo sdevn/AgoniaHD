@@ -27,19 +27,35 @@
     <string name="deck_finish_finish_game">Τελείωσε το πααιχνίδι</string>
     <string name="dlg_save_title">Αποθήκευση παιχνιδιού</string>
     <string name="dlg_save_message">Το παιχνίδι δεν τελείωσε!\nΤί θέλεις να κάνεις;\n(πάτα το κουμπί πίσω για να συνεχίσεις να παίζεις)</string>
-    <string name="dlg_save_btn_save">Αποθήκευση και έξοδος</string>
-    <string name="dlg_save_btn_exit">Εξοδος χωρίς αποθήκευση</string>
+    <string name="dlg_save_btn_save">Αποθήκευση</string>
+    <string name="dlg_save_btn_exit">Εξοδος</string>
     <string name="dlg_save_btn_finish_game">Τέλος παιχνιδιού</string>
     <string name="dlg_load_title">Επαναφορά παιχνιδιού</string>
     <string name="dlg_load_message">Υπάρχει αποθηκευμένο παιχνίδι!\nΘες να το σνεχίσεις;</string>
-    <string name="dlg_load_btn_load">Σύνέχεια αποθηκευμένου</string>
+    <string name="dlg_load_btn_load">Σύνέχεια αποθ.</string>
     <string name="dlg_load_btn_new_game">Νέο παιχνίδι</string>
-    
     <string name="points">Πόντοι</string>
     <string name="draw">Ισσοπαλία</string>
     <string name="wins">Νίκες</string>
-	<string name="winner">Νικητής: %s</string>
-	<string name="total">Σύνολο</string>
-	<string name="hand_and_score" formatted="false"> %s= %d %s</string>
-
+    <string name="winner">Νικητής: %s</string>
+    <string name="total">Σύνολο</string>
+    <string name="hand_and_score" formatted="false"> %s= %d %s</string>
+    <string name="how_overview_title">Τα βασικά</string>
+    <string name="how_rules_title">Κανόνες</string>
+    <string name="how_overview_content">Σε κάθε παρτίδα μοιράζονται από 7 φύλλα σε κάθε παίκτη. Ένα φύλλο τοποθετείται ανοιχτό στο τραπέζι, ενώ η υπόλοιπη τράπουλα τοποθετείται ανάποδα.\nΣκοπός κάθε παίκτη είναι να ρίξει όλα τα φύλλα που έχει στο χέρι. Όταν ένας παίκτης ρίξει το τελευταίο του φύλλο, τότε η παρτίδα τελειώνει. Ο αντίπαλός του παίρνει μηδέν πόντους, ενώ αυτός παίρνει πόντους, ανάλογα με το άθροισμα των πόντων του κάθε φύλλου που έχει μείνει στα χέρια του αντιπάλου.\nΚάθε φύλλο (από 2 έως 10) έχει τόσους πόντους όσο και ο αριθμός του. Οι φιγούρες (βαλές, ντάμα και ρήγας - J,Q,K) έχουν από 10 πόντους. Οι άσσοι (A) έχουν 20 πόντους.</string>
+    <string name="how_rules_content">Ο κάθε παίκτης πρέπει να ρίξει ένα φύλλο το οποίο να έχει είτε τον ίδιο αριθμό ή την ίδια φιγούρα με το φύλλο που βρίσκεται ανοικτό πάνω στο τραπέζι. Αν δεν έχει αντίστοιχο φύλλο, τότε πρέπει να τραβήξει ένα φύλλο από την τράπουλα. Αν και πάλι δεν βρει κατάλληλο φύλλο τότε πάει πάσο.\nΟ κάθε παίκτης μπορεί να τραβήξει φύλλο από την τράπουλα ακόμα και αν έχει διαθέσιμο φύλλο να παίξει. Μπορεί επίσης να πάει πάσο ακόμα και αν έχει διαθέσιμο φύλλο να παίξει. Σε κάθε περίπτωση όμως, πριν ένας παίκτης πάει πάσο θα πρέπει να έχει τραβήξει ένα φύλλο από την τράπουλα.</string>
+	<string name="how_special_card_title">Ειδικά φύλλα</string>
+    <string name="how_special_card_ace_title">Άσος</string>
+    <string name="how_special_card_seven_title">Εφτά</string>
+    <string name="how_special_card_eight_title">Οκτώ</string>
+    <string name="how_special_card_content">Κάποια φύλλα δεν ακολουθούν τους συνηθισμένους κανονες και έχουν ξεχωριστές ιδιότητες.</string>
+	<string name="how_special_card_ace_content">Ο Άσος μπορεί να παιχτεί πάνω από οποιοδήποτε φύλλο (ασχέτος φιγούρας και αριθμού) εκτός από Άσο. Αν ένας παίκτης ρίξει Άσο, τότε μπορεί να επιλέξει όποια φιγούρα θέλει. Ο επόμενος παίκτης θα παίξει με τη φιγούρα που έχει δηλωθεί. Και επίσης οι παίχτες δεν μπορούν να βγούν με Άσο.</string>
+    <string name="how_special_card_seven_content">Αν ένας παίκτης ρίξει 7, τότε ο επόμενος παίκτης τραβάει δύο φύλλα από την τράπουλα, εκτός αν έχει και ο ίδιος 7, οπότε παίζοντάς το ο επόμενος παίκτης θα τραβήξει 4 φύλλα από την τράπουλα κ.ο.κ. μέχρι να βρεθεί παίκτης που δεν έχει 7. Αν ο παίκτης που θα πάρει τα φύλλα δεν έχει κατάλληλο φύλλο για να παίξει, τότε θα τραβήξει ένα φύλλο από την τράπουλα. Άν ένας παίκτης τραβήξει φύλλα μετά από το 7 του προηγούμενου παίκτη και στα φύλλα που θα τράβηξε βρει 7άρι, μπορεί να το παίξει, αλλά θα ισχύει σαν να είναι το πρώτο 7άρι (ο επόμενος παίκτης θα τραβήξει 2 φύλλα).</string>
+    <string name="how_special_card_eight_content">Αν ένας παίκτης ρίξει 8, πρέπει να ξαναπαίξει. Αν δεν έχει κατάλληλο φύλλο, πρέπει να τραβήξει από την τράπουλα και αν δεν βρει κατάλληλο φύλλο να πάει πάσο. Ένας παίκτης μπορεί να παίξει στη σειρά όσα 8άρια θέλει.</string>
+	<string name="next">Επόμενο</string>
+	<string name="previous">Προηγούμενο</string>
+	
+	<string name="how_cpu_cards">Τα φύλλα ου αντιπάλου</string>
+	<string name="how_your_cards">Τα φύλλα σου</string>
+	<string name="how_deck">Τράπουλα</string>
 </resources>

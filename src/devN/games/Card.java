@@ -1,7 +1,5 @@
 package devN.games;
 
-// TODO: Prostheste kwdika wste na mporei na ginei sygkrisi duo trapouloxartwn
-// me basi tin aksia tous opws auti upologizetai apo to getValue
 public class Card implements Comparable<Card>
 {
 	// pszSUITS indices

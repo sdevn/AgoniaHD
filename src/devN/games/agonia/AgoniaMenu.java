@@ -32,18 +32,7 @@ public class AgoniaMenu extends Activity
 		{
 			new F(this);
 		}
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see android.app.Activity#onStart()
-	 */
-	@Override
-	protected void onStart()
-	{
-		super.onStart();
-
+	
 		Button pref = (Button) findViewById(R.id.btPref);
 		Button game = (Button) findViewById(R.id.btGame);
 		Button how = (Button) findViewById(R.id.btHow);
@@ -73,8 +62,7 @@ public class AgoniaMenu extends Activity
 			@Override
 			public void onClick(View v)
 			{
-				// TODO Auto-generated method stub
-
+				startActivity(new Intent(AgoniaMenu.this, HowToPlay.class));
 			}
 		});
 		

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="how_page_padding">12dp</dimen>
+    <dimen name="how_divider_margin_bottom">12dp</dimen>
+    <dimen name="how_content_margin_bottom">18dp</dimen>
+    <dimen name="how_btn_width">150dp</dimen>
+    <dimen name="how_mid_btn_margin">2dp</dimen>
+    <dimen name="how_tv_margin">20dp</dimen>
+</resources>

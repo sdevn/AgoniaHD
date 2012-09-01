@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="devN.games.agonia"
+    android:installLocation="preferExternal"
     android:versionCode="1"
     android:versionName="1.0" >
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    
+
     <uses-sdk
         android:minSdkVersion="7"
         android:targetSdkVersion="13" />
@@ -24,13 +25,25 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".AgoniaGame" />
-        <activity android:name=".AgoniaMenu" />
-        <activity android:name=".AgoniaPref" />
-        <activity android:name="com.google.ads.AdActivity"
+        <activity
+            android:name=".AgoniaGame"
+            android:configChanges="orientation|keyboardHidden|keyboard"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".AgoniaMenu"
+            android:configChanges="orientation|keyboardHidden|keyboard"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".AgoniaPref"
+            android:configChanges="orientation|keyboardHidden|keyboard"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".HowToPlay"
+            android:configChanges="orientation|keyboardHidden|keyboard"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="com.google.ads.AdActivity"
             android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize" />
     </application>
-
-
 
 </manifest>

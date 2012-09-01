@@ -6,16 +6,61 @@
         <item name="android:background">@drawable/btn_menu</item>
         <item name="android:layout_marginBottom">0.0dp</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:layout_width">192dp</item>
         <item name="android:layout_centerHorizontal">true</item>
+        <item name="android:layout_width">192dp</item>
         <item name="android:minWidth">192dp</item>
         <item name="android:maxWidth">192dp</item>
     </style>
     
+    <style name="how_button" parent="@android:style/Widget.Button">
+        <item name="android:textAppearance">?android:attr/textAppearanceLarge</item>
+        <item name="android:background">@drawable/btn_menu</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_margin">0.0dp</item>
+        <item name="android:layout_width">@dimen/how_btn_width</item>
+        <item name="android:minWidth">@dimen/how_btn_width</item>
+        <item name="android:maxWidth">@dimen/how_btn_width</item>
+    </style>
+
     <style name="UICard" parent="@android:style/Widget.ImageButton">
-    	<item name="android:background">#00000000</item>
-    	<item name="android:layout_width">wrap_content</item>
+        <item name="android:background">#00000000</item>
+        <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
     </style>
 
+    <style name="divider_horizontal">
+        <item name="android:layout_width">fill_parent</item>
+        <item name="android:layout_height">1dp</item>
+        <item name="android:background">@color/total_divider</item>
+        <item name="android:src">@drawable/divider_trans</item>
+    </style>
+
+    <style name="divider_vertical">
+        <item name="android:layout_width">1dp</item>
+        <item name="android:layout_height">fill_parent</item>
+        <item name="android:background">@color/total_divider</item>
+        <item name="android:src">@drawable/divider_trans</item>
+    </style>
+    
+    <style name="how_divider" parent="@style/divider_horizontal">
+        <item name="android:layout_marginBottom">@dimen/how_divider_margin_bottom</item>
+    </style>
+    
+    <style name="how_title" parent="@android:style/Widget.TextView">
+        <item name="android:textAppearance">?android:attr/textAppearanceLarge</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+    
+    <style name="how_title_special" parent="@style/how_title">
+        <item name="android:textStyle">bold</item>
+    </style>
+    
+    <style name="how_content" parent="@android:style/Widget.TextView">
+        <item name="android:textAppearance">?android:attr/textAppearanceMedium</item>
+        <item name="android:layout_marginBottom">@dimen/how_content_margin_bottom</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+    
 </resources>

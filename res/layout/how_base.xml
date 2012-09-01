@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/how_base"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/tsoha" >
+
+    <ImageView
+        android:id="@+id/mid"
+        android:layout_width="10dp"
+        android:layout_height="45dp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_margin="@dimen/how_mid_btn_margin"
+        android:contentDescription="@string/blank"
+        android:src="@drawable/divider_trans" />
+
+    <Button
+        android:id="@+id/how_btn_prev"
+        style="@style/how_button"
+        android:layout_alignTop="@id/mid"
+        android:layout_toLeftOf="@id/mid"
+        android:text="@string/previous" />
+
+    <Button
+        android:id="@+id/how_btn_next"
+        style="@style/how_button"
+        android:layout_alignTop="@id/mid"
+        android:layout_toRightOf="@id/mid"
+        android:text="@string/next" />
+
+    <ViewFlipper
+        android:id="@+id/viewFlipper1"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@id/mid"
+        android:layout_centerHorizontal="true" >
+
+        <include
+            android:id="@+id/page1"
+            layout="@layout/how_page1" />
+
+        <include
+            android:id="@+id/page2"
+            layout="@layout/how_page2" />
+
+        <include
+            android:id="@+id/page3"
+            layout="@layout/how_page3" />
+    </ViewFlipper>
+
+</RelativeLayout>
