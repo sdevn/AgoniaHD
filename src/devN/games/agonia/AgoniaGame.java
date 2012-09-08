@@ -37,6 +37,7 @@ import android.widget.Toast;
 import devN.etc.dragdrop.DragController;
 import devN.etc.dragdrop.DragSource;
 import devN.games.Card;
+import devN.games.CardGame;
 import devN.games.Player;
 import devN.games.UICard;
 import devN.games.UIDeck;
@@ -49,7 +50,7 @@ public class AgoniaGame extends Activity implements DragSource, OnTouchListener
 	public static final int DIALOG_SEVEN_ID		= 1;
 	public static final int DIALOG_FINISH_ID	= 2; 	// game finished
 	public static final int DIALOG_SAVE_ID		= 3;	// save game
-	public static final int DIALOG_LOAD_ID		= 4;	// save game
+	public static final int DIALOG_LOAD_ID		= 4;	// load game
 
 	public static final String SAVE_FILE = "agonia.sav";
 	public static final String PREF_SAVE = "save.pref";
@@ -147,8 +148,8 @@ public class AgoniaGame extends Activity implements DragSource, OnTouchListener
 			break;
 			
 		case AgoniaAI.MODE_MODERATE:
-			throw new RuntimeException("MODE_MODERATE Not implemented yet!");
-//			break;
+			cpuAI = new ModerateAI(ucp.getPlayer());
+			break;
 				
 		case AgoniaAI.MODE_MEGAMIND:
 			throw new RuntimeException("MODE_MEGAMIND Not implemented yet!");
@@ -759,9 +760,11 @@ public class AgoniaGame extends Activity implements DragSource, OnTouchListener
 		list.addAll(ucp.getHand());
 		list.add(NULL_CARD);
 		list.add(stackTop.getCard());
-		list.addAll(game.getDeck().deck());
-		list.add(NULL_CARD);
+		list.addAll(game.getDeck().cards());
+		list.add(NULL_CARD);		
 		
+		// write to save file
+		dos.writeBoolean(game.canDraw(up.getPlayer()));
 		for (Card c : list)
 		{
 			dos.writeInt(c.getSuit());
@@ -831,39 +834,41 @@ public class AgoniaGame extends Activity implements DragSource, OnTouchListener
 	private void loadGame(FileInputStream f) throws IOException
 	{
 		DataInputStream dis = new DataInputStream(f);
-		game = new Agonia(deck.getDeck(), up.getPlayer(), ucp.getPlayer(), 0);
+		List<Card> p1hand = new ArrayList<Card>();
+		List<Card> p2hand = new ArrayList<Card>();
+		List<Card> newDeck = new ArrayList<Card>();
 		
-		List<Card> hand = new ArrayList<Card>(); 
+		game = new Agonia(deck.getDeck(), up.getPlayer(), ucp.getPlayer(), CardGame.DONT_DEAL);
+		deck.draw(deck.size());		// clear		
+		deck.put(NULL_CARD, false);		// to prevent game finish, cause of empty deck
+
+		boolean canDraw = dis.readBoolean();
+		
 		Card c = new Card(dis.readInt(), dis.readInt());
 		
 		// Diavazoume ta hartia pou eihe o player sto heri
 		// Uparhei periptosi na min kratouse tipota! (px petakse 8)
 		while (!c.equals(NULL_CARD))
 		{
-			hand.add(c);
+			p1hand.add(c);
 			c = new Card(dis.readInt(), dis.readInt());
 		}
-		
-		up.draw(new ArrayList<Card>(hand));
-		hand.clear();
+		deck.put(p1hand, false);
+		game.draw(up.getPlayer(), p1hand.size());
 		
 		// Diavazoume ta hartia pou eihe o cpu sto heri
 		c = new Card(dis.readInt(), dis.readInt());
 		
 		do
 		{
-			hand.add(c);
+			p2hand.add(c);
 			c = new Card(dis.readInt(), dis.readInt());
 		} while (!c.equals(NULL_CARD));
-		
-		ucp.draw(new ArrayList<Card>(hand));
-		hand.clear();
+		deck.put(p2hand, false);
+		game.draw(ucp.getPlayer(), p2hand.size());
 		
 		// Diavazoume to stackTop
 		c = new Card(dis.readInt(), dis.readInt());
-		hand.add(c);
-		deck.draw(new ArrayList<Card>(hand));
-		hand.clear();
 		
 		stackTop.setGame(game);
 		stackTop.setCardRefTo(game.getTop(0));
@@ -875,12 +880,18 @@ public class AgoniaGame extends Activity implements DragSource, OnTouchListener
 		
 		do
 		{
-			hand.add(c);
+			newDeck.add(c);
 			c = new Card(dis.readInt(), dis.readInt());
-		} while (!c.equals(NULL_CARD));
+		} while (!c.equals(NULL_CARD));		
+		deck.put(newDeck, true);
+		deck.cards().remove(NULL_CARD);
 		
-		deck.draw(deck.size());
-		deck.put(hand, true);
+		if (!canDraw)
+		{	// simulate a draw to restore draw state
+			game.draw(up.getPlayer(), 0);
+			deck.showInfo();
+			deck.setImage("btn_paso");
+		}
 	}
 
 	@Override

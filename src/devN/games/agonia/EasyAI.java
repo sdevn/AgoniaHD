@@ -19,8 +19,8 @@ public class EasyAI implements AgoniaAI
 		me = p;
 	}
 
-	/* (non-Javadoc)
-	 * @see devN.games.Player#willPlay()
+	/**
+	 * Paizei panta to fullo me ti megaluteri getRank()
 	 */
 	@Override
 	public Card willPlay()
@@ -31,21 +31,19 @@ public class EasyAI implements AgoniaAI
 		for (Iterator<Card> iterator = tempHand.iterator(); iterator.hasNext();)
 		{
 			Card c = iterator.next();
-			Log.d("AI", "scanned " + c);
+			Log.d(TAG, "scanned " + c);
 			
 			if (me.getGame().canPlay(c))
 			{
-				Log.d("AI", "choosed " + c);
+				Log.d(TAG, "choosed " + c);
 				return new Card(c);
 			}
 		}
 		return Card.NULL_CARD;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see devN.games.Player#getAceSuit()
+	/**
+	 * @return suit me ti megaluteri suhnotita ap ta fulla sto heri tou
 	 */
 	@Override
 	public int getAceSuit()
@@ -63,29 +61,27 @@ public class EasyAI implements AgoniaAI
 			suitsCount[c.getSuit()]++;
 		}
 
-		Log.d("AI", Card.pszSUITS[0] + suitsCount[0] + " " + Card.pszSUITS[1]
+		Log.d(TAG, Card.pszSUITS[0] + suitsCount[0] + " " + Card.pszSUITS[1]
 					+ suitsCount[1] + " " + Card.pszSUITS[2] + suitsCount[2] + " "
 					+ Card.pszSUITS[3] + suitsCount[3]);
 
 		System.arraycopy(suitsCount, 0, temp, 0, Card.MAX_SUIT);
 
 		Arrays.sort(temp);
-
+		
+		// finds index of max in unsorted array
 		for (i = 0; i < suitsCount.length; i++)
 		{
 			if (suitsCount[i] == temp[3])
-			{
+			{	// suitsCount[i] is suitsCount.getMax()
 				break;
 			}
 		}
-		Log.d("AI", "will set to A" + Card.pszSUITS[i]);
+		Log.d(TAG, "will set to A" + Card.pszSUITS[i]);
 
 		return i;
 	}
 
-	/* (non-Javadoc)
-	 * @see devN.games.Player#playSeven()
-	 */
 	@Override
 	public Card playSeven()
 	{
@@ -99,5 +95,4 @@ public class EasyAI implements AgoniaAI
 
 		return Card.NULL_CARD;
 	}
-
 }

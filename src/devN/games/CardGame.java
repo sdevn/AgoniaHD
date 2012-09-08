@@ -5,6 +5,8 @@ import java.util.List;
 
 public abstract class CardGame
 {
+	public final static int DONT_DEAL = -1;
+	
 	protected List<Card> SPECIAL_CARDS;
 	
 	protected int START_DEAL_COUNT;
@@ -12,46 +14,28 @@ public abstract class CardGame
 	protected Deck deck;
 	protected Player p1, p2;
 	protected List<Card> stackTop;
+	protected List<GameListener> listeners = new ArrayList<GameListener>();
 	
-	/**
-	 * @param d
-	 * @param p1
-	 * @param p2
-	 * @param startDeal
-	 * @param stackTopSize
-	 */
 	public CardGame(Deck d, Player p1, Player p2, int startDeal, int stackTopSize)
 	{
-		SPECIAL_CARDS = new ArrayList<Card>();
-		setSpecialCards();
-
+		init(d, p1, p2, startDeal);
+//		
 //		List<Card> debugDraw = new ArrayList<Card>();
-//		int rank = 7;
-//		debugDraw.add(new Card(0, rank));
-//		debugDraw.add(new Card(1, rank));
-//		debugDraw.add(new Card(2, rank));
-//		debugDraw.add(new Card(3, rank));
+//		debugDraw.add(new Card(0, 1));
+//		debugDraw.add(new Card(1, 1));
+//		debugDraw.add(new Card(1, 9));
+//		debugDraw.add(new Card(1, 8));
+//		debugDraw.add(new Card(1, 7));
+//		debugDraw.add(new Card(1, 6));
+//		debugDraw.add(new Card(2, 10));
+//		debugDraw.add(new Card(2, 11));
+//		debugDraw.add(new Card(2, 12));
+//		
+//		p2.draw(debugDraw);
 		
-		START_DEAL_COUNT = startDeal;
-		STACK_TOP_COUNT = stackTopSize;
-		deck = d;
-		this.p1 = p1;
-		this.p2 = p2;
-		this.p1.setDeck(deck);
-		this.p2.setDeck(deck);
-		this.p1.setGame(this);
-		this.p2.setGame(this);
+		STACK_TOP_COUNT = stackTopSize;		
 		
-		deck.shuffle();
-
-		if (startDeal > 0)
-		{
-			p1.draw(START_DEAL_COUNT);
-			p2.draw(START_DEAL_COUNT);
-			
-			stackTop = deck.draw(STACK_TOP_COUNT);	
-		}
-		else 
+		if (startDeal == DONT_DEAL) 
 		{
 			stackTop = new ArrayList<Card>();
 			for (int i = 0; i < stackTopSize; i++)
@@ -59,17 +43,21 @@ public abstract class CardGame
 				stackTop.add(new Card(Card.NULL_CARD));
 			}
 		}
-	
+		else 
+		{
+			stackTop = deck.draw(STACK_TOP_COUNT);
+		}
 	}
 
-	/**
-	 * @param d
-	 * @param p1
-	 * @param p2
-	 * @param startDeal
-	 * @param stackTopCards
-	 */
 	public CardGame(Deck d, Player p1, Player p2, int startDeal, List<Card> stackTopCards)
+	{
+		stackTop = d.draw(stackTopCards);
+		STACK_TOP_COUNT = stackTop.size();
+		
+		init(d, p1, p2, startDeal);
+	}
+	
+	private void init(Deck d, Player p1, Player p2, int startDeal)
 	{
 		SPECIAL_CARDS = new ArrayList<Card>();
 		setSpecialCards();
@@ -77,17 +65,20 @@ public abstract class CardGame
 		deck = d;
 		this.p1 = p1;
 		this.p2 = p2;
+		
 		this.p1.setDeck(deck);
 		this.p2.setDeck(deck);
 		
+		this.p1.setGame(this);
+		this.p2.setGame(this);
+		
 		deck.shuffle();
-
-		stackTop = deck.draw(stackTopCards);
-
-		STACK_TOP_COUNT = stackTop.size();
-
-		p1.draw(START_DEAL_COUNT);
-		p2.draw(START_DEAL_COUNT);
+		
+		if (startDeal != DONT_DEAL)
+		{
+			p1.draw(START_DEAL_COUNT);
+			p2.draw(START_DEAL_COUNT);
+		}
 	}
 	
 	public abstract void handleSpecial(Player p, Card c);
@@ -197,5 +188,10 @@ public abstract class CardGame
 		{
 			p.playCard(c);
 		}
+	}
+	
+	public void addGameListener(GameListener listener)
+	{
+		listeners.add(listener);
 	}
 }

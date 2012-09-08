@@ -238,7 +238,7 @@ public class Player implements AgoniaAI
 	@Override
 	public String toString()
 	{
-		return name + " \n " + hand.size() + " cards";
+		return name + "\n" + hand.size() + " cards";
 	}
 	
 	public String handString()

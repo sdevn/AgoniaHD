@@ -51,7 +51,7 @@ public class Deck
 		List<Card> drawed;
 		int size, toDraw;
 		
-		if (this.deck.isEmpty())
+		if (this.deck.isEmpty() || n == 0)
 		{
 			return new ArrayList<Card>();
 		}
@@ -122,20 +122,6 @@ public class Deck
 		Collections.shuffle(this.deck);
 	}
 	
-//	public static void main(String args[])
-//	{
-//		Deck d = new Deck();
-//
-//		d.shuffle();
-////		d.sort();
-//		d.draw(51);
-//		System.out.println(d.draw(3));
-//	
-//	}
-
-	/* (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
 	@Override
 	public String toString()
 	{
@@ -165,7 +151,7 @@ public class Deck
 	/**
 	 * @return the deck
 	 */
-	public List<Card> deck()
+	public List<Card> cards()
 	{
 		return deck;
 	}
@@ -173,7 +159,7 @@ public class Deck
 	/**
 	 * @param deck the deck to set
 	 */
-	public void setDeck(List<Card> deck)
+	public void setCards(List<Card> deck)
 	{
 		this.deck = deck;
 	}

@@ -63,6 +63,7 @@ public class AgoniaMenu extends Activity
 			public void onClick(View v)
 			{
 				startActivity(new Intent(AgoniaMenu.this, HowToPlay.class));
+				overridePendingTransition(R.anim.right_to_original_pos, R.anim.out_to_left);
 			}
 		});
 		

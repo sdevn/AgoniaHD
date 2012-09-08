@@ -24,15 +24,6 @@ public class SplashScreen extends Activity
 		setContentView(R.layout.splash_screen);
 		
 		ivDevn = (ImageView) findViewById(R.id.ic_devn);
-	}
-	
-	/* (non-Javadoc)
-	 * @see android.app.Activity#onResume()
-	 */
-	@Override
-	protected void onResume()
-	{
-		super.onResume();
 	
 		Animation animSplash = AnimationUtils.loadAnimation(this, R.anim.splash);
 		animSplash.setAnimationListener(new AnimationListener(){
@@ -63,9 +54,6 @@ public class SplashScreen extends Activity
 		ivDevn.startAnimation(animSplash);		
 	}
 
-	/* (non-Javadoc)
-	 * @see android.app.Activity#onBackPressed()
-	 */
 	@Override
 	public void onBackPressed()
 	{	/*

@@ -47,7 +47,6 @@ public class Agonia extends CardGame implements Serializable
 	{
 		turn = p1;
 		lastDraw = null;
-		isNineSpecial = F.getBoolean(F.KEY_IS_NINE_SPECIAl, true);
 		deckFinishOption = Integer.parseInt(F.getString(F.KEY_DECK_FINISH, "0"));
 	}
 
@@ -144,8 +143,11 @@ public class Agonia extends CardGame implements Serializable
 	@Override
 	public void setSpecialCards()
 	{
-		Card[] c =
-			{ 
+		isNineSpecial = F.getBoolean(F.KEY_IS_NINE_SPECIAl, true);
+
+		List<Card> specialCards = new ArrayList<Card>();
+		
+		specialCards.addAll(Arrays.asList(
 			// Ace
 			new Card(Card.iCLUBS, 1), new Card(Card.iDIAMONDS, 1),
 			new Card(Card.iHEARTS, 1), new Card(Card.iSPADES, 1),
@@ -156,14 +158,19 @@ public class Agonia extends CardGame implements Serializable
 
 			// Eight
 			new Card(Card.iCLUBS, 8), new Card(Card.iDIAMONDS, 8),
-			new Card(Card.iHEARTS, 8), new Card(Card.iSPADES, 8),
+			new Card(Card.iHEARTS, 8), new Card(Card.iSPADES, 8)
+			));
 
-			// Nine
-			new Card(Card.iCLUBS, 9), new Card(Card.iDIAMONDS, 9),
-			new Card(Card.iHEARTS, 9), new Card(Card.iSPADES, 9)
-			};
-
-		this.SPECIAL_CARDS.addAll(Arrays.asList(c));
+		if (isNineSpecial)
+		{
+			specialCards.addAll(Arrays.asList(
+				// Nine
+				new Card(Card.iCLUBS, 9), new Card(Card.iDIAMONDS, 9),
+				new Card(Card.iHEARTS, 9), new Card(Card.iSPADES, 9)
+			));
+		}
+		
+		this.SPECIAL_CARDS.addAll(specialCards);
 	}
 
 	@Override
@@ -197,13 +204,13 @@ public class Agonia extends CardGame implements Serializable
 				recycled.draw(p2.getHand());
 				recycled.draw(top);
 				
-				deck.put(recycled.deck(), true);
+				deck.put(recycled.cards(), true);
 				}
 				break;
 
 			case DECK_FINISH_PICK_NEW:
 				{
-				deck.put(new Deck().deck(), true);	
+				deck.put(new Deck().cards(), true);	
 				}
 				break;
 			

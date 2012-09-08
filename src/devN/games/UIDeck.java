@@ -122,6 +122,11 @@ public class UIDeck extends UICard
 		});
 	}
 	
+	public List<Card> cards()
+	{
+		return deck.cards();
+	}
+	
 	private class InnerDeck extends Deck
 	{
 		public InnerDeck()

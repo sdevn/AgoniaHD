@@ -78,4 +78,5 @@
 	<string name="how_cpu_cards">These is your opponent cards</string>
 	<string name="how_your_cards">These is your cards</string>
 	<string name="how_deck">Deck</string>
+	<string name="done">Done</string>
 </resources>
