@@ -5,6 +5,7 @@ import devN.games.agonia.R;
 import android.app.AlertDialog.Builder;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.res.Resources;
 import android.preference.DialogPreference;
 import android.util.AttributeSet;
 
@@ -59,10 +60,25 @@ public class ResetScoresDlgPref extends DialogPreference
 
 	public void refreshSummury()
 	{
-//		StringBuilder sb = new StringBuilder(10)
-//		.append(F.getInt(F.KEY_P1_SCORE, 0) + " - ")
-//		.append(F.getInt(F.KEY_P2_SCORE, 0));
-//
-//		setSummary(sb.toString());
+		Resources res = getContext().getResources();
+		String summForamt = "%s %c:%d %c:%d";
+		String defp1Name = res.getString(R.string.default_p1_name);
+		String defp2Name = res.getString(R.string.default_p2_name);
+		char wins = res.getString(R.string.wins).charAt(0);
+		char points = res.getString(R.string.points).charAt(0);
+		
+		StringBuilder sb = new StringBuilder(60)
+		.append(String.format(summForamt, 
+				F.getString(F.KEY_P1_NAME, defp1Name), 
+				wins, F.getInt(F.KEY_P1_WINS, 0),
+				points, F.getInt(F.KEY_P1_SCORE, 0)))
+		.append("\n")
+		.append(String.format(summForamt, 
+				F.getString(F.KEY_P2_NAME, defp2Name), 
+				wins, F.getInt(F.KEY_P2_WINS, 0),
+				points, F.getInt(F.KEY_P2_SCORE, 0)))
+		;
+
+		setSummary(sb.toString());
 	}
 }
