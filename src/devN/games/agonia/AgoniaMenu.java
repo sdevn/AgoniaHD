@@ -16,12 +16,7 @@ public class AgoniaMenu extends Activity
 {
 	private static final int DIALOG_ABOUT_ID = 0;
 	private static final int DIALOG_COMMING_SOON_ID = 1;
-	
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see android.app.Activity#onCreate(android.os.Bundle)
-	 */
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
 	{

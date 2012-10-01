@@ -14,9 +14,6 @@ public class SplashScreen extends Activity
 {
 	private ImageView ivDevn; 
 
-	/* (non-Javadoc)
-	 * @see android.app.Activity#onCreate(android.os.Bundle)
-	 */
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
 	{

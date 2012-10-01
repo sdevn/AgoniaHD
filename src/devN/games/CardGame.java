@@ -19,20 +19,25 @@ public abstract class CardGame
 	public CardGame(Deck d, Player p1, Player p2, int startDeal, int stackTopSize)
 	{
 		init(d, p1, p2, startDeal);
-//		
+//
 //		List<Card> debugDraw = new ArrayList<Card>();
 //		debugDraw.add(new Card(0, 1));
 //		debugDraw.add(new Card(1, 1));
 //		debugDraw.add(new Card(1, 9));
 //		debugDraw.add(new Card(1, 8));
-//		debugDraw.add(new Card(1, 7));
 //		debugDraw.add(new Card(1, 6));
 //		debugDraw.add(new Card(2, 10));
 //		debugDraw.add(new Card(2, 11));
 //		debugDraw.add(new Card(2, 12));
 //		
+//		debugDraw.add(new Card(1, 7));
+//		debugDraw.add(new Card(3, 7));
+//		p1.draw(debugDraw);
+//		debugDraw = new ArrayList<Card>();
+//		debugDraw.add(new Card(2, 7));
+//		debugDraw.add(new Card(0, 7));
 //		p2.draw(debugDraw);
-		
+//
 		STACK_TOP_COUNT = stackTopSize;		
 		
 		if (startDeal == DONT_DEAL) 
@@ -92,6 +97,13 @@ public abstract class CardGame
 	public abstract void draw(Player p);
 	
 	public abstract void draw(Player p, int n);
+	
+	/**
+	 * 
+	 * @param specialOp means that this draw is not follows the regular rules. (maybe
+	 * 			caused by a special card)
+	 */
+	public abstract void draw(Player p, int n, boolean specialOp);
 	
 	public abstract void setSpecialCards();
 	

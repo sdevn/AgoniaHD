@@ -21,8 +21,8 @@ public class Player implements AgoniaAI
 	
 	public Player()
 	{
-		this.name = "Uknown";
 		this.id = ++cIDs;
+		this.name = "Uknown_" + this.id;
 		this.score = 0;
 		this.team = -1;
 		this.wins = 0;
@@ -238,7 +238,7 @@ public class Player implements AgoniaAI
 	@Override
 	public String toString()
 	{
-		return name + "\n" + hand.size() + " cards";
+		return name + " [" + hand.size() + "]";
 	}
 	
 	public String handString()

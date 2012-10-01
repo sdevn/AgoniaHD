@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import android.util.Log;
 import devN.games.Card;
 import devN.games.CardGame;
 import devN.games.Deck;
@@ -176,16 +177,25 @@ public class Agonia extends CardGame implements Serializable
 	@Override
 	public void draw(Player p)
 	{
-		lastDraw = p;
-		p.draw();
-		onDrawFromDeck();
+		draw(p, 1);
 	}
 	
 	@Override
 	public void draw(Player p, int n)
 	{
-		lastDraw = p;
+		draw(p, n, false);
+	}
+	
+	@Override
+	public void draw(Player p, int n, boolean specialOp)
+	{
 		p.draw(n);
+		
+		if (!specialOp)
+		{
+			lastDraw = p;
+		}
+
 		onDrawFromDeck();
 	}
 	
@@ -226,9 +236,6 @@ public class Agonia extends CardGame implements Serializable
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see devN.games.CardGame#play(devN.games.Player, devN.games.Card)
-	 */
 	@Override
 	public void play(Player p, Card c)
 	{
@@ -238,7 +245,7 @@ public class Agonia extends CardGame implements Serializable
 		{
 			getTop(0).setRank(c.getRank());
 			getTop(0).setSuit(c.getSuit());
-			
+
 			if (isSpecial(c))
 			{
 				handleSpecial(p, c);
@@ -248,8 +255,10 @@ public class Agonia extends CardGame implements Serializable
 		//TODO: Other exception should throwed here (in the end of methode)
 		if (p.getHand().isEmpty()
 		&& getTop(0).getRank() != 8
-		&& (getTop(0).getRank() != 9 || !isNineSpecial))
+		&& (getTop(0).getRank() != 9 || !isNineSpecial)
+		&& !Card.NULL_CARD.equals(c))
 		{
+			Log.d("dbg", p.getName() + " finish with " + c);
 			finishGame();
 		}
 	}

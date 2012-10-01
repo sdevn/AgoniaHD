@@ -12,6 +12,7 @@
     <string name="dlg_finish_btn_play_again">Play again</string>
     <string name="default_p1_name">Player</string>
     <string name="default_p2_name">Cpu</string>
+    <string name="default_difficult_mode">2</string>
     <string name="key_p1_name">p1_name</string>
     <string name="key_p2_name">p2_name</string>
     <string name="key_p1_score">p1_score</string>
@@ -22,10 +23,12 @@
     <string name="key_difficult">difficult</string>
     <string name="key_reset_dlg">reset_dlg</string>
     <string name="key_deck_finish">deck_finish</string>
+    <string name="key_color_hints">color_hints</string>
     <string name="pref_general_title">General</string>
     <string name="pref_ingame_title">In-game</string>
     <string name="pref_p1_name_title">Your name</string>
     <string name="pref_p2_name_title">Opponent\'s name</string>
+    <string name="pref_nine_title">Nine-Jump</string>
     <string name="pref_nine_summ">When Nine played, next player losses his turn</string>
     <string name="pref_difficult_title">Difficulty</string>
     <string name="pref_reset_title">Reset scores</string>
@@ -35,7 +38,7 @@
     <string name="mode_moderate">Moderate</string>
     <string name="mode_megamind">MegaMind !</string>
     <string name="dlg_about_message"><![CDATA[<font color="white">Custom buttons made with: <a href="http://www.cooltext.com" target="_blank">cooltext.com</a><br /><br />Cards - Deck icons downloaded from: <a href="http://freeware.esoterica.free.fr/html/freecards.html" target="_blank">freeware.esoterica.free.fr</a><br />(Authors: Jesse Fuchs and Tom Hart)<br /><br />This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by/3.0/gr/deed.en">Creative Commons Attribution 3.0 Greece License</a>.</font><br /> ]]></string>
-    <string name="dlg_comming_soon_message">➤new deck back images\n➤hard mode\n➤more preferences for more special cards\n➤game history when game finished\n➤Challenges / achievements</string>
+    <string name="dlg_comming_soon_message">➤new deck!\n➤hard mode\n➤more preferences for more special cards\n➤game history when game finished\n</string>
     <string name="pref_name_aborted_message" formatted="false">Names length should between %d and %d\nwithout any punctuation character or whitespace </string>
     <string name="menu_btn_new_game">New game</string>
     <string name="menu_btn_pref">Preferences</string>
@@ -69,14 +72,16 @@
     <string name="how_special_card_seven_title">Seven</string>
     <string name="how_special_card_eight_title">Eight</string>
     <string name="how_special_card_content">Some cards don\'t follows the normal an have some special effects.</string>
-	<string name="how_special_card_ace_content">Ace can be played over any card (regardless of suit and rank) except Ace. If a player play an ace then he can choose any suit he wants. The next player will play with the claimed suit. And also the players can not go out with Ace.</string>
+    <string name="how_special_card_ace_content">Ace can be played over any card (regardless of suit and rank) except Ace. If a player play an ace then he can choose any suit he wants. The next player will play with the claimed suit. And also the players can not go out with Ace.</string>
     <string name="how_special_card_seven_content">If a player play 7, then the next player draws two cards from the deck, unless he has 7, so playing it the next player will draw 4 cards from the deck and so until a player has no 7. If the player who gets the cards do not have an appropriate card to play, then he must draw a card from the deck. If a player draw cards after of the previously played 7 and finds a 7 in these cards, he can play it, but it would act as the first 7 (the next player will draw 2 cards).</string>
     <string name="how_special_card_eight_content">If a player play 8 he must play again. If he have not any corresponding card, then he must draw a card from the deck. If he still do not find an appropriate card then he say "passo". A player can play as many 8s in a row as he wants to.</string>
-	<string name="next">Next</string>
-	<string name="previous">Previous</string>
-	
-	<string name="how_cpu_cards">These is your opponent cards</string>
-	<string name="how_your_cards">These is your cards</string>
-	<string name="how_deck">Deck</string>
-	<string name="done">Done</string>
+    <string name="next">Next</string>
+    <string name="previous">Previous</string>
+    <string name="how_cpu_cards">These is your opponent cards</string>
+    <string name="how_your_cards">These is your cards</string>
+    <string name="how_deck">Deck</string>
+    <string name="done">Done</string>
+
+    <string name="pref_color_hints_title">Color hints</string>
+    <string name="pref_color_hints_summ">Varius color hints to guide you in game</string>
 </resources>

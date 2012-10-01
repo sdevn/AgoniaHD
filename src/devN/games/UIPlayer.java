@@ -1,6 +1,5 @@
 package devN.games;
 
-import static android.util.Log.d;
 import java.util.LinkedList;
 import java.util.List;
 import android.content.Context;
@@ -74,7 +73,7 @@ public class UIPlayer extends LinearLayout implements AnimationListener, DropTar
 		}
 		catch (NotFoundException e)
 		{
-			d("anim", "onAdd not found! " + animAddId);
+//			d("anim", "onAdd not found! " + animAddId);
 		}
 		try
 		{
@@ -83,7 +82,7 @@ public class UIPlayer extends LinearLayout implements AnimationListener, DropTar
 		}
 		catch (NotFoundException e)
 		{
-			d("anim", "onRemv not found! " + animRemoveId);
+//			d("anim", "onRemv not found! " + animRemoveId);
 		}
 		a.recycle();
 	}

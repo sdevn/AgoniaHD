@@ -70,6 +70,9 @@ public class ModerateAI implements AgoniaAI
 	{
 		List<Card> playable = new ArrayList<Card>();
 
+		Log.d(TAG, "available " + me.handString() + 
+				"top -> " + me.getGame().getTop(0));
+		
 		for (Card card : me.getHand())
 		{
 			if (me.getGame().canPlay(card))
@@ -80,7 +83,7 @@ public class ModerateAI implements AgoniaAI
 		
 		if (playable.isEmpty())
 		{
-			Log.d(TAG, "No playable");
+			Log.d(TAG, "No one playable!");
 			return Card.NULL_CARD;
 		}
 		

@@ -301,7 +301,8 @@ public class DragLayer extends FrameLayout implements DragController {
                 if (mLastDropTarget == dropTarget) {
                     dropTarget.onDragOver(mDragSource, coordinates[0], coordinates[1],
                         (int) mTouchOffsetX, (int) mTouchOffsetY, mDragInfo);
-                } else {
+                } 
+                else {
                     if (mLastDropTarget != null) {
                         mLastDropTarget.onDragExit(mDragSource, coordinates[0], coordinates[1],
                             (int) mTouchOffsetX, (int) mTouchOffsetY, mDragInfo);
@@ -309,7 +310,8 @@ public class DragLayer extends FrameLayout implements DragController {
                     dropTarget.onDragEnter(mDragSource, coordinates[0], coordinates[1],
                         (int) mTouchOffsetX, (int) mTouchOffsetY, mDragInfo);
                 }
-            } else {
+            } 
+            else {
                 if (mLastDropTarget != null) {
                     mLastDropTarget.onDragExit(mDragSource, coordinates[0], coordinates[1],
                         (int) mTouchOffsetX, (int) mTouchOffsetY, mDragInfo);
@@ -363,7 +365,8 @@ public class DragLayer extends FrameLayout implements DragController {
                         (int) mTouchOffsetX, (int) mTouchOffsetY, mDragInfo);
                 mDragSource.onDropCompleted((View) dropTarget, true);
                 return true;
-            } else {
+            } 
+            else {
                 mDragSource.onDropCompleted((View) dropTarget, false);
                 return true;
             }
@@ -399,18 +402,20 @@ public class DragLayer extends FrameLayout implements DragController {
                         if (child instanceof DropTarget) {
                             // Only consider this child if they will accept
                             DropTarget childTarget = (DropTarget) child;
-                            if (childTarget.acceptDrop(mDragSource, x, y, 0, 0, mDragInfo)) {
-                                dropCoordinates[0] = x;
-                                dropCoordinates[1] = y;
-//                                Log.d(TAG, "Chilstarget accept drops " + child.getContentDescription());
-                                return (DropTarget) child;
-                            } else {
-//                            	Log.d(TAG, "child is not accept drops");
-                                return null;
-                            }
+//                            if (childTarget.acceptDrop(mDragSource, x, y, 0, 0, mDragInfo)) {
+//                                dropCoordinates[0] = x;
+//                                dropCoordinates[1] = y;
+////                                Log.d(TAG, "Chilstarget accept drops " + child.getContentDescription());
+//                                return (DropTarget) child;
+//                            } else {
+////                            	Log.d(TAG, "child is not accept drops");
+//                                return null;
+//                            }
+                            return childTarget;
                         }
 //                        Log.d(TAG, "target is null, but child is not a drop target " + child.getContentDescription());
-                    } else {
+                    } 
+                    else {
 //                    	Log.d(TAG, "target = " + target.toString());
                         return target;
                     }

@@ -14,6 +14,11 @@
             android:dialogTitle="@string/pref_p2_name_title"
             android:key="@string/key_p2_name"
             android:title="@string/pref_p2_name_title" />
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="@string/key_color_hints"
+            android:summary="@string/pref_color_hints_summ"
+            android:title="@string/pref_color_hints_title" />
 
         <devN.games.agonia.pref.ResetScoresDlgPref
             android:dialogIcon="@android:drawable/ic_dialog_alert"
@@ -25,7 +30,7 @@
         android:key="ingame"
         android:title="@string/pref_ingame_title" >
         <ListPreference
-            android:defaultValue="0"
+            android:defaultValue="@string/default_difficult_mode"
             android:entries="@array/difficult_modes"
             android:entryValues="@array/difficult_modes_values"
             android:key="@string/key_difficult"
@@ -42,7 +47,7 @@
             android:defaultValue="true"
             android:key="@string/key_is_nine_special"
             android:summary="@string/pref_nine_summ"
-            android:title="Nine-Jump" />
+            android:title="@string/pref_nine_title" />
     </PreferenceCategory>
 
 </PreferenceScreen>

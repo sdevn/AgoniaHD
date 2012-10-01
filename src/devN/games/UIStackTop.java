@@ -1,22 +1,32 @@
 package devN.games;
 
 import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import devN.etc.dragdrop.DragSource;
 import devN.etc.dragdrop.DropTarget;
+import devN.games.agonia.F;
+import devN.games.agonia.R;
 
 public class UIStackTop extends UICard implements DropTarget
 {
+	@SuppressWarnings("unused")
+	private final static String tag = "dragdrop";
+	
+	private static boolean colorHints;
+	
 	private CardGame game;
 	
 	public UIStackTop(Context context, AttributeSet attrs, int defStyle)
 	{
 		super(context, attrs, defStyle);
+		colorHints = F.getBoolean(F.KEY_COLOR_HINTS, true);
 	}
 
 	public UIStackTop(Context context, AttributeSet attrs)
 	{
 		super(context, attrs);
+		colorHints = F.getBoolean(F.KEY_COLOR_HINTS, true);
 	}
 
 	public UIStackTop(Context context)
@@ -43,39 +53,70 @@ public class UIStackTop extends UICard implements DropTarget
 	{
 		this.game = game;
 	}
+	
+	private void resetBackground()
+	{
+		if (!colorHints)
+		{
+			return;
+		}
+		
+		setBackgroundResource(0);
+		invalidate();
+	}
 
 	@Override
 	public void onDrop(DragSource source, int x, int y, int xOffset, int yOffset,
 						Object dragInfo)
 	{
-
+		resetBackground();
 	}
 
 	@Override
 	public void onDragEnter(DragSource source, int x, int y, int xOffset, int yOffset,
 							Object dragInfo)
 	{
+		if (!colorHints)
+		{
+			return;
+		}
+		
+		UICard draggedCard = (UICard) dragInfo;
 
+		boolean b = game.canPlay(draggedCard.getCard());
+		
+		Drawable bgdDrawable;
+		
+		if (b)
+		{
+			bgdDrawable = getResources().getDrawable(R.drawable.accept);
+		}
+		else 
+		{
+			bgdDrawable = getResources().getDrawable(R.drawable.reject);
+		}
+		
+		setBackgroundDrawable(bgdDrawable);
+		
+		invalidate();
 	}
 
 	@Override
 	public void onDragOver(DragSource source, int x, int y, int xOffset, int yOffset,
 							Object dragInfo)
 	{
-		
+
 	}
 
 	@Override
 	public void onDragExit(DragSource source, int x, int y, int xOffset, int yOffset,
 							Object dragInfo)
 	{
-
+		resetBackground();
 	}
 
 	/*
 	 * @param dragInfo UICard pou ginete drag
-	 * 
-	 * @see devN.etc.dragdrop.DropTarget#acceptDrop(devN.etc.dragdrop.DragSource, int, int, int, int, java.lang.Object)
 	 */
 	@Override
 	public boolean acceptDrop(DragSource source, int x, int y, int xOffset, int yOffset,
@@ -84,6 +125,7 @@ public class UIStackTop extends UICard implements DropTarget
 		UICard draggedCard = (UICard) dragInfo;
 
 		boolean b = game.canPlay(draggedCard.getCard());
+		
 		return b;
 	}
 
