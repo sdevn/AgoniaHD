@@ -24,6 +24,8 @@ public class Agonia extends CardGame implements Serializable
 	protected Player turn;
 	protected boolean isNineSpecial;
 	protected boolean isGameFinished = false;
+	private boolean aceOnAce;
+	private boolean aceFinish;
 	private int deckFinishOption;
 	
 	public Agonia(Deck d, Player p, Player cp)
@@ -49,6 +51,8 @@ public class Agonia extends CardGame implements Serializable
 		turn = p1;
 		lastDraw = null;
 		deckFinishOption = Integer.parseInt(F.getString(F.KEY_DECK_FINISH, "0"));
+		aceOnAce = F.getBoolean(F.KEY_ACE_ON_ACE, false);
+		aceFinish = F.getBoolean(F.KEY_ACE_FINISH, false);
 	}
 
 	@Override
@@ -61,9 +65,15 @@ public class Agonia extends CardGame implements Serializable
 			return false;
 		}
 
-		if (c.getRank() == 1 && (top.getRank() == 1 || turn.getHand().size() == 1))
-		{// ohi Ace se Ace kai ohi Ace os teleutaio filo
-			return false;
+		if (c.getRank() == 1 && top.getRank() == 1
+		&& turn.getHand().size() != 1) 
+		{// Ace on ace option
+			return aceOnAce;
+		}
+		
+		if (c.getRank() == 1 && turn.getHand().size() == 1)
+		{// Ace finish option
+			return aceFinish && (aceOnAce || top.getRank() != 1);
 		}
 
 		if (c.sameSuit(top) || c.sameRank(top) || c.getRank() == 1)
@@ -74,8 +84,13 @@ public class Agonia extends CardGame implements Serializable
 		return false;	// NULL_CARD ?
 	}
 
-	private void handleAce(Card c)
+	private void handleAce(Player p, Card c)
 	{
+		if (aceFinish && p.getHand().isEmpty())
+		{// game will be finished, no point to pop-up a dialog
+			return;
+		}
+		
 		throw new AcePlayed();
 	}
 
@@ -103,7 +118,7 @@ public class Agonia extends CardGame implements Serializable
 		{
 			case 1:
 			{
-				handleAce(c);				
+				handleAce(p, c);				
 				break;
 			}
 			case 7:
@@ -144,6 +159,9 @@ public class Agonia extends CardGame implements Serializable
 	@Override
 	public void setSpecialCards()
 	{
+		// prepei na arhikopoieitai edo ki ohi stin init(), logo tou oti
+		// h setSpecialCards() kaleite ap ton super constructor, diladi prin
+		// tin init()
 		isNineSpecial = F.getBoolean(F.KEY_IS_NINE_SPECIAl, true);
 
 		List<Card> specialCards = new ArrayList<Card>();

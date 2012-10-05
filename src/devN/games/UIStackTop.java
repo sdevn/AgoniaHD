@@ -76,13 +76,13 @@ public class UIStackTop extends UICard implements DropTarget
 	public void onDragEnter(DragSource source, int x, int y, int xOffset, int yOffset,
 							Object dragInfo)
 	{
-		if (!colorHints)
+		if (!colorHints || dragInfo instanceof UIDeck)
 		{
 			return;
 		}
 		
 		UICard draggedCard = (UICard) dragInfo;
-
+		
 		boolean b = game.canPlay(draggedCard.getCard());
 		
 		Drawable bgdDrawable;

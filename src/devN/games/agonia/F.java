@@ -19,6 +19,8 @@ public class F
 	public static String KEY_DIFFICULT_MODE;
 	public static String KEY_DECK_FINISH;
 	public static String KEY_COLOR_HINTS;
+	public static String KEY_ACE_ON_ACE;
+	public static String KEY_ACE_FINISH;
 	
 	public static SharedPreferences settings;
 	
@@ -34,6 +36,8 @@ public class F
 		KEY_DIFFICULT_MODE = a.getString(R.string.key_difficult);
 		KEY_DECK_FINISH = a.getString(R.string.key_deck_finish);
 		KEY_COLOR_HINTS = a.getString(R.string.key_color_hints);
+		KEY_ACE_ON_ACE = a.getString(R.string.key_ace_on_ace);
+		KEY_ACE_FINISH = a.getString(R.string.key_ace_finish);
 		
 		settings = PreferenceManager.getDefaultSharedPreferences(a);
 	}

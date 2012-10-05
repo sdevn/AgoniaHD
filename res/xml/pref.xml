@@ -48,6 +48,18 @@
             android:key="@string/key_is_nine_special"
             android:summary="@string/pref_nine_summ"
             android:title="@string/pref_nine_title" />
+        
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="@string/key_ace_on_ace"
+            android:summary="@string/pref_ace_on_ace_summ"
+            android:title="@string/pref_ace_on_ace_title" />
+        
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="@string/key_ace_finish"
+            android:summary="@string/pref_ace_finish_summ"
+            android:title="@string/pref_ace_finish_title" />
     </PreferenceCategory>
 
 </PreferenceScreen>

@@ -24,6 +24,8 @@
     <string name="key_reset_dlg">reset_dlg</string>
     <string name="key_deck_finish">deck_finish</string>
     <string name="key_color_hints">color_hints</string>
+    <string name="key_ace_on_ace">ace_on_ace</string>
+    <string name="key_ace_finish">ace_finish</string>
     <string name="pref_general_title">General</string>
     <string name="pref_ingame_title">In-game</string>
     <string name="pref_p1_name_title">Your name</string>
@@ -72,7 +74,7 @@
     <string name="how_special_card_seven_title">Seven</string>
     <string name="how_special_card_eight_title">Eight</string>
     <string name="how_special_card_content">Some cards don\'t follows the normal an have some special effects.</string>
-    <string name="how_special_card_ace_content">Ace can be played over any card (regardless of suit and rank) except Ace. If a player play an ace then he can choose any suit he wants. The next player will play with the claimed suit. And also the players can not go out with Ace.</string>
+    <string name="how_special_card_ace_content">Ace can be played over any card (regardless of suit and rank). If a player play an ace then he can choose any suit he wants. The next player will play with the claimed suit.</string>
     <string name="how_special_card_seven_content">If a player play 7, then the next player draws two cards from the deck, unless he has 7, so playing it the next player will draw 4 cards from the deck and so until a player has no 7. If the player who gets the cards do not have an appropriate card to play, then he must draw a card from the deck. If a player draw cards after of the previously played 7 and finds a 7 in these cards, he can play it, but it would act as the first 7 (the next player will draw 2 cards).</string>
     <string name="how_special_card_eight_content">If a player play 8 he must play again. If he have not any corresponding card, then he must draw a card from the deck. If he still do not find an appropriate card then he say "passo". A player can play as many 8s in a row as he wants to.</string>
     <string name="next">Next</string>
@@ -84,4 +86,10 @@
 
     <string name="pref_color_hints_title">Color hints</string>
     <string name="pref_color_hints_summ">Varius color hints to guide you in game</string>
+    
+    <string name="pref_ace_on_ace_title">Ace-On-Ace</string>
+    <string name="pref_ace_on_ace_summ">Ace could be played on top of Ace</string>
+    
+    <string name="pref_ace_finish_title">Ace The Last</string>
+    <string name="pref_ace_finish_summ">Allow players to go out with Ace</string>
 </resources>
