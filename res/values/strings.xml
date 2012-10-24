@@ -7,6 +7,7 @@
     <string name="dlg_ace_title">Pick a suit</string>
     <string name="dlg_finish_title">Game finished!</string>
     <string name="dlg_seven_btn_draw">Draw (%d)</string>
+    <string name="dlg_seven_btn_play">Play it!</string>
     <string name="dlg_seven_title">Play Seven or draw?</string>
     <string name="exit">Exit</string>
     <string name="dlg_finish_btn_play_again">Play again</string>

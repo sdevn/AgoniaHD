@@ -276,7 +276,6 @@ public class Agonia extends CardGame implements Serializable
 		&& (getTop(0).getRank() != 9 || !isNineSpecial)
 		&& !Card.NULL_CARD.equals(c))
 		{
-			Log.d("dbg", p.getName() + " finish with " + c);
 			finishGame();
 		}
 	}

@@ -4,6 +4,7 @@
     <string name="dlg_ace_title">Διάλεξε χρώμα</string>
     <string name="dlg_finish_title">Τέλος παχνιδίου!</string>
     <string name="dlg_seven_btn_draw">Τράβηξε (%d)</string>
+    <string name="dlg_seven_btn_play">Πέτα το!</string>
     <string name="dlg_seven_title">Θα παίξεις Εφτά ή θα τραβήξεις;</string>
     <string name="exit">Έξοδος</string>
     <string name="dlg_finish_btn_play_again">Παίξε ξανά</string>

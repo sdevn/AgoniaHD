@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<HorizontalScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:ads="http://schemas.android.com/apk/lib/com.google.ads"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="@dimen/ad_top_bottom_margin"
+    android:layout_marginTop="@dimen/ad_top_bottom_margin" >
+
+    <com.google.ads.AdView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        ads:adSize="SMART_BANNER"
+        ads:adUnitId="a15007e97f87daa"
+        ads:loadAdOnCreate="true"
+        ads:testDevices="TEST_EMULATOR" >
+    </com.google.ads.AdView>
+
+</HorizontalScrollView>

@@ -63,4 +63,9 @@
         <item name="android:layout_height">wrap_content</item>
     </style>
     
+	<style name="dlg_ace_suits" parent="@android:style/Widget.ImageButton">
+        <item name="android:background">@drawable/sel_bkgr_touched</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_width">96dp</item>
+    </style>
 </resources>

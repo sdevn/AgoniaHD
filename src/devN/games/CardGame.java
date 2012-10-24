@@ -18,26 +18,24 @@ public abstract class CardGame
 	
 	public CardGame(Deck d, Player p1, Player p2, int startDeal, int stackTopSize)
 	{
+//		startDeal = DONT_DEAL;
+//		
 		init(d, p1, p2, startDeal);
 //
 //		List<Card> debugDraw = new ArrayList<Card>();
-//		debugDraw.add(new Card(0, 1));
-//		debugDraw.add(new Card(1, 1));
-//		debugDraw.add(new Card(1, 9));
-//		debugDraw.add(new Card(1, 8));
-//		debugDraw.add(new Card(1, 6));
-//		debugDraw.add(new Card(2, 10));
-//		debugDraw.add(new Card(2, 11));
-//		debugDraw.add(new Card(2, 12));
-//		
+//		debugDraw.add(new Card(0, 7));
 //		debugDraw.add(new Card(1, 7));
-//		debugDraw.add(new Card(3, 7));
+//		
 //		p1.draw(debugDraw);
+//		
 //		debugDraw = new ArrayList<Card>();
 //		debugDraw.add(new Card(2, 7));
-//		debugDraw.add(new Card(0, 7));
+//		debugDraw.add(new Card(3, 7));
 //		p2.draw(debugDraw);
-//
+//		
+//		p1.draw(5);
+//		p2.draw(5);
+
 		STACK_TOP_COUNT = stackTopSize;		
 		
 		if (startDeal == DONT_DEAL) 
@@ -45,7 +43,7 @@ public abstract class CardGame
 			stackTop = new ArrayList<Card>();
 			for (int i = 0; i < stackTopSize; i++)
 			{
-				stackTop.add(new Card(Card.NULL_CARD));
+				stackTop.add(deck.draw().get(0));
 			}
 		}
 		else 

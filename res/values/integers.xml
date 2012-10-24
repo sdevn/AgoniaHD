@@ -2,6 +2,12 @@
 <resources>
 
     <!-- hrisimopoieite os long!! -->
-    <integer name="cpu_delay">1500</integer>
+    <integer name="cpu_delay">1000</integer>
+
+    <integer name="menu_anim_startOffset">300</integer>
+    <integer name="menu_anim_duration">500</integer>
+    
+    <integer name="how_anim_startOffset">300</integer>
+    <integer name="how_anim_duration">500</integer>
 
 </resources>

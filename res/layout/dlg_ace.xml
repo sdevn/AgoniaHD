@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:app="http://schemas.android.com/apk/res/devN.games.agonia"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="match_parent"
+    android:background="@color/tsoha"
+    android:orientation="vertical" >
+
+    <android.support.v7.widget.GridLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:padding="@dimen/dlg_ace_grid_padding"
+        app:alignmentMode="alignMargins"
+        app:columnCount="2"
+        app:rowCount="2"
+        app:useDefaultMargins="true" >
+
+        <ImageButton
+            android:id="@+id/clubs"
+            style="@style/dlg_ace_suits"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_column="0"
+            app:layout_columnSpan="1"
+            app:layout_row="0"
+            app:layout_rowSpan="1"
+            android:contentDescription="@string/blank"
+            android:src="@drawable/clubs" />
+
+        <ImageButton
+            android:id="@+id/diamonds"
+            style="@style/dlg_ace_suits"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_column="1"
+            app:layout_columnSpan="1"
+            app:layout_row="0"
+            app:layout_rowSpan="1"
+            android:contentDescription="@string/blank"
+            android:src="@drawable/diamonds" />
+
+        <ImageButton
+            android:id="@+id/spades"
+            style="@style/dlg_ace_suits"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_column="0"
+            app:layout_columnSpan="1"
+            app:layout_row="1"
+            app:layout_rowSpan="1"
+            android:contentDescription="@string/blank"
+            android:src="@drawable/spades" />
+
+        <ImageButton
+            android:id="@+id/hearts"
+            style="@style/dlg_ace_suits"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_column="1"
+            app:layout_columnSpan="1"
+            app:layout_row="1"
+            app:layout_rowSpan="1"
+            android:contentDescription="@string/blank"
+            android:src="@drawable/hearts" />
+    </android.support.v7.widget.GridLayout>
+
+    <include layout="@layout/ad_in_dialog" />
+
+</LinearLayout>

@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.webkit.WebView;
 import android.widget.Button;
+import android.widget.ImageButton;
 
 public class AgoniaMenu extends Activity
 {
@@ -31,7 +32,7 @@ public class AgoniaMenu extends Activity
 		Button pref = (Button) findViewById(R.id.btPref);
 		Button game = (Button) findViewById(R.id.btGame);
 		Button how = (Button) findViewById(R.id.btHow);
-		Button about = (Button) findViewById(R.id.btAbout);
+		ImageButton about = (ImageButton) findViewById(R.id.ibtAbout);
 		Button exit = (Button) findViewById(R.id.btExit);
 
 		pref.setOnClickListener(new OnClickListener(){
@@ -70,12 +71,7 @@ public class AgoniaMenu extends Activity
 				showDialog(DIALOG_ABOUT_ID);
 			}
 		});
-		
-		if (exit == null)
-		{
-			return;
-		}
-		
+
 		exit.setOnClickListener(new OnClickListener(){
 
 			@Override
@@ -170,6 +166,7 @@ public class AgoniaMenu extends Activity
 	
 	private void atExit()
 	{
-		showDialog(DIALOG_COMMING_SOON_ID);
+//		showDialog(DIALOG_COMMING_SOON_ID);
+		finish();
 	}
 }

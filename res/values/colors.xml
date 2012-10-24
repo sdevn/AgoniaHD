@@ -5,5 +5,6 @@
     <color name="total_divider">#00FA9A</color>
     <color name="delete_color_filter">#A5FF0000</color>
     <color name="snag_callout_color">#F444</color>
+    <color name="touched_backround">#B5363636</color>
     
 </resources>

@@ -17,6 +17,7 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnCancelListener;
+import android.content.DialogInterface.OnDismissListener;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.content.res.Configuration;
@@ -31,8 +32,12 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
+import android.view.ViewGroup.OnHierarchyChangeListener;
 import android.view.WindowManager.BadTokenException;
+import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 import devN.etc.dragdrop.DragController;
@@ -64,11 +69,12 @@ public class AgoniaGame extends Activity implements DragSource, OnTouchListener
 	protected UICard draggedCard;
 	protected UIStackTop stackTop;
 	protected UIDeck deck;
-	protected int suits[] = new int[3];
 	protected int sevenDraw;
 	protected long cpuDelay;
 	protected boolean dragging = false;
 	private DragController dragController;
+	private	LayoutInflater inflater;
+	private Card selectedSeven = Card.NULL_CARD;
 	
 	/** Called when the activity is first created. */
 	@Override
@@ -89,6 +95,8 @@ public class AgoniaGame extends Activity implements DragSource, OnTouchListener
 		TextView deckInfo;
 		boolean isWideScreen;
 		Resources res = getResources();
+		
+		inflater = getLayoutInflater();
 		
 		if (F.settings == null)
 		{
@@ -236,10 +244,9 @@ public class AgoniaGame extends Activity implements DragSource, OnTouchListener
 			/* No winner! */
 		}
 		saveScores();
-		
+
 		// otan vgainei o player na min uparhei polu anamoni eos otou vgei to finishDialog
-		Long dlgDelay = game.turn.equals(up.getPlayer()) ? cpuDelay : cpuDelay * 2;
-		
+		Long dlgDelay = (long) (game.whoPlayNext().equals(up.getPlayer()) ? (cpuDelay / 2) : (cpuDelay * 1.3));
 		new Handler().postDelayed(new Runnable(){
 			public void run()
 			{
@@ -393,7 +400,8 @@ public class AgoniaGame extends Activity implements DragSource, OnTouchListener
 				new Handler().postDelayed(new Runnable(){
 					public void run()
 					{
-						makeSevenDlg().show();
+//						makeSevenDlg().show();
+						showDialog(DIALOG_SEVEN_ID);
 					}
 				}, cpuDelay + 200);
 			}
@@ -443,7 +451,6 @@ public class AgoniaGame extends Activity implements DragSource, OnTouchListener
 		sevenDraw = 0;
 		
 		Player next = game.whoPlayNext();	// should be previous
-		d(TAG, "next is: " + next.getName());
 		
 		if (next.getHand().isEmpty())
 		{
@@ -471,9 +478,9 @@ public class AgoniaGame extends Activity implements DragSource, OnTouchListener
 			}
 			break;
 												
-		case DIALOG_SEVEN_ID: 	// TODO: unused, epeidi uparhei bug sto opoio otan 
-			{					//			petiete cpu(7)->player(7)->cpu(7)
-			dialog = makeSevenDlg();	//	o deuteros dialogos den emfanizete
+		case DIALOG_SEVEN_ID:
+			{
+			dialog = makeSevenDlg();
 			}
 			break;
 			
@@ -505,24 +512,219 @@ public class AgoniaGame extends Activity implements DragSource, OnTouchListener
 		return dialog;
 	}
 
+	@Override
+	protected void onPrepareDialog(int id, Dialog dialog)
+	{
+		switch (id)
+		{
+		case DIALOG_SEVEN_ID:
+			LinearLayout sevenContainer = (LinearLayout) dialog.findViewById(R.id.dlg_seven_container);
+			Button btnDraw = (Button) dialog.findViewById(R.id.dlg_seven_btn_draw);
+			List<Card> sevens = getSevens();
+			
+			btnDraw.setText(getString(R.string.dlg_seven_btn_draw, sevenDraw));
+			
+			sevenContainer.removeAllViews();
+			for (Card c : sevens)
+			{
+				UICard seven = new UICard(this, c, true);
+				sevenContainer.addView(seven);
+			}
+			break;
+
+		default:
+			break;
+		}
+		
+		super.onPrepareDialog(id, dialog);
+	}
+
 	private Dialog makeAceDlg()
 	{
+		final Dialog retVal;
+		
+		LinearLayout dlgContent = (LinearLayout) inflater.inflate(R.layout.dlg_ace, null);
+		ImageButton suitButtons[] = new ImageButton[4];
+		
+		suitButtons[Card.iSPADES] = (ImageButton) dlgContent.findViewById(R.id.spades);
+		suitButtons[Card.iDIAMONDS] = (ImageButton) dlgContent.findViewById(R.id.diamonds);
+		suitButtons[Card.iCLUBS] = (ImageButton) dlgContent.findViewById(R.id.clubs);
+		suitButtons[Card.iHEARTS] = (ImageButton) dlgContent.findViewById(R.id.hearts);
+		
 		// @formatter:off
+
 		AlertDialog.Builder builder = new AlertDialog.Builder(this)
 		.setTitle(getString(R.string.dlg_ace_title))
 		.setCancelable(false)
-		.setItems(Card.pszSUITS, new DialogInterface.OnClickListener(){
-			public void onClick(DialogInterface dialog, int item)
+		.setView(dlgContent)
+		;
+		
+		// @formatter:on
+		
+		retVal = builder.create();
+		
+		for (int i = 0; i < suitButtons.length; i++)
+		{
+			final int suit = i;
+			
+			suitButtons[i].setOnClickListener(new OnClickListener(){
+				
+				@Override
+				public void onClick(View v)
+				{
+					onAceSuitSelected(suit);
+					retVal.dismiss();
+				}
+			});
+		}
+		
+		return retVal;
+	}
+	
+	private void onAceSuitSelected(int suit)
+	{
+		stackTop.getCard().setSuit(suit);
+		stackTop.postSetImage("");
+		game.switchTurn();
+		cpuAutoPlay();
+	}
+	
+	private Dialog makeSevenDlg()
+	{
+		final Dialog retVal;
+		
+		List<Card> sevens = getSevens();
+		
+		LinearLayout dlgContent = (LinearLayout) inflater.inflate(R.layout.dlg_seven, null);
+		LinearLayout sevenContainer = (LinearLayout) dlgContent.findViewById(R.id.dlg_seven_container);
+		Button btnDraw = (Button) dlgContent.findViewById(R.id.dlg_seven_btn_draw);
+		final Button btnPlay = (Button) dlgContent.findViewById(R.id.dlg_seven_btn_play);
+		
+		btnDraw.setText(getString(R.string.dlg_seven_btn_draw, sevenDraw));
+		btnPlay.setText(getString(R.string.dlg_seven_btn_play));
+
+		sevenContainer.setOnHierarchyChangeListener(new OnHierarchyChangeListener(){
+				private OnClickListener sevenClickListener = new OnClickListener(){
+				int cchilds;
+				
+				private void select(LinearLayout container, View selected)
+				{
+					cchilds = container.getChildCount();
+					clean(container);
+					
+					selected.setBackgroundResource(R.drawable.accept);
+				}
+				
+				private void clean(LinearLayout container)
+				{
+					for (int i = 0; i < cchilds; i++)
+					{
+						View v = container.getChildAt(i);
+						
+						v.setBackgroundResource(0);
+					}
+				}
+				
+				@Override
+				public void onClick(View v)
+				{
+					select((LinearLayout) v.getParent(), v);
+					selectedSeven = ((UICard) v).getCard();
+					btnPlay.setEnabled(true);
+				}
+			};
+			
+			@Override
+			public void onChildViewRemoved(View parent, View child)
 			{
-				stackTop.getCard().setSuit(item);
-				stackTop.postSetImage("");
-				game.switchTurn();
-				cpuAutoPlay();
+								
+			}
+			
+			@Override
+			public void onChildViewAdded(View parent, View child)
+			{
+				child.setOnClickListener(sevenClickListener);
+			}
+		});
+		
+		for (Card c : sevens)
+		{
+			UICard seven = new UICard(this, c, true);
+			sevenContainer.addView(seven);
+		}
+		
+		// @formatter:off
+		AlertDialog.Builder builder = new AlertDialog.Builder(this)
+		.setTitle(getString(R.string.dlg_seven_title))
+		.setView(dlgContent)
+		.setCancelable(true)
+		.setOnCancelListener(new OnCancelListener(){
+			
+			@Override
+			public void onCancel(DialogInterface dialog)
+			{
+				sevenDraw();				
 			}
 		})
 		;
 		// @formatter:on
-		return builder.create();
+		
+		retVal = builder.create();
+		retVal.setOnDismissListener(new OnDismissListener(){
+			
+			@Override
+			public void onDismiss(DialogInterface dialog)
+			{
+				btnPlay.setEnabled(false);
+				
+			}
+		});
+		
+		btnDraw.setOnClickListener(new OnClickListener(){
+			
+			@Override
+			public void onClick(View v)
+			{
+				sevenDraw();
+				retVal.dismiss();
+			}
+		});
+		
+		btnPlay.setOnClickListener(new OnClickListener(){
+			
+			@Override
+			public void onClick(View v)
+			{
+				try 
+				{
+					game.play(up.getPlayer(), selectedSeven);
+				}
+				catch (SevenPlayed e) 
+				{
+					game.switchTurn();
+					stackTop.postSetImage("", 100);
+					handleSeven(e.suit);
+				}
+				retVal.dismiss();
+			}
+		});
+		
+		return retVal;
+	}
+	
+	private List<Card> getSevens()
+	{
+		List<Card> sevens = new ArrayList<Card>();
+		
+		for (Card c : up.getHand())
+		{
+			if (c.getRank() == 7)
+			{
+				sevens.add(new Card(c));
+			}
+		}
+		
+		return sevens;
 	}
 	
 	private Dialog makeFinishDlg()
@@ -541,9 +743,8 @@ public class AgoniaGame extends Activity implements DragSource, OnTouchListener
 		String p2Hand = ucp.handString();
 		String winnerText;
 		
-		LayoutInflater inflater = getLayoutInflater();
-		
-		LinearLayout dlgContent = (LinearLayout) inflater.inflate(R.layout.dlg_finish, null);
+		ScrollView dlgContainer = (ScrollView) inflater.inflate(R.layout.dlg_finish, null);
+		LinearLayout dlgContent = (LinearLayout) dlgContainer.findViewById(R.id.dlg_finish_content);
 		
 		TextView p1name = (TextView) dlgContent.findViewById(R.id.dlg_finish_p1_name);
 		p1name.setText(p1Name);
@@ -592,7 +793,7 @@ public class AgoniaGame extends Activity implements DragSource, OnTouchListener
 		
 		AlertDialog.Builder builder = new AlertDialog.Builder(this)
 		.setTitle(getString(R.string.dlg_finish_title))
-		.setView(dlgContent)
+		.setView(dlgContainer)
 		.setNegativeButton(getString(R.string.exit), new DialogInterface.OnClickListener(){
 			
 			@Override
@@ -622,81 +823,6 @@ public class AgoniaGame extends Activity implements DragSource, OnTouchListener
 		return builder.create();
 	}
 
-	private Dialog makeSevenDlg() 
-	{
-		List<CharSequence> sevens = new ArrayList<CharSequence>();
-		int i = 0;	
-		
-		for (Card c : up.getHand()) 
-		{
-			if (c.getRank() == 7) 
-			{
-				suits[i++] = c.getSuit();
-				sevens.add(c.toString());
-			}
-		}
-		
-		CharSequence[] css = new CharSequence[sevens.size()];
-		
-		// @formatter:off
-		AlertDialog.Builder builder = new AlertDialog.Builder(this)
-		.setTitle(getString(R.string.dlg_seven_title))
-		.setNegativeButton(getString(R.string.dlg_seven_btn_draw, sevenDraw), 
-							new DialogInterface.OnClickListener(){
-
-			@Override
-			public void onClick(DialogInterface dialog, int item)
-			{
-				if (item == DialogInterface.BUTTON_NEGATIVE) 
-				{
-					sevenDraw();
-					return;
-				}
-			}
-		})
-		.setCancelable(true)
-		.setOnCancelListener(new OnCancelListener(){
-			
-			@Override
-			public void onCancel(DialogInterface dialog)
-			{
-				sevenDraw();				
-			}
-		})
-		.setItems(sevens.toArray(css), new DialogInterface.OnClickListener(){
-			public void onClick(DialogInterface dialog, int item)
-			{
-				try 
-				{
-					game.play(up.getPlayer(), new Card(suits[item], 7));
-				} 
-				catch (SevenPlayed e) 
-				{
-					game.switchTurn();
-					stackTop.postSetImage("", 100);
-					handleSeven(e.suit);
-				}
-			}
-		})
-		;
-//		
-//		AlertDialog alertDialog = builder.create();
-//		
-//		alertDialog.setOnDismissListener(new DialogInterface.OnDismissListener(){
-//
-//			@Override
-//			public void onDismiss(DialogInterface dialog)
-//			{
-//				// TODO: replace it with trick from
-//				// http://stackoverflow.com/questions/4811688/how-to-set-contents-of-setsinglechoiceitems-in-onpreparedialog
-//				removeDialog(DIALOG_SEVEN_ID);		
-//			}
-//			
-//		});
-		// @formatter:on
-		return builder.create();
-	}
-	
 	private Dialog makeSaveGameDlg()
 	{
 		// @formatter:off
@@ -988,7 +1114,7 @@ public class AgoniaGame extends Activity implements DragSource, OnTouchListener
 		}
 		else 
 		{
-			l(draggedCard.getCard() + " is not accepted!");
+			// draggedCard is placed back to its owner's hand
 		}
 		dragging = false;
 	}
