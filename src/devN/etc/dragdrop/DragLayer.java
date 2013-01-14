@@ -103,16 +103,19 @@ public class DragLayer extends FrameLayout implements DragController {
     public DragLayer(Context context, AttributeSet attrs) {
         super(context, attrs);
 
-        final int srcColor = context.getResources().getColor(R.color.delete_color_filter);
-        mTrashPaint.setColorFilter(new PorterDuffColorFilter(srcColor, PorterDuff.Mode.SRC_ATOP));
-
-        // Make estimated paint area in gray
-        int snagColor = context.getResources().getColor(R.color.snag_callout_color);
-        Paint estimatedPaint = new Paint();
-        estimatedPaint.setColor(snagColor);
-        estimatedPaint.setStrokeWidth(3);
-        estimatedPaint.setAntiAlias(true);
-
+        if (!isInEditMode())
+		{
+			final int srcColor = context.getResources().getColor(R.color.delete_color_filter);
+			mTrashPaint.setColorFilter(new PorterDuffColorFilter(srcColor,
+																	PorterDuff.Mode.SRC_ATOP));
+        
+			// Make estimated paint area in gray
+	        int snagColor = context.getResources().getColor(R.color.snag_callout_color);
+	        Paint estimatedPaint = new Paint();
+	        estimatedPaint.setColor(snagColor);
+	        estimatedPaint.setStrokeWidth(3);
+	        estimatedPaint.setAntiAlias(true);
+		}
     }
 
     public void startDrag(View v, DragSource source, Object dragInfo, int dragAction) {

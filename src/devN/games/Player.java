@@ -2,9 +2,12 @@ package devN.games;
 
 import java.util.ArrayList;
 import java.util.List;
+import android.os.Parcel;
+import android.os.Parcelable;
+import android.util.Log;
 import devN.games.agonia.AgoniaAI;
 
-public class Player implements AgoniaAI
+public class Player implements AgoniaAI, Parcelable
 {
 	private static int cIDs = 0;
 
@@ -13,6 +16,9 @@ public class Player implements AgoniaAI
 	protected List<Card> hand;
 	protected List<Card> owned;
 	protected CardGame game;
+	protected int setScore;
+	protected int setWins;
+	protected boolean playingInSet;
 	protected int score;
 	protected int team;
 	protected int id;
@@ -23,6 +29,9 @@ public class Player implements AgoniaAI
 	{
 		this.id = ++cIDs;
 		this.name = "Uknown_" + this.id;
+		this.setScore = 0;
+		this.setWins = 0;
+		this.playingInSet = false;
 		this.score = 0;
 		this.team = -1;
 		this.wins = 0;
@@ -39,6 +48,10 @@ public class Player implements AgoniaAI
 	
 	public void addScore(int points)
 	{
+		if (playingInSet)
+		{
+			addSetScore(points);
+		}
 		this.score += points;
 	}
 
@@ -159,6 +172,46 @@ public class Player implements AgoniaAI
 		return game;
 	}
 
+	public int getSetScore()
+	{
+		return setScore;
+	}
+
+	public int getSetWins()
+	{
+		return setWins;
+	}
+
+	public boolean isPlayingInSet()
+	{
+		return playingInSet;
+	}
+
+	public void setSetScore(int newScore)
+	{
+		this.setScore = newScore;
+	}
+	
+	public void addSetScore(int score)
+	{
+		this.setScore += score;
+	}
+
+	public void setSetWins(int setWins)
+	{
+		this.setWins = setWins;
+	}
+	
+	public void winSet()
+	{
+		this.setWins++;
+	}
+
+	public void setPlayingInSet(boolean playingInSet)
+	{
+		this.playingInSet = playingInSet;
+	}
+
 	public void setName(String name)
 	{
 		this.name = name;
@@ -202,7 +255,14 @@ public class Player implements AgoniaAI
 	
 	public void win()
 	{
-		wins++;
+		if (playingInSet)
+		{
+			winSet();
+		}
+		else 
+		{
+			wins++;
+		}
 	}
 
 	public boolean playCard(int i)
@@ -232,9 +292,6 @@ public class Player implements AgoniaAI
 		return !hand.isEmpty();
 	}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
 	@Override
 	public String toString()
 	{
@@ -274,9 +331,6 @@ public class Player implements AgoniaAI
 		this.owned.addAll(c);
 	}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
 	@Override
 	public boolean equals(Object o)
 	{
@@ -295,10 +349,24 @@ public class Player implements AgoniaAI
 		return (this.getId() == that.getId());
 	}
 
-	
 	public void setAI(AgoniaAI ai)
 	{
 		this.ai = ai;
+		if (this.ai != null)
+		{
+			
+		}
+	}
+	
+	@Override
+	public int getMode()
+	{
+		if (isRealPlayer())
+		{
+			return AgoniaAI.MODE_NO_AI;
+		}
+		
+		return ai.getMode();
 	}
 
 	@Override
@@ -307,9 +375,6 @@ public class Player implements AgoniaAI
 		return ai.willPlay();
 	}
 
-	/* (non-Javadoc)
-	 * @see devN.games.agonia.AgoniaAI#getAceSuit()
-	 */
 	@Override
 	public int getAceSuit()
 	{
@@ -321,10 +386,55 @@ public class Player implements AgoniaAI
 	{
 		return ai.playSeven();
 	}
+	
+	public static final Parcelable.Creator<Player> CREATOR = new Parcelable.Creator<Player>(){
+		@Override
+		public Player createFromParcel(Parcel source)
+		{
+			return new Player(source);
+		}
 
-//	@Override
-//	public Card askFor(int suit, int rank)
-//	{
-//		return ai.askFor(suit, rank);
-//	}
+		@Override
+		public Player[] newArray(int size)
+		{
+			return new Player[size];
+		}
+
+	};
+	
+	@Override
+	public int describeContents()
+	{
+		return 0;
+	}
+
+	/**
+	 * Saved in form:
+	 * [name] [id] [team] [AI_mode] [setWins] [setScore]
+	 */
+	@Override
+	public void writeToParcel(Parcel dest, int flags)
+	{
+		dest.writeString(name);
+		dest.writeInt(id);
+		dest.writeInt(team);
+		dest.writeInt(getMode());
+		dest.writeInt(setWins);
+		dest.writeInt(setScore);
+	}
+
+	/**
+	 * Load in form:
+	 * [name] [id] [team] [AI_mode] [setWins] [setScore]
+	 */
+	private Player(Parcel in) 
+	{
+		name = in.readString();		
+		id = in.readInt();
+		team = in.readInt();
+		ai = AgoniaAIBuilder.createById(in.readInt(), this);
+		setWins = in.readInt();
+		setScore = in.readInt();
+    }
+
 }

@@ -5,11 +5,14 @@ import java.util.List;
 import android.content.Context;
 import android.content.res.Resources.NotFoundException;
 import android.content.res.TypedArray;
+import android.os.Handler;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
 import android.view.animation.AnimationUtils;
+import android.view.animation.TranslateAnimation;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import devN.etc.dragdrop.DragSource;
@@ -22,8 +25,12 @@ public class UIPlayer extends LinearLayout implements AnimationListener, DropTar
 {
 	@SuppressWarnings("unused")
 	private static final String tag = "dbg";
-	private Animation animOnRemove = null;
-	private Animation animOnAdd = null;
+	
+	private boolean bAnimOnRemove;
+	private boolean bAnimOnAdd;
+	private Animation animOnRemove;
+	private Animation animOnAdd;
+	
 	private List<View> toRemove = new LinkedList<View>();
 	private InnerPlayer player = new InnerPlayer();
 	private TextView tvInfo;
@@ -33,75 +40,176 @@ public class UIPlayer extends LinearLayout implements AnimationListener, DropTar
 	private OnTouchListener onTouchListener;
 	
 	private int infoId;
+
+	private int childWidth;		// UICard dimensions
+	private int childHeight;
 	
-	private static int childWidth;
-	private static int parentWidth;
-	@SuppressWarnings("unused")
-	private static int childHeight;
-	@SuppressWarnings("unused")
-	private static int parentHeight;
+	private int parentWidth;	// this deminsions
+	private int parentHeight;
 	
-	public UIPlayer(Context context, AttributeSet attrs)
+	private int parentFullWidth;	// screen dimensions
+	@SuppressWarnings("unused")
+	private int parentFullHeight;
+	
+	private int animDeltaY;
+	private int animDeltaX;
+	private long animDuration;
+	
+	public UIPlayer(Context context, AttributeSet attrs, int defStyle)
 	{
 		super(context, attrs);
 		initAttrs(context, attrs);
 	}
+
+	public UIPlayer(Context context, AttributeSet attrs)
+	{
+		this(context, attrs, 0);
+	}
 	
 	public void initAttrs(Context context, AttributeSet attrs)
 	{
-		TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.UICard, 0, 0);
+		TypedArray a = getContext().obtainStyledAttributes(attrs, R.styleable.UICard, 0, 0);
 		visible = a.getBoolean(R.styleable.UICard_visible, false);
 		a.recycle();
 
 		a = context.obtainStyledAttributes(attrs, R.styleable.UIInfo, 0, 0);
-		infoId = a.getResourceId(R.styleable.UIInfo_info, 0);
-		if (infoId != 0)
+		
+		final int N = a.getIndexCount();
+		for (int i = 0; i < N; i++) 
 		{
-			tvInfo = (TextView) findViewById(infoId);
-		}
+            int attr = a.getIndex(i);
+            switch (attr) 
+            {
+            case R.styleable.UIInfo_info:
+            	infoId = a.getResourceId(attr, -1);
+            	if (infoId != -1 && !isInEditMode())
+        		{
+//        			Log.d("dbg", getName() + " info = " + infoId);
+        		}
+            	break;
+            }
+        }
+		
 		a.recycle();
 		
-		a = context.obtainStyledAttributes(attrs, R.styleable.UIPlayer, 0, 0);
+		a = getContext().obtainStyledAttributes(attrs, R.styleable.UIPlayer, 0, 0);
 		int team = a.getInt(R.styleable.UIPlayer_team, -1); 
 		player.setTeam(team);
 
-		int animAddId = a.getResourceId(R.styleable.UIPlayer_drawCardAnimation, -1);
-		int animRemoveId = a.getResourceId(R.styleable.UIPlayer_playCardAnimation, -1);
+		int animAddId = a.getResourceId(R.styleable.UIPlayer_drawCardAnimation, R.anim.cpu_draw);
+		bAnimOnAdd = a.getBoolean(R.styleable.UIPlayer_drawCardAnimation, true);
+		
+		int animRemoveId = a.getResourceId(R.styleable.UIPlayer_playCardAnimation, R.anim.cpu_play);
+		bAnimOnRemove = a.getBoolean(R.styleable.UIPlayer_playCardAnimation, true);
+		
 		try
 		{
-			animOnAdd = AnimationUtils.loadAnimation(context, animAddId);
+			if (bAnimOnAdd && !isInEditMode())
+			{
+				animOnAdd = AnimationUtils.loadAnimation(context, animAddId);
+			}
 		}
 		catch (NotFoundException e)
 		{
-//			d("anim", "onAdd not found! " + animAddId);
+			Log.d("anim", player + "onAdd not found! " + animAddId);
 		}
 		try
 		{
-			animOnRemove = AnimationUtils.loadAnimation(context, animRemoveId);
-			animOnRemove.setAnimationListener(this);
+			if (bAnimOnRemove && !isInEditMode())
+			{
+				animOnRemove = AnimationUtils.loadAnimation(context, animRemoveId);
+				animOnRemove.setAnimationListener(this);
+			}
 		}
 		catch (NotFoundException e)
 		{
-//			d("anim", "onRemv not found! " + animRemoveId);
+			Log.d("anim", player + "onRemv not found! " + animRemoveId);
 		}
 		a.recycle();
 	}
 	
-	public static void initDimensions(Context context, int width, int height)
+	public void initDimensions(int width, int height, int fullWidth, int fullHeight)
 	{
 		parentHeight = height;
 		parentWidth = width;
 		
-		UICard c = new UICard(context, new Card(-1, -1), false);
+											// ean o player minei horis kartes alla den bgei
+		getLayoutParams().height = height;	// (px petakse 8), to height epeidi einai WRAP_CONTENT
+											// midenizete, me apotelesma na min mporei na kanei draw
+
+		parentFullHeight = fullHeight;
+		parentFullWidth = fullWidth;
+
+		UICard c = new UICard(getContext(), new Card(-1, -1), false);
 		c.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
 		childWidth = c.getMeasuredWidth();
 		childHeight = c.getMeasuredHeight();
 		
-//		d(tag, childWidth + " / " + parentWidth);
+		animDeltaY = parentHeight + (parentHeight - childHeight) / 2;
+	}
+	
+	private int calcPlayDeltaX(UICard c)
+	{
+		int delta;
+		int center = (parentFullWidth - childWidth) / 2;
+		int[] aChildCoords = new int[2];
+		
+		c.getLocationOnScreen(aChildCoords);
+		
+		delta = (int) (center - aChildCoords[0]);
+		
+		return delta;
+	}
+	
+	private Animation getNewPlayAnim()
+	{
+		TranslateAnimation anim;
+		
+		anim = new TranslateAnimation(0, animDeltaX, 0, animDeltaY);
+		
+		anim.setDuration(animDuration);
+		anim.setAnimationListener(this);
+		
+		return anim;
+	}
+	
+	private int calcDrawDeltaX(UICard c)
+	{
+		int delta;
+		int rightmostEdge;
+		int[] aParLocation = new int[2];
+		
+		getLocationOnScreen(aParLocation);
+		
+		rightmostEdge = getChildCount() * childWidth + aParLocation[0];
+		
+		if (parentWidth < rightmostEdge)
+		{
+			rightmostEdge = aParLocation[0] + parentWidth;
+		}
+		
+		delta = -(rightmostEdge - childWidth);
+		
+//		Log.d("anim", player.getName() + " aW " + rightmostEdge);
+		
+		return delta;
+	}
+	
+	private Animation getNewDrawAnim()
+	{
+		TranslateAnimation anim;
+		
+		anim = new TranslateAnimation(animDeltaX, 0, animDeltaY, 0);
+		
+		anim.setDuration(animDuration);
+		
+		return anim;
 	}
 	
 	public void setAnimationsDuration(long durationMillis)
 	{
+		animDuration = durationMillis;
+		
 		if (animOnAdd != null)
 		{
 			animOnAdd.setDuration(durationMillis);
@@ -127,18 +235,45 @@ public class UIPlayer extends LinearLayout implements AnimationListener, DropTar
 		return marg - getPaddingRight();
 	}
 
+	private void addToContainer(List<Card> viewsToAdd)
+	{
+		boolean shouldAnimate = bAnimOnAdd && layoutAnimFinisdhed;
+		
+		lpCards.rightMargin = getRightMarg(getChildCount() + viewsToAdd.size());
+		requestLayout();
+		int i = viewsToAdd.size();
+
+		for (Card c : viewsToAdd)
+		{
+			UICard child = new UICard(getContext(), c, visible);
+			child.setOnTouchListener(onTouchListener);
+			child.setLayoutParams(lpCards);
+			addView(child);
+			
+			if (shouldAnimate)
+			{
+				i--;
+				animDeltaX = calcDrawDeltaX(child);
+				animOnAdd = getNewDrawAnim();
+				animOnAdd.setDuration(animDuration - i * 100);
+				child.startAnimation(animOnAdd);	
+			}
+		}
+	}
+
 	@Override
 	protected void onFinishInflate()
 	{
 		super.onFinishInflate();
-		
+
 		if (getLayoutAnimation() == null)
 		{
+			layoutAnimFinisdhed = true;
 			return;
 		}
 		
 		new Runnable(){
-			
+
 			@Override
 			public void run()
 			{
@@ -157,27 +292,7 @@ public class UIPlayer extends LinearLayout implements AnimationListener, DropTar
 			}
 		}.run();
 	}
-
-	private void addToContainer(List<Card> viewsToAdd)
-	{
-		boolean shouldAnimate = animOnAdd != null && layoutAnimFinisdhed;
-		
-		lpCards.rightMargin = getRightMarg(getChildCount() + viewsToAdd.size());
-		requestLayout();
-		
-		for (Card c : viewsToAdd)
-		{
-			UICard child = new UICard(getContext(), c, visible);
-			child.setOnTouchListener(onTouchListener);
-			child.setLayoutParams(lpCards);
-			addView(child);
-			if (shouldAnimate)
-			{
-				child.startAnimation(animOnAdd);	
-			}
-		}
-	}
-
+	
 	/**
 	 * 
 	 * @param c
@@ -196,7 +311,7 @@ public class UIPlayer extends LinearLayout implements AnimationListener, DropTar
 		}
 
 		int childs = getChildCount();
-		boolean willStartAnimate = toRemove.isEmpty() && animOnRemove != null;
+		
 		View v;
 
 		for (int i = 0; i < childs && atMost > 0; i++)
@@ -204,23 +319,20 @@ public class UIPlayer extends LinearLayout implements AnimationListener, DropTar
 			v = getChildAt(i);
 			if (v.getTag().equals(c))
 			{
-				if (animOnRemove == null)
+				animDeltaX = calcPlayDeltaX((UICard) v);
+				
+				if (bAnimOnRemove)
 				{
-					removeView(v);
+					animOnRemove = getNewPlayAnim();
+					((UICard) v).setVisible(true);
+					((UICard) v).postSetImage("");
 				}
-				else
-				{
-					toRemove.add(v);
-				}
+				
+				removeFromContainer(i, success);
 				atMost--;
 			}
 		}
 
-		if (willStartAnimate)
-		{
-			v = toRemove.get(0);
-			v.startAnimation(animOnRemove);
-		}
 		return childs > getChildCount();
 	}
 
@@ -230,7 +342,8 @@ public class UIPlayer extends LinearLayout implements AnimationListener, DropTar
 		{
 			return false;
 		}
-
+		
+		boolean willStartAnimate = toRemove.isEmpty() && animOnRemove != null;
 		int childs = getChildCount();
 		View v = getChildAt(index);
 
@@ -241,6 +354,10 @@ public class UIPlayer extends LinearLayout implements AnimationListener, DropTar
 		else
 		{
 			toRemove.add(v);
+		}
+		
+		if (willStartAnimate)
+		{
 			v.startAnimation(animOnRemove);
 		}
 
@@ -296,6 +413,23 @@ public class UIPlayer extends LinearLayout implements AnimationListener, DropTar
 	{
 		this.tvInfo = tvInfo;
 	}
+	
+	public void setInfo()
+	{
+		View parent = getRootView();
+		
+//		Log.d("dbg", getName() + " par " + parent);
+		
+		setInfo((TextView) parent.findViewById(infoId));
+		
+	}
+
+	@Override
+	public void setVisibility(int visibility)
+	{
+		tvInfo.setVisibility(visibility);
+		super.setVisibility(visibility);
+	}
 
 	public void setVisible(boolean visible)
 	{
@@ -305,15 +439,24 @@ public class UIPlayer extends LinearLayout implements AnimationListener, DropTar
 	private void refreshInfo()
 	{
 		final String info = player.toString();
+		Handler h = getHandler();
 		
-//		getHandler().post(new Runnable(){
-//
-//			@Override
-//			public void run()
-//			{
-				tvInfo.setText(info);
-//			}
-//		});
+		if (h == null)
+		{
+//			Log.d(tag, getName() + " my handler sucks!! :@");
+			tvInfo.setText(info);
+		}
+		else 
+		{
+			h.post(new Runnable(){
+	
+				@Override
+				public void run()
+				{
+					tvInfo.setText(info);
+				}
+			});
+		}
 	}
 
 	public OnTouchListener getOnTouchListener()
@@ -364,41 +507,27 @@ public class UIPlayer extends LinearLayout implements AnimationListener, DropTar
 	
 	@Override
 	public void onAnimationRepeat(Animation animation)
-	{
-
-	}
+	{ }
 
 	@Override
 	public void onAnimationStart(Animation animation)
-	{
-
-	}
+	{ }
 
 	@Override
 	public void onDrop(DragSource source, int x, int y, int xOffset, int yOffset,
-						Object dragInfo)
-	{
-	}
+						Object dragInfo) {}
 
 	@Override
 	public void onDragEnter(DragSource source, int x, int y, int xOffset, int yOffset,
-							Object dragInfo)
-	{
-	}
+							Object dragInfo) { }
 
 	@Override
 	public void onDragOver(DragSource source, int x, int y, int xOffset, int yOffset,
-							Object dragInfo)
-	{
-
-	}
+							Object dragInfo) { }
 
 	@Override
 	public void onDragExit(DragSource source, int x, int y, int xOffset, int yOffset,
-							Object dragInfo)
-	{
-	
-	}
+							Object dragInfo) { }
 
 	@Override
 	public boolean acceptDrop(DragSource source, int x, int y, int xOffset, int yOffset,
@@ -458,6 +587,11 @@ public class UIPlayer extends LinearLayout implements AnimationListener, DropTar
 		player.setAI(ai);
 	}
 	
+	public void setTeam(int team)
+	{
+		player.setTeam(team);
+	}
+	
 	@Override
 	public Card willPlay()
 	{
@@ -496,6 +630,11 @@ public class UIPlayer extends LinearLayout implements AnimationListener, DropTar
 		return player.getWins();
 	}
 	
+	public int getTeam()
+	{
+		return player.getTeam();
+	}
+	
 	public void setWins(int wins)
 	{
 		player.setWins(wins);
@@ -505,26 +644,37 @@ public class UIPlayer extends LinearLayout implements AnimationListener, DropTar
 	{
 		player.win();
 	}
-		
-	private class InnerPlayer extends Player
+	
+	@Override
+	public int getMode()
 	{
-
+		return player.getMode();
+	}
+	
+	public void setPlayerTo(Player p)
+	{
+		int aiMode = p.getAI() != null ? p.getAI().getMode() : AgoniaAI.MODE_NO_AI;
+		player.id = p.getId();
+		player.setName(p.getName());
+		player.setSetScore(p.getSetScore());
+		player.setSetWins(p.getSetWins());
+		player.setAI(AgoniaAIBuilder.createById(aiMode, player));
+		player.setPlayingInSet(true);
+	}
+		
+	public class InnerPlayer extends Player
+	{
 		public InnerPlayer()
 		{
 			super();
 		}
 
-		@SuppressWarnings("unused")
+		// unused
 		public InnerPlayer(String name, int team)
 		{
 			super(name, team);
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see devN.games.Player#draw()
-		 */
 		@Override
 		public List<Card> draw()
 		{
@@ -535,11 +685,6 @@ public class UIPlayer extends LinearLayout implements AnimationListener, DropTar
 			return drawed;
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see devN.games.Player#draw(int)
-		 */
 		@Override
 		public List<Card> draw(int n)
 		{
@@ -550,11 +695,6 @@ public class UIPlayer extends LinearLayout implements AnimationListener, DropTar
 			return drawed;
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see devN.games.Player#draw(java.util.List)
-		 */
 		@Override
 		public List<Card> draw(List<Card> cards)
 		{
@@ -565,11 +705,6 @@ public class UIPlayer extends LinearLayout implements AnimationListener, DropTar
 			return drawed;
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see devN.games.Player#playCard(devN.games.Card)
-		 */
 		@Override
 		public boolean playCard(Card c)
 		{
@@ -580,11 +715,6 @@ public class UIPlayer extends LinearLayout implements AnimationListener, DropTar
 			return b;
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see devN.games.Player#playCard(int)
-		 */
 		@Override
 		public boolean playCard(int i)
 		{
@@ -595,11 +725,6 @@ public class UIPlayer extends LinearLayout implements AnimationListener, DropTar
 			return b;
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see devN.games.Player#addScore(int)
-		 */
 		@Override
 		public void addScore(int points)
 		{

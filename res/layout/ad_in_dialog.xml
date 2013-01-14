@@ -10,9 +10,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         ads:adSize="SMART_BANNER"
+        ads:testDevices="TEST_EMULATOR"
         ads:adUnitId="a15007e97f87daa"
-        ads:loadAdOnCreate="true"
-        ads:testDevices="TEST_EMULATOR" >
+        ads:loadAdOnCreate="true" >
     </com.google.ads.AdView>
 
 </HorizontalScrollView>

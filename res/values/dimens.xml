@@ -6,6 +6,14 @@
     <dimen name="how_btn_width">150dp</dimen>
     <dimen name="how_mid_btn_margin">2dp</dimen>
     <dimen name="how_tv_margin">20dp</dimen>
+    
     <dimen name="ad_top_bottom_margin">5dp</dimen>
+    
     <dimen name="dlg_ace_grid_padding">10dp</dimen>
+    
+    <dimen name="dlg_set_finish_ic_height">280dp</dimen>
+    
+    <dimen name="dlg_finish_txv_handString">15dp</dimen>
+    
+    <dimen name="menu_btn_margin_bottom">20dp</dimen>
 </resources>

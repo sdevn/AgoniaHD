@@ -5,10 +5,10 @@
     <string name="dlg_finish_title">Τέλος παχνιδίου!</string>
     <string name="dlg_seven_btn_draw">Τράβηξε (%d)</string>
     <string name="dlg_seven_btn_play">Πέτα το!</string>
-    <string name="dlg_seven_title">Θα παίξεις Εφτά ή θα τραβήξεις;</string>
+    <string name="dlg_seven_title">Διάλλεξε Εφτά ή τραβήξε</string>
     <string name="exit">Έξοδος</string>
     <string name="dlg_finish_btn_play_again">Παίξε ξανά</string>
-    <string name="default_p1_name">Παίκτης</string>
+    <string name="default_p1_name">Παίκτ</string>
     <string name="default_p2_name">Υπολ</string>
     <string name="pref_general_title">Γενικές</string>
     <string name="pref_ingame_title">Παιχνιδιού</string>
@@ -26,15 +26,6 @@
     <string name="deck_finish_recycle">Χρησημοποιησε τις ήδη πεταμένες κάρτες για τράπουλα</string>
     <string name="deck_finish_pick_new">Βάλε μια νέα τράπουλα</string>
     <string name="deck_finish_finish_game">Τελείωσε το πααιχνίδι</string>
-    <string name="dlg_save_title">Αποθήκευση παιχνιδιού</string>
-    <string name="dlg_save_message">Το παιχνίδι δεν τελείωσε!\nΤί θέλεις να κάνεις;\n(πάτα το κουμπί πίσω για να συνεχίσεις να παίζεις)</string>
-    <string name="dlg_save_btn_save">Αποθ.</string>
-    <string name="dlg_save_btn_exit">Εξοδος</string>
-    <string name="dlg_save_btn_finish_game">Τέλος παιχνιδιού</string>
-    <string name="dlg_load_title">Επαναφορά παιχνιδιού</string>
-    <string name="dlg_load_message">Υπάρχει αποθηκευμένο παιχνίδι!\nΘες να το σνεχίσεις;</string>
-    <string name="dlg_load_btn_load">Σύνέχεια αποθ.</string>
-    <string name="dlg_load_btn_new_game">Νέο παιχνίδι</string>
     <string name="points">Πόντοι</string>
     <string name="draw">Ισσοπαλία</string>
     <string name="wins">Νίκες</string>
@@ -65,4 +56,28 @@
     
     <string name="pref_ace_on_ace_summ">Ο Άσσος μπορεί να παιχτεί πάνω σε Άσσο</string>
     <string name="pref_ace_finish_summ">Οι παίκτες μπορούν να βγουν με Άσσο</string>
+    
+    <string name="dlg_exit_title">Θα εγκαταλείψεις;</string>
+    <string name="dlg_exit_message">Αν εγκαταλειψεις το παιχνίδι θα μετρήσει ως ήττα!!\nΕίσαι σίγορος;</string>
+    
+	<string name="cpu1">Υπολ1</string>
+	<string name="cpu2">Υπολ2</string>
+	<string name="cpu3">Υπολ3</string>
+	<string name="friend">Φίλος</string>
+	
+	<string name="set_type_goal">Παρτίδα με:</string>
+	<string name="players">Παίχτες:</string>
+	
+	<string name="set_btn_start">Νέα παρτίδα</string>
+	
+	<string name="set_btn_continue_next">Επόμενο παιχνίδι</string>
+	<string name="set_btn_continue_winner">Δείξε το νικητή</string>
+	<string name="winner_team">Νικήτρια ομάδα: %s</string>
+	<string name="teams">Ομάδες</string>
+	<string name="set_info" formatted="false">Τύπος: %s, Στόχος: %d, Γύρος: %d</string>
+
+	<string name="dlg_rate_title">Σου αρέσει η Αγωνία;</string>
+    <string name="dlg_rate_message">Αν σου αρέσει η Αγωνία βαθμολόγισε την με πέντε αστεράκια και ένα καλό σχόλιο!!\nΑν πιστεύεις οτι λείπει κατι ή κάτι δεν σου αρέσει, πες το μου και θα το φτιάξω.\nΕυχαριστώ!!</string>
+	
+        <string name="dlg_comming_soon_message">Δυστυχώς αυτή η αναβάθμιση άργησε αρκετά. Η επόμενη θα βγει στο τέλος Φεβρουαρίου.\nΘα έχει αλλαγές στα γραφικά (κυρίως στην τράπουλα και στα κουμπιά) καθώς και δυνατότητα αποθήκευσης Παιχνιδιού αλλά και Παρτίδας.\nΕυχαριστώ πολύ για τη στήριξη σας!! :)</string>
 </resources>

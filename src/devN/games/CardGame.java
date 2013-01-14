@@ -12,30 +12,34 @@ public abstract class CardGame
 	protected int START_DEAL_COUNT;
 	protected int STACK_TOP_COUNT;
 	protected Deck deck;
-	protected Player p1, p2;
+	protected List<Player> players = new ArrayList<Player>();;
 	protected List<Card> stackTop;
-	protected List<GameListener> listeners = new ArrayList<GameListener>();
+	protected static List<GameListener> gameListeners = new ArrayList<GameListener>();
 	
-	public CardGame(Deck d, Player p1, Player p2, int startDeal, int stackTopSize)
+	public CardGame(Deck d, List<Player> players, int startDeal, int stackTopSize)
 	{
 //		startDeal = DONT_DEAL;
-//		
-		init(d, p1, p2, startDeal);
-//
-//		List<Card> debugDraw = new ArrayList<Card>();
-//		debugDraw.add(new Card(0, 7));
-//		debugDraw.add(new Card(1, 7));
-//		
-//		p1.draw(debugDraw);
-//		
-//		debugDraw = new ArrayList<Card>();
-//		debugDraw.add(new Card(2, 7));
-//		debugDraw.add(new Card(3, 7));
-//		p2.draw(debugDraw);
-//		
-//		p1.draw(5);
-//		p2.draw(5);
+		
+		init(d, players, startDeal);
 
+//		List<Card> debugDraw = new ArrayList<Card>();
+//		debugDraw.add(new Card(0, 8));
+//		debugDraw.add(new Card(1, 8));
+//		debugDraw.add(new Card(2, 8));
+//		debugDraw.add(new Card(3, 8));
+//		
+//		for (Player p : players)
+//		{
+//			if (p.isRealPlayer())
+//			{
+//				p.draw(debugDraw);
+//			}
+//			else 
+//			{
+//				p.draw();
+//			}
+//		}
+		
 		STACK_TOP_COUNT = stackTopSize;		
 		
 		if (startDeal == DONT_DEAL) 
@@ -50,37 +54,81 @@ public abstract class CardGame
 		{
 			stackTop = deck.draw(STACK_TOP_COUNT);
 		}
+		
+		informInit(stackTop);
 	}
 
-	public CardGame(Deck d, Player p1, Player p2, int startDeal, List<Card> stackTopCards)
+	public CardGame(Deck d, List<Player> players, int startDeal, List<Card> stackTopCards)
 	{
 		stackTop = d.draw(stackTopCards);
 		STACK_TOP_COUNT = stackTop.size();
 		
-		init(d, p1, p2, startDeal);
+		init(d, players, startDeal);
+		
+		informInit(stackTop);
 	}
 	
-	private void init(Deck d, Player p1, Player p2, int startDeal)
+	private void init(Deck d, List<Player> players, int startDeal)
 	{
 		SPECIAL_CARDS = new ArrayList<Card>();
 		setSpecialCards();
 		START_DEAL_COUNT = startDeal;
 		deck = d;
-		this.p1 = p1;
-		this.p2 = p2;
-		
-		this.p1.setDeck(deck);
-		this.p2.setDeck(deck);
-		
-		this.p1.setGame(this);
-		this.p2.setGame(this);
-		
+		this.players = players;
 		deck.shuffle();
-		
+
+		for (Player p : players)
+		{
+			p.setDeck(deck);
+			p.setGame(this);
+		}
+
 		if (startDeal != DONT_DEAL)
 		{
-			p1.draw(START_DEAL_COUNT);
-			p2.draw(START_DEAL_COUNT);
+			for (Player p : players)
+			{
+				draw(p, START_DEAL_COUNT, true);
+			}
+		}
+	}
+	
+	protected void informInit(List<Card> stackTopCards)
+	{
+		for (GameListener listener : gameListeners)
+		{
+			listener.initGameParams(players.size(), stackTopCards);
+		}
+	}
+	
+	protected void informDraw(Player who, int n)
+	{
+		for (GameListener listener : gameListeners)
+		{
+			listener.onDrawFromDeck(who, n);
+		}
+	}
+	
+	protected void informPlay(Player who, Card c)
+	{
+		for (GameListener listener : gameListeners)
+		{
+			listener.onPlay(who, c);
+		}
+	}
+	
+	protected void informPlay(Player who, List<Card> cards)
+	{
+		for (GameListener listener : gameListeners)
+		{
+			listener.onPlay(who, cards);
+		}
+	}
+	
+	protected void informPlay(Player who, int cCards)
+	{
+		for (GameListener listener : gameListeners)
+		{
+			listener.onPlay(who, cCards);
 		}
 	}
 	
@@ -110,17 +158,11 @@ public abstract class CardGame
 		return SPECIAL_CARDS.contains(c);
 	}
 
-	/**
-	 * @return the deck
-	 */
 	public Deck getDeck()
 	{
 		return deck;
 	}
 
-	/**
-	 * @return the top card
-	 */
 	public List<Card> getStackTop()
 	{
 		return stackTop;
@@ -131,26 +173,24 @@ public abstract class CardGame
 		return stackTop.get(index);
 	}
 
-	/**
-	 * @return the player
-	 */
-	public Player getPlayer(int id)
+	public Player getPlayerById(int id)
 	{
-		if (id == p1.getId())
+		for (Player p : players)
 		{
-			return p1;
+			if (p.getId() == id)
+			{
+				return p;
+			}
 		}
-		if (id == p2.getId())
-		{
-			return p2;
-		}
+		
 		return null;
 	}
 
-	/**
-	 * @param top
-	 *            the top card to set
-	 */
+	public List<Player> getPlayers()
+	{
+		return players;
+	}
+
 	public void setTop(List<Card> top)
 	{
 		this.stackTop = top;
@@ -161,30 +201,24 @@ public abstract class CardGame
 		stackTop.set(index, c);
 	}
 
-	/**
-	 * @return the sTART_DEAL_COUNT
-	 */
 	public int START_DEAL_COUNT()
 	{
 		return START_DEAL_COUNT;
 	}
 
-	/**
-	 * @return the sTACK_TOP_COUNT
-	 */
 	public int STACK_TOP_COUNT()
 	{
 		return STACK_TOP_COUNT;
 	}
 
-	/**
-	 * @param deck the deck to set
-	 */
 	public void setDeck(Deck deck)
 	{
 		this.deck = deck;
-		this.p1.setDeck(deck);
-		this.p2.setDeck(deck);
+		
+		for (Player p : players)
+		{
+			p.setDeck(deck);
+		}
 	}
 	
 	public void play(Player p, Card c)
@@ -197,11 +231,75 @@ public abstract class CardGame
 		if (has && can)
 		{
 			p.playCard(c);
+			informPlay(p, c);
 		}
 	}
 	
-	public void addGameListener(GameListener listener)
+	public static void addGameListener(GameListener listener)
 	{
-		listeners.add(listener);
+		gameListeners.add(listener);
 	}
+
+//	/**
+//	 * Saved in form:
+//	 * [deck] 
+//	 * [players_size] [player0] ... [playerN] [stackTop_size] [stackTop_card0] ... [stackTop_cardM]
+//	 * 
+//	 * where N [players_size] is and M is [stackTop_size]
+//	 */
+//	@Override
+//	public void save(DataOutputStream d) throws IOException
+//	{
+//		// players
+//		d.writeInt(players.size());
+//		for (Player p : players)
+//		{
+//			p.save(d);
+//		}
+//		
+//		// stackTop
+//		d.writeInt(stackTop.size());
+//		for (Card c : stackTop)
+//		{
+//			c.save(d);
+//		}
+//		
+//		deck.save(d);
+//	}
+//
+//	@Override
+//	public void load(DataInputStream d) throws IOException
+//	{
+//		int i;
+//		List<Player> tempPlayers = new ArrayList<Player>();
+//		stackTop = new ArrayList<Card>();
+//		
+//		// player
+//		i = d.readInt();
+//		while (i > 0)
+//		{
+//			tempPlayers.add(new Player(d));
+//			--i;
+//		}
+//		
+//		i = 0;
+//		for (Player p : tempPlayers)
+//		{
+//			deck.cards().clear();
+//			deck.put(p.getHand(), false);
+//			players.get(i).draw(p.getHand());
+//			i++;
+//		}
+//		
+//		
+//		// stackTop
+//		i = d.readInt();
+//		while (i > 0)
+//		{
+//			stackTop.add(new Card(d));
+//			--i;
+//		}
+//		
+//		deck.load(d);
+//	}
 }

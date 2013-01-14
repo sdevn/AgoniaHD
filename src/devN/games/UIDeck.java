@@ -12,19 +12,29 @@ public class UIDeck extends UICard
 {
 	private TextView tvInfo;
 	private InnerDeck deck = new InnerDeck();
-	boolean isWideScreen = false;
+	boolean isWideScreen = true;
 	private int infoId;
 
 	public UIDeck(Context context, AttributeSet attrs)
 	{
 		super(context, attrs);
-		TypedArray taInfo = context.obtainStyledAttributes(attrs, R.styleable.UIInfo);
-		infoId = taInfo.getResourceId(R.styleable.UIInfo_info, 0);
-		if (infoId != 0)
+		TypedArray a = getContext().obtainStyledAttributes(attrs, R.styleable.UIInfo);
+
+		final int N = a.getIndexCount();
+		for (int i = 0; i < N; i++) 
 		{
-//			tvInfo = (TextView) findViewById(infoId);
-			taInfo.recycle();
-		}
+            int attr = a.getIndex(i);
+            switch (attr) 
+            {
+            case R.styleable.UIInfo_info:
+            	infoId = a.getResourceId(attr, -1);
+            	break;
+            }
+        }
+		
+//		Log.d("dbg", "deck info = " + infoId);
+		
+		a.recycle();
 	}
 
 	public UIDeck(Context context, TextView info)
@@ -94,6 +104,16 @@ public class UIDeck extends UICard
 	{
 		this.tvInfo = tvInfo;
 	}
+	
+	public void setInfo()
+	{
+		View parent = getRootView();
+		
+//		Log.d("dbg", "deck par " + parent);
+		
+		setInfo((TextView) parent.findViewById(infoId));
+		
+	}
 
 	public boolean isWideScreen()
 	{
@@ -117,7 +137,7 @@ public class UIDeck extends UICard
 			@Override
 			public void run()
 			{
-				tvInfo.setText(Integer.toString(size()));
+				tvInfo.setText("" + size() + "");
 			}
 		});
 	}
@@ -134,11 +154,6 @@ public class UIDeck extends UICard
 			super();
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see devN.games.Deck#draw()
-		 */
 		@Override
 		public List<Card> draw()
 		{
@@ -147,11 +162,6 @@ public class UIDeck extends UICard
 			return c;
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see devN.games.Deck#draw(int)
-		 */
 		@Override
 		public List<Card> draw(int n)
 		{
@@ -160,11 +170,6 @@ public class UIDeck extends UICard
 			return c;
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see devN.games.Deck#draw(java.util.List)
-		 */
 		@Override
 		public List<Card> draw(List<Card> cards)
 		{
@@ -173,11 +178,6 @@ public class UIDeck extends UICard
 			return c;
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see devN.games.Deck#put(devN.games.Card, boolean)
-		 */
 		@Override
 		public void put(Card c, boolean suffleAfter)
 		{
@@ -185,11 +185,6 @@ public class UIDeck extends UICard
 			refreshInfo();
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see devN.games.Deck#put(java.util.List, boolean)
-		 */
 		@Override
 		public void put(List<Card> c, boolean suffleAfter)
 		{

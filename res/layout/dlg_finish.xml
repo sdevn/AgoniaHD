@@ -1,279 +1,63 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:app="http://schemas.android.com/apk/res/devN.games.agonia"
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:ads="http://schemas.android.com/apk/lib/com.google.ads"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/dlg_finish_content"
     android:layout_width="wrap_content"
-    android:layout_height="wrap_content" >
+    android:layout_height="wrap_content"
+    android:background="@color/tsoha"
+    android:orientation="vertical" >
 
-    <LinearLayout android:id="@+id/dlg_finish_content"
+    <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="vertical" >
+        android:text="@string/default_p1_name"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/dlg_finish_txv_handString"
+        android:text="@string/blank"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
 
-        <TextView
-            android:id="@+id/dlg_finish_p1_name"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/default_p1_name"
-            android:textAppearance="?android:attr/textAppearanceLarge" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/default_p2_name"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/dlg_finish_txv_handString"
+        android:text="@string/blank"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
 
-        <TextView
-            android:id="@+id/dlg_finish_p1_hand"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/blank"
-            android:textAppearance="?android:attr/textAppearanceMedium" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/default_p2_name"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/dlg_finish_txv_handString"
+        android:text="@string/blank"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
 
-        <ImageView
-            style="@style/divider_horizontal"
-            android:contentDescription="@string/divider" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/default_p2_name"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/dlg_finish_txv_handString"
+        android:text="@string/blank"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
 
-        <TextView
-            android:id="@+id/dlg_finish_p2_name"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/default_p2_name"
-            android:textAppearance="?android:attr/textAppearanceLarge" />
+    <include layout="@layout/ad_in_dialog" />
 
-        <TextView
-            android:id="@+id/dlg_finish_p2_hand"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/blank"
-            android:textAppearance="?android:attr/textAppearanceMedium" />
-
-        <ImageView
-            style="@style/divider_horizontal"
-            android:contentDescription="@string/divider" />
-
-        <TextView
-            android:id="@+id/dlg_finish_winner"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/winner"
-            android:textAppearance="?android:attr/textAppearanceLarge" />
-
-        <ImageView
-            style="@style/divider_horizontal"
-            android:contentDescription="@string/divider" />
-
-        <android.support.v7.widget.GridLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginTop="5dp"
-            app:columnCount="7"
-            app:rowCount="9" >
-
-            <!-- border left line -->
-
-            <ImageView
-                style="@style/divider_vertical"
-                app:layout_column="0"
-                app:layout_columnSpan="1"
-                app:layout_gravity="fill_vertical"
-                app:layout_row="0"
-                app:layout_rowSpan="9"
-                android:contentDescription="@string/divider" />
-
-            <!-- border top line -->
-
-            <ImageView
-                style="@style/divider_horizontal"
-                app:layout_column="0"
-                app:layout_columnSpan="7"
-                app:layout_gravity="fill_horizontal"
-                app:layout_row="0"
-                app:layout_rowSpan="1"
-                android:contentDescription="@string/divider" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:layout_column="0"
-                app:layout_columnSpan="7"
-                app:layout_gravity="center_horizontal"
-                app:layout_row="1"
-                app:layout_rowSpan="1"
-                android:text="@string/total"
-                android:textAppearance="?android:attr/textAppearanceMedium" />
-
-            <!-- line between Total/WinsPoints -->
-
-            <ImageView
-                style="@style/divider_horizontal"
-                app:layout_column="0"
-                app:layout_columnSpan="7"
-                app:layout_gravity="fill_horizontal"
-                app:layout_row="2"
-                app:layout_rowSpan="1"
-                android:contentDescription="@string/divider" />
-
-            <!-- line between PlayerNames/Wins -->
-
-            <ImageView
-                style="@style/divider_vertical"
-                app:layout_column="2"
-                app:layout_columnSpan="1"
-                app:layout_gravity="fill_vertical"
-                app:layout_row="3"
-                app:layout_rowSpan="6"
-                android:contentDescription="@string/divider" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="3dp"
-                android:layout_marginRight="3dp"
-                app:layout_column="3"
-                app:layout_columnSpan="1"
-                app:layout_gravity="center_horizontal"
-                app:layout_row="3"
-                app:layout_rowSpan="1"
-                android:text="@string/wins"
-                android:textAppearance="?android:attr/textAppearanceSmall" />
-
-            <!-- line between Wins/Points -->
-
-            <ImageView
-                style="@style/divider_vertical"
-                app:layout_column="4"
-                app:layout_columnSpan="1"
-                app:layout_gravity="fill_vertical"
-                app:layout_row="3"
-                app:layout_rowSpan="6"
-                android:contentDescription="@string/divider" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="3dp"
-                android:layout_marginRight="3dp"
-                app:layout_column="5"
-                app:layout_columnSpan="1"
-                app:layout_gravity="center_horizontal"
-                app:layout_row="3"
-                app:layout_rowSpan="1"
-                android:text="@string/points"
-                android:textAppearance="?android:attr/textAppearanceSmall" />
-
-            <!-- border right line -->
-
-            <ImageView
-                style="@style/divider_vertical"
-                app:layout_column="6"
-                app:layout_columnSpan="1"
-                app:layout_gravity="fill_vertical"
-                app:layout_row="0"
-                app:layout_rowSpan="9"
-                android:contentDescription="@string/divider" />
-
-            <!-- line between WinsPoints/PlayerNames -->
-
-            <ImageView
-                style="@style/divider_horizontal"
-                app:layout_column="0"
-                app:layout_columnSpan="7"
-                app:layout_gravity="fill_horizontal"
-                app:layout_row="4"
-                app:layout_rowSpan="1"
-                android:contentDescription="@string/divider" />
-
-            <TextView
-                android:id="@+id/dlg_finish_border_p1_name"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:layout_column="1"
-                app:layout_columnSpan="1"
-                app:layout_gravity="left"
-                app:layout_row="5"
-                app:layout_rowSpan="1"
-                android:text="@string/default_p1_name"
-                android:textAppearance="?android:attr/textAppearanceSmall" />
-
-            <TextView
-                android:id="@+id/dlg_finish_border_p1_wins"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:layout_column="3"
-                app:layout_columnSpan="1"
-                app:layout_gravity="center_horizontal"
-                app:layout_row="5"
-                app:layout_rowSpan="1"
-                android:text="@string/blank"
-                android:textAppearance="?android:attr/textAppearanceSmall" />
-
-            <TextView
-                android:id="@+id/dlg_finish_border_p1_points"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:layout_column="5"
-                app:layout_columnSpan="1"
-                app:layout_gravity="center_horizontal"
-                app:layout_row="5"
-                app:layout_rowSpan="1"
-                android:text="@string/blank"
-                android:textAppearance="?android:attr/textAppearanceSmall" />
-
-            <!-- line between PlayerNames -->
-
-            <ImageView
-                style="@style/divider_horizontal"
-                app:layout_column="0"
-                app:layout_columnSpan="7"
-                app:layout_gravity="fill_horizontal"
-                app:layout_row="6"
-                app:layout_rowSpan="1"
-                android:contentDescription="@string/divider" />
-
-            <TextView
-                android:id="@+id/dlg_finish_border_p2_name"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:layout_column="1"
-                app:layout_columnSpan="1"
-                app:layout_gravity="left"
-                app:layout_row="7"
-                app:layout_rowSpan="1"
-                android:text="@string/default_p2_name"
-                android:textAppearance="?android:attr/textAppearanceSmall" />
-
-            <TextView
-                android:id="@+id/dlg_finish_border_p2_wins"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:layout_column="3"
-                app:layout_columnSpan="1"
-                app:layout_gravity="center_horizontal"
-                app:layout_row="7"
-                app:layout_rowSpan="1"
-                android:text="@string/blank"
-                android:textAppearance="?android:attr/textAppearanceSmall" />
-
-            <TextView
-                android:id="@+id/dlg_finish_border_p2_points"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:layout_column="5"
-                app:layout_columnSpan="1"
-                app:layout_gravity="center_horizontal"
-                app:layout_row="7"
-                app:layout_rowSpan="1"
-                android:text="@string/blank"
-                android:textAppearance="?android:attr/textAppearanceSmall" />
-
-            <!-- border bottom line -->
-
-            <ImageView
-                style="@style/divider_horizontal"
-                app:layout_column="0"
-                app:layout_columnSpan="7"
-                app:layout_gravity="fill_horizontal"
-                app:layout_row="8"
-                app:layout_rowSpan="1"
-                android:contentDescription="@string/divider" />
-        </android.support.v7.widget.GridLayout>
-
-        <include layout="@layout/ad_in_dialog" />
-    </LinearLayout>
-</ScrollView>
+</LinearLayout>

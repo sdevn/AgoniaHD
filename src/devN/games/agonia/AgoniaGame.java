@@ -1,15 +1,10 @@
 package devN.games.agonia;
 
-import static android.content.res.Configuration.SCREENLAYOUT_LONG_MASK;
-import static android.content.res.Configuration.SCREENLAYOUT_LONG_YES;
-import static android.util.Log.d;
 import static devN.games.Card.NULL_CARD;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import static devN.games.agonia.GameSetActivity.ID_AI_MODES;
+import static devN.games.agonia.GameSetActivity.ID_GAMESET;
+import static devN.games.agonia.GameSetActivity.ID_NEW_SET;
+import static devN.games.agonia.GameSetActivity.ID_PLAYERS_NUM;
 import java.util.ArrayList;
 import java.util.List;
 import android.app.Activity;
@@ -18,14 +13,12 @@ import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnCancelListener;
 import android.content.DialogInterface.OnDismissListener;
-import android.content.SharedPreferences;
-import android.content.SharedPreferences.Editor;
-import android.content.res.Configuration;
+import android.content.Intent;
 import android.content.res.Resources;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -33,39 +26,40 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup.OnHierarchyChangeListener;
-import android.view.WindowManager.BadTokenException;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
-import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
+import devN.etc.TextColorAnimation;
+import devN.etc.TextColorAnimationGroup;
 import devN.etc.dragdrop.DragController;
 import devN.etc.dragdrop.DragSource;
 import devN.games.Card;
-import devN.games.CardGame;
+import devN.games.GameSet;
 import devN.games.Player;
 import devN.games.UICard;
 import devN.games.UIDeck;
 import devN.games.UIPlayer;
 import devN.games.UIStackTop;
+import devN.games.agonia.AgoniaAI.AgoniaAIBuilder;
 
-public class AgoniaGame extends Activity implements DragSource, OnTouchListener
+public class AgoniaGame extends Activity implements DragSource, OnTouchListener, AgoniaGameListener
 {
-	public static final int DIALOG_ACE_ID		= 0;
-	public static final int DIALOG_SEVEN_ID		= 1;
-	public static final int DIALOG_FINISH_ID	= 2; 	// game finished
-	public static final int DIALOG_SAVE_ID		= 3;	// save game
-	public static final int DIALOG_LOAD_ID		= 4;	// load game
+	// TODO: GameHistory dialog
+	// TODO: Save / Load game
+	// TODO: Statistics for game wins/loses/total games
+	
+	public static final int DIALOG_ACE_ID			= 0;
+	public static final int DIALOG_SEVEN_ID			= 1;
+	public static final int DIALOG_FINISH_ID		= 2; 	// game finished
+	public static final int DIALOG_EXIT_ID			= 3;
 
-	public static final String SAVE_FILE = "agonia.sav";
-	public static final String PREF_SAVE = "save.pref";
-	public static final String KEY_SAVE = "save";
 	public static final String TAG = "dbg";
 
 	protected Agonia game;
 	protected UIPlayer up;
-	protected UIPlayer ucp;
+	protected UIPlayer[] aupCpu = new UIPlayer[3];
 	protected UICard draggedCard;
 	protected UIStackTop stackTop;
 	protected UIDeck deck;
@@ -75,8 +69,22 @@ public class AgoniaGame extends Activity implements DragSource, OnTouchListener
 	private DragController dragController;
 	private	LayoutInflater inflater;
 	private Card selectedSeven = Card.NULL_CARD;
+	private List<Player> players = new ArrayList<Player>();
+	private GameSet set;
+	private int cCpu;
+	private LinearLayout infosContainer;
+	private TextColorAnimationGroup tcaGroup;
+	private boolean isNewSet;
+
+	/**
+	 * paiktes pou anamihtikan se Seven-Seven...
+	 * wste na kseroume an kapoios petakse to teleutaio tou filo
+	 */
+	private List<Player> sevenPlayers = new ArrayList<Player>();
 	
-	/** Called when the activity is first created. */
+	/**
+	 * Bundle should contains params for GameSet.
+	 */
 	@Override
 	public void onCreate(Bundle savedInstanceState)
 	{
@@ -85,99 +93,99 @@ public class AgoniaGame extends Activity implements DragSource, OnTouchListener
 
 		AgoniaAI cpuAI;
 		String p1Name;
-		String p2Name;
-		int p1score;
-		int p2score;
-		int p1wins;
-		int p2wins;
-		TextView upInfo;
-		TextView ucpInfo;
-		TextView deckInfo;
-		boolean isWideScreen;
+		String[] aCpuNames = new String[3];;
 		Resources res = getResources();
+
+		Intent intent = getIntent();
 		
+		int numPlayers;
+		int modes[];
+		
+		isNewSet = intent.getBooleanExtra(ID_NEW_SET, true);
+		set = intent.getParcelableExtra(GameSetActivity.ID_GAMESET);
+		numPlayers = intent.getIntExtra(ID_PLAYERS_NUM, set.getPlayersCount());
+		cCpu = numPlayers - 1;
+		
+		tcaGroup = new TextColorAnimationGroup();
 		inflater = getLayoutInflater();
-		
+
 		if (F.settings == null)
 		{
 			new F(this);
 		}
-		
-		Configuration conf = res.getConfiguration();
-		isWideScreen = SCREENLAYOUT_LONG_YES == (conf.screenLayout & SCREENLAYOUT_LONG_MASK);
+
+		DisplayMetrics displayMetrics = new DisplayMetrics();
+		getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
 		
 		cpuDelay = res.getInteger(R.integer.cpu_delay);
 
 		p1Name = F.getString(F.KEY_P1_NAME, getString(R.string.default_p1_name));
-		p1score = F.getInt(F.KEY_P1_SCORE, 0);
-		p1wins = F.getInt(F.KEY_P1_WINS, 0);
-		
-		p2Name = F.getString(F.KEY_P2_NAME, getString(R.string.default_p2_name));
-		p2score = F.getInt(F.KEY_P2_SCORE, 0);
-		p2wins = F.getInt(F.KEY_P2_WINS, 0);
-		
-		upInfo = (TextView) findViewById(R.id.pName);
-		ucpInfo = (TextView) findViewById(R.id.cpName);
-		deckInfo = (TextView) findViewById(R.id.deckSize);
-		
 		up = (UIPlayer) findViewById(R.id.player);
-		up.setInfo(upInfo);
+		up.setInfo();
 		up.setName(p1Name);
-		up.setWins(p1wins);
-		up.addScore(p1score);
+		up.initDimensions(displayMetrics.widthPixels, displayMetrics.heightPixels / 3,
+							displayMetrics.widthPixels, displayMetrics.heightPixels);
 		up.setOnTouchListener(this);
+
+		aCpuNames[0] = getString(R.string.cpu1);
+		aCpuNames[1] = getString(R.string.cpu2);
+		aCpuNames[2] = getString(R.string.friend);
 		
-		ucp = (UIPlayer) findViewById(R.id.computer);
-		ucp.setInfo(ucpInfo);
-		ucp.setName(p2Name);
-		ucp.setWins(p2wins);
-		ucp.addScore(p2score);
-		ucp.setAnimationsDuration(cpuDelay);
-		ucp.setOnTouchListener(this);
+		aupCpu[0] = (UIPlayer) findViewById(R.id.cpu1);
+		aupCpu[1] = (UIPlayer) findViewById(R.id.cpu2);
+		aupCpu[2] = (UIPlayer) findViewById(R.id.cpu3);
+		
+		if (numPlayers == GameSetActivity.iPLAYERS_NUM_2v2 + 2)
+		{
+			aupCpu[1].setTeam(2);
+		}
+		
+		for (int i = cCpu; i < aupCpu.length; i++)
+		{
+			aupCpu[i].setInfo();
+			aupCpu[i].setVisibility(View.GONE);
+		}
+		
+		int cpusWidth = displayMetrics.widthPixels / cCpu;
+		modes = intent.getIntArrayExtra(ID_AI_MODES);
+		
+		for (int i = 0; i < cCpu; i++)
+		{
+			if (isNewSet)
+			{
+				cpuAI = AgoniaAIBuilder.createById(modes[i], aupCpu[i].getPlayer());
+				aupCpu[i].setAI(cpuAI);
+			}
+			else
+			{
+				int teamIndex = 0;
+				
+				if (numPlayers == GameSetActivity.iPLAYERS_NUM_2v2 + 2)
+				{
+					teamIndex = i > 0 ? 1 : 0;
+				}
+				Player target = set.getPlayerByTeam(aupCpu[i].getTeam(), teamIndex);
+				
+				aupCpu[i].setPlayerTo(target);
+			}
+
+			aupCpu[i].setInfo();
+			aupCpu[i].setName(aCpuNames[i]);
+			aupCpu[i].initDimensions(cpusWidth, displayMetrics.heightPixels / 3, 
+										displayMetrics.widthPixels, displayMetrics.heightPixels);
+			aupCpu[i].setOnTouchListener(this);
+			aupCpu[i].setAnimationsDuration(cpuDelay);
+		}
 
 		dragController = (DragController) findViewById(R.id.dragLayer);
+		
+		infosContainer = (LinearLayout) findViewById(R.id.infosContainer);
 		
 		stackTop = (UIStackTop) findViewById(R.id.stackTop);
 		
 		deck = (UIDeck) findViewById(R.id.deck);
-		deck.setInfo(deckInfo);
-		deck.setWideScreen(isWideScreen);
+		deck.setInfo();
 		deck.setOnTouchListener(this);
-
-		DisplayMetrics displayMetrics = new DisplayMetrics();
-		getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
-		UIPlayer.initDimensions(this, displayMetrics.widthPixels, displayMetrics.heightPixels);
-		
-		int diffMode = Integer.parseInt(F.getString(getString(R.string.key_difficult), getString(R.string.default_difficult_mode)));
-		
-//		l("mode " + diffMode);
-		
-		switch (diffMode)
-		{
-		case AgoniaAI.MODE_MONKEY:
-			cpuAI = new MonkeyAI(ucp.getPlayer());
-			break;
-			
-		case AgoniaAI.MODE_EASY:
-			cpuAI = new EasyAI(ucp.getPlayer());
-			break;
-			
-		case AgoniaAI.MODE_MODERATE:
-			cpuAI = new ModerateAI(ucp.getPlayer());
-			break;
-				
-		case AgoniaAI.MODE_MEGAMIND:
-			throw new RuntimeException("MODE_MEGAMIND Not implemented yet!");
-//			break;
-			
-		default:
-			throw new RuntimeException("Uknown difficult mode");
-//			break;
-		}
-		ucp.setAI(cpuAI);
-		
-		deck.hideInfo();
-
 		deck.setOnClickListener(new OnClickListener(){
 
 			@Override
@@ -189,109 +197,193 @@ public class AgoniaGame extends Activity implements DragSource, OnTouchListener
 				{
 					return;
 				}
-				else
-				{
-					deck.hideInfo();
-					deck.setImage();
-					game.switchTurn();
-					cpuAutoPlay();  // -> heirizete moni tis ta exceptions tou CPU
-				}
+
+				deck.setImage();
+				game.switchTurn();
+				cpuAutoPlay();  // -> heirizete moni tis ta exceptions tou CPU
 			}
 		});
 		
-		if (checkLoadGame())
+		if (!isNewSet)
 		{
-			showDialog(DIALOG_LOAD_ID);
+			up.setPlayerTo(set.getPlayerByTeam(1, 0));
+			set.clearPlayers();
+		}
+		
+		players.add(up.getPlayer());
+
+		if (numPlayers == GameSetActivity.iPLAYERS_NUM_2v2 + 2)
+		{
+			players.add(aupCpu[1].getPlayer());
+			players.add(aupCpu[2].getPlayer());
+			players.add(aupCpu[0].getPlayer());
+		}
+		else if (numPlayers == GameSetActivity.iPLAYERS_NUM_1v1v1 + 2) 
+		{
+			players.add(aupCpu[1].getPlayer());
+			players.add(aupCpu[0].getPlayer());
 		}
 		else 
 		{
-			newGame();
+			players.add(aupCpu[0].getPlayer());
 		}
-	}
 
-	private boolean checkLoadGame()
-	{
-		SharedPreferences pref = getSharedPreferences(PREF_SAVE, MODE_PRIVATE);
-		
-		return pref.getBoolean(KEY_SAVE, false);
-	}
-	
-	private void newGame()
-	{
-		game = new Agonia(deck.getDeck(), up.getPlayer(), ucp.getPlayer());
-
-		stackTop.setGame(game);
-		stackTop.setCardRefTo(game.getTop(0));
-	}
-	
-	protected void gameFinished() 
-	{
-		int p1HandScore = game.scoreOf(up.getHand());
-		int p2HandScore = game.scoreOf(ucp.getHand());
-		
-		up.addScore(p2HandScore);
-		ucp.addScore(p1HandScore);
-		if (p1HandScore > p2HandScore)
-		{
-			ucp.win();
-		}
-		else if (p2HandScore > p1HandScore) 
-		{
-			up.win();
-		}
-		else 
-		{
-			/* No winner! */
-		}
-		saveScores();
-
-		// otan vgainei o player na min uparhei polu anamoni eos otou vgei to finishDialog
-		Long dlgDelay = (long) (game.whoPlayNext().equals(up.getPlayer()) ? (cpuDelay / 2) : (cpuDelay * 1.3));
-		new Handler().postDelayed(new Runnable(){
-			public void run()
-			{
-				try
-				{
-					showDialog(DIALOG_FINISH_ID);
-				}
-				catch (BadTokenException ex)
-				{
-					/*
-					 * ean patisei back button prin vgei o dialogos
-					 * petiete exeption epeidi i parent activity tou dialogou
-					 * den trehei
-					 */
-				}
-			}
-		}, dlgDelay);
-	}
-
-	private void saveScores()
-	{
-		// @formatter:off
-	
-		F.edit()
-		.putInt(F.KEY_P1_SCORE, up.getScore())
-		.putInt(F.KEY_P2_SCORE, ucp.getScore())
-		.putInt(F.KEY_P1_WINS, up.getWins())
-		.putInt(F.KEY_P2_WINS, ucp.getWins())
-		.commit();
-		
-		// @formatter:on
+		newGame();
 	}
 
 	@Override
-	public void onBackPressed()
+	protected void onDestroy()
 	{
-		if (!game.isGameFinished() && game.turn.equals(up.getPlayer()))
-		{
-			showDialog(DIALOG_SAVE_ID);
-		}
+		tcaGroup.stopAll();		
+		super.onDestroy();
 	}
 
+	private void newGame()
+	{
+		int[] colors = {Color.YELLOW, Color.RED};
+
+		Agonia.addGameListener(this);
+
+		game = new Agonia(deck.getDeck(), players, isNewSet, set.getFirstPlayerId());
+		
+		stackTop.setGame(game);
+		stackTop.setCardRefTo(game.getTop(0));
+		
+		infosContainer.removeAllViews();
+		
+		for (Player p : players)
+		{
+			UIPlayer uip = playerToUIPlayer(p);
+			TextView infos = uip.getInfo();
+			
+			infosContainer.addView(infos);
+
+			TextColorAnimation tca = new TextColorAnimation(infos, colors);
+			tca.setEndColor(Color.WHITE);
+			
+			tcaGroup.add(p.getId(), tca);
+			
+			set.addPlayer(p);
+		}
+		
+		set.setFirstPlayerId(game.turn.getId());
+		
+		onSwitchTurn(game.turn, game.turn);
+		
+		if (!game.turn.isRealPlayer())
+		{
+			new Handler().postDelayed(new Runnable(){
+				public void run()
+				{
+					cpuAutoPlay();
+				}
+			}, (long) (cpuDelay * 1.5));
+		}
+	}
+	
+	@SuppressWarnings("deprecation")
+	protected void gameFinished() 
+	{
+//		int p1HandScore = game.scoreOf(up.getHand());
+//		int p2HandScore = game.scoreOf(ucp.getHand());
+//		
+//		up.addScore(p2HandScore);
+//		ucp.addScore(p1HandScore);
+//		if (p1HandScore > p2HandScore)
+//		{
+//			ucp.win();
+//		}
+//		else if (p2HandScore > p1HandScore) 
+//		{
+//			up.win();
+//		}
+//		else 
+//		{
+//			/* No winner! */
+//		}
+//		saveScores();
+//
+//		// otan vgainei o player na min uparhei polu anamoni eos otou vgei to finishDialog
+//		Long dlgDelay = (long) (game.whoPlayNext().equals(up.getPlayer()) ? (cpuDelay / 2) : (cpuDelay * 1.3));
+//		new Handler().postDelayed(new Runnable(){
+//			public void run()
+//			{
+//				try
+//				{
+//					showDialog(DIALOG_FINISH_ID);
+//				}
+//				catch (BadTokenException ex)
+//				{
+//					/*
+//					 * ean patisei back button prin vgei o dialogos
+//					 * petiete exeption epeidi i parent activity tou dialogou
+//					 * den trehei
+//					 */
+//				}
+//			}
+//		}, dlgDelay);
+
+//		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+//		builder.setMessage(GAME_EVENTS);
+//		builder.setNeutralButton(android.R.string.ok, new DialogInterface.OnClickListener(){
+//
+//			@Override
+//			public void onClick(DialogInterface dialog, int which)
+//			{
+//				
+//			}
+//		}).show();		
+		
+		set.gameFinished();
+		
+		long delay = 200;
+		
+		if (!game.whoIsPrev().isRealPlayer())
+		{
+			delay += cpuDelay;
+		}
+		
+		new Handler().postDelayed(new Runnable(){
+			public void run()
+			{
+				showDialog(DIALOG_FINISH_ID);
+			}
+		}, delay);
+	}
+
+	@SuppressWarnings("unused")
+	private void saveScoresToSet()
+	{
+		// @formatter:off
+	
+//		F.edit()
+//		.putInt(F.KEY_P1_SCORE, up.getScore())
+//		.putInt(F.KEY_P2_SCORE, ucp.getScore())
+//		.putInt(F.KEY_P1_WINS, up.getWins())
+//		.putInt(F.KEY_P2_WINS, ucp.getWins())
+//		.commit();
+		
+		// @formatter:on
+		
+//		for (int team = 1; team <= set.getTeamsCount(); team++)
+//		{
+//			Player setPlayer = set.getPlayerByTeam(team, 0);
+//			Player gamePlayer = game.getPlayerById(setPlayer.getId());
+//			setPlayer.addScore(gamePlayer.getScore());
+//		}
+		
+	}
+
+	@SuppressWarnings("deprecation")
+	@Override
+	public void onBackPressed()
+	{
+		showDialog(DIALOG_EXIT_ID);
+	}
+
+	@SuppressWarnings("deprecation")
 	public void playerPlay(Player p, Card c)
 	{
-		deck.hideInfo();
 		deck.setImage();
 		
 		try
@@ -312,19 +404,22 @@ public class AgoniaGame extends Activity implements DragSource, OnTouchListener
 		}
 		catch (GameFinished e)
 		{
-			gameFinished();
 			stackTop.setImage();
+			gameFinished();
 		}
 	}
 
 	public void cpuAutoPlay()
 	{
-		if (!game.turn.equals(ucp.getPlayer()))
+		if (game.turn.isRealPlayer())
 		{
-			d(TAG, "its not my turn!");
 			return;
 		}
-	
+		
+		final UIPlayer ucp = turnToUIPlayer();
+		
+//		d(TAG, ucp.getPlayer().getName() + " plays now");
+		
 		new Handler().postDelayed(new Runnable(){
 			public void run()
 			{
@@ -341,11 +436,30 @@ public class AgoniaGame extends Activity implements DragSource, OnTouchListener
 						else
 						{
 							game.play(ucp.getPlayer(), choosed);
-							// TODO customize it
+							// TODO customize it, personalize it for each cpu
+							int gravity;
+							int xOffset = 0;
 							Toast t = Toast.makeText(getApplicationContext(),
 									"Passo",
 									Toast.LENGTH_SHORT);
-							t.setGravity(Gravity.TOP, t.getXOffset(), 30);
+							
+							if (cCpu == 1 || ucp.getTeam() == up.getTeam())
+							{// 1vs1 or Friend
+								gravity = Gravity.CENTER_HORIZONTAL;
+							}
+							else if (ucp.equals(aupCpu[1]) || ucp.getTeam() == 3) 
+							{// Cpu2
+								gravity = Gravity.RIGHT;
+								xOffset = -20;
+							}
+							else 
+							{// 2vs2 and Cpu1
+								gravity = Gravity.LEFT;
+								xOffset = 20;
+							}
+							
+							t.setGravity(Gravity.TOP | gravity, xOffset, 30);
+							
 							t.show();
 						}
 					}
@@ -364,25 +478,47 @@ public class AgoniaGame extends Activity implements DragSource, OnTouchListener
 					else
 					{
 						stackTop.postSetImage("", cpuDelay);
+						if (!game.turn.isRealPlayer())
+						{
+							cpuAutoPlay();
+						}      
 					}
+					
 				}
 				catch (AcePlayed e)
 				{
 					int aceSuit = ucp.getAceSuit();
 	
-					game.getTop(0).setSuit(aceSuit);
+					game.informAceSuitSelected(aceSuit);
+					
+					stackTop.setCard(new Card(aceSuit, 1), false);
 					stackTop.postSetImage("", cpuDelay);
 					game.switchTurn();
+					
+					if (!game.turn.isRealPlayer())
+					{
+					    new Handler().postDelayed(new Runnable() {
+						    public void run()
+						    {
+						        cpuAutoPlay();
+						    }
+					    }, cpuDelay);
+                    }     
 				}
-				catch (SevenPlayed e)
+				catch (final SevenPlayed e)
 				{
 					stackTop.postSetImage("", cpuDelay);
-					handleSeven(e.suit);
-					return;
+					
+					new Handler().postDelayed(new Runnable() {
+						public void run()
+						{
+							handleSeven(e.suit);
+						}
+					}, cpuDelay);
 				}
 				catch (GameFinished e)
 				{
-					stackTop.postSetImage("");
+					stackTop.postSetImage("", cpuDelay);
 					gameFinished();
 				}
 			}
@@ -390,24 +526,32 @@ public class AgoniaGame extends Activity implements DragSource, OnTouchListener
 		}, cpuDelay + 200);
 	}
 
+	/**
+	 * game.turn == playerOfSeven 
+	 */
 	public void handleSeven(int suit)
 	{
 		sevenDraw += Agonia.DRAW_WITH_SEVEN;
+		sevenPlayers.add(game.turn);
+		
+		game.switchTurn();
+		
 		try
 		{
-			if (game.turn.equals(ucp.getPlayer()))
+			if (game.turn.isRealPlayer())
 			{
 				new Handler().postDelayed(new Runnable(){
+					@SuppressWarnings("deprecation")
 					public void run()
 					{
-//						makeSevenDlg().show();
 						showDialog(DIALOG_SEVEN_ID);
 					}
-				}, cpuDelay + 200);
+				}, 200);
 			}
-			else if (game.turn.equals(up.getPlayer()))
-			{
-				game.switchTurn();
+			else
+			{	
+				UIPlayer ucp = turnToUIPlayer();
+				
 				try
 				{
 					game.play(ucp.getPlayer(), ucp.playSeven());
@@ -419,47 +563,80 @@ public class AgoniaGame extends Activity implements DragSource, OnTouchListener
 				}
 				sevenDraw();
 			}
-			else
-			{
-				throw new ArrayIndexOutOfBoundsException("pehtike lathos...");
-			}
 		}
-		catch (SevenPlayed e)
+		catch (final SevenPlayed e)
 		{
 			stackTop.postSetImage("", cpuDelay - 200);
-			handleSeven(e.suit);
+			new Handler().postDelayed(new Runnable() {
+				public void run()
+				{
+					handleSeven(e.suit);
+				}
+			}, cpuDelay);
 		}
 	}
 
 	private void sevenDraw()
 	{
-		game.switchTurn();
+		game.turn = game.whoIsPrev();
+		
+		tcaGroup.pauseAll();	// just to be safe...
+
+		onSwitchTurn(game.turn, game.turn);
+			
+		final View table = findViewById(R.id.table);
+		final View cpusContainer = findViewById(R.id.cpusContainer);
+		Runnable r = new Runnable(){
+			public void run()
+			{
+				cpusContainer.postInvalidate();
+				cpusContainer.requestLayout();
+				table.postInvalidate();
+				table.requestLayout();
+			}
+		};
 		
 		try
 		{
 			game.draw(game.turn, sevenDraw, true);
+			
+			for (int i = 15; i > 0; i--)
+			{
+				cpusContainer.postDelayed(r, cpuDelay / i);
+				table.postDelayed(r, cpuDelay / i);
+			}
+
+			cpusContainer.postDelayed(r, cpuDelay + 50);
+			table.postDelayed(r, cpuDelay + 50);
 		}
-		catch (GameFinished ex) 
+		catch (GameFinished ex) // maybe deck finished
 		{
 			gameFinished();
 			return;
 		}
 		
-		deck.hideInfo();
 		deck.setImage();
 		
-		sevenDraw = 0;
-		
-		Player next = game.whoPlayNext();	// should be previous
-		
-		if (next.getHand().isEmpty())
+		for (Player p : sevenPlayers)
 		{
-			game.isGameFinished = true;
-			gameFinished();
-			return;
+			if (p.getHand().isEmpty())
+			{
+				try
+				{
+					game.finishGame();
+				}
+				catch (GameFinished ex)
+				{
+					gameFinished();
+					return;
+				}
+			}
 		}
-
-		if (game.turn.equals(ucp.getPlayer())) 
+		
+		sevenDraw = 0;
+		sevenPlayers.clear();
+		
+		if (!game.turn.isRealPlayer()) 
 		{
 			cpuAutoPlay();
 		}
@@ -490,15 +667,9 @@ public class AgoniaGame extends Activity implements DragSource, OnTouchListener
 			}
 			break;
 			
-		case DIALOG_SAVE_ID:
+		case DIALOG_EXIT_ID:
 			{
-			dialog = makeSaveGameDlg();
-			}
-			break;
-			
-		case DIALOG_LOAD_ID:
-			{
-			dialog = makeLoadGameDlg();
+			dialog = makeExitDlg();
 			}
 			break;
 			
@@ -512,6 +683,7 @@ public class AgoniaGame extends Activity implements DragSource, OnTouchListener
 		return dialog;
 	}
 
+	@SuppressWarnings("deprecation")
 	@Override
 	protected void onPrepareDialog(int id, Dialog dialog)
 	{
@@ -572,7 +744,7 @@ public class AgoniaGame extends Activity implements DragSource, OnTouchListener
 				@Override
 				public void onClick(View v)
 				{
-					onAceSuitSelected(suit);
+					playerAceSuitSelected(suit);
 					retVal.dismiss();
 				}
 			});
@@ -581,10 +753,13 @@ public class AgoniaGame extends Activity implements DragSource, OnTouchListener
 		return retVal;
 	}
 	
-	private void onAceSuitSelected(int suit)
+	private void playerAceSuitSelected(int suit)
 	{
-		stackTop.getCard().setSuit(suit);
+		stackTop.setCard(new Card(suit, 1));
 		stackTop.postSetImage("");
+		
+		game.informAceSuitSelected(suit);
+		
 		game.switchTurn();
 		cpuAutoPlay();
 	}
@@ -663,6 +838,7 @@ public class AgoniaGame extends Activity implements DragSource, OnTouchListener
 			@Override
 			public void onCancel(DialogInterface dialog)
 			{
+				game.switchTurn();
 				sevenDraw();				
 			}
 		})
@@ -685,6 +861,7 @@ public class AgoniaGame extends Activity implements DragSource, OnTouchListener
 			@Override
 			public void onClick(View v)
 			{
+				game.switchTurn();
 				sevenDraw();
 				retVal.dismiss();
 			}
@@ -701,7 +878,7 @@ public class AgoniaGame extends Activity implements DragSource, OnTouchListener
 				}
 				catch (SevenPlayed e) 
 				{
-					game.switchTurn();
+//					game.switchTurn();
 					stackTop.postSetImage("", 100);
 					handleSeven(e.suit);
 				}
@@ -727,94 +904,103 @@ public class AgoniaGame extends Activity implements DragSource, OnTouchListener
 		return sevens;
 	}
 	
-	private Dialog makeFinishDlg()
+	private Dialog makeExitDlg()
 	{
-		// @formatter:off
-
-		int p1TotalScore = up.getScore();
-		int p2TotalScore = ucp.getScore();
-		int p1Wins = up.getWins();
-		int p2Wins = ucp.getWins();
-		int p1HandScore = game.scoreOf(up.getHand());
-		int p2HandScore = game.scoreOf(ucp.getHand());
-		String p1Name = up.getName();
-		String p2Name = ucp.getName();
-		String p1Hand = up.handString();
-		String p2Hand = ucp.handString();
-		String winnerText;
-		
-		ScrollView dlgContainer = (ScrollView) inflater.inflate(R.layout.dlg_finish, null);
-		LinearLayout dlgContent = (LinearLayout) dlgContainer.findViewById(R.id.dlg_finish_content);
-		
-		TextView p1name = (TextView) dlgContent.findViewById(R.id.dlg_finish_p1_name);
-		p1name.setText(p1Name);
-		
-		TextView p2name = (TextView) dlgContent.findViewById(R.id.dlg_finish_p2_name);
-		p2name.setText(p2Name);
-		
-		TextView p1name_border = (TextView) dlgContent.findViewById(R.id.dlg_finish_border_p1_name);
-		p1name_border.setText(p1Name);
-		
-		TextView p2name_border = (TextView) dlgContent.findViewById(R.id.dlg_finish_border_p2_name);
-		p2name_border.setText(p2Name);
-		
-		TextView p1hand = (TextView) dlgContent.findViewById(R.id.dlg_finish_p1_hand);
-		p1hand.setText(getString(R.string.hand_and_score, p1Hand, p1HandScore, getString(R.string.points)));
-		
-		TextView p2hand = (TextView) dlgContent.findViewById(R.id.dlg_finish_p2_hand);
-		p2hand.setText(getString(R.string.hand_and_score, p2Hand, p2HandScore, getString(R.string.points)));
-		
-		TextView p1wins = (TextView) dlgContent.findViewById(R.id.dlg_finish_border_p1_wins);
-		p1wins.setText(Integer.toString(p1Wins));
-		
-		TextView p2wins = (TextView) dlgContent.findViewById(R.id.dlg_finish_border_p2_wins);
-		p2wins.setText(Integer.toString(p2Wins));
-		
-		TextView p1points = (TextView) dlgContent.findViewById(R.id.dlg_finish_border_p1_points);
-		p1points.setText(Integer.toString(p1TotalScore));
-		
-		TextView p2points = (TextView) dlgContent.findViewById(R.id.dlg_finish_border_p2_points);
-		p2points.setText(Integer.toString(p2TotalScore));
-
-		TextView winner = (TextView) dlgContent.findViewById(R.id.dlg_finish_winner);
-		if (p1HandScore > p2HandScore)
-		{
-			winnerText = p2Name;
-		}
-		else if (p2HandScore > p1HandScore) 
-		{
-			winnerText = p1Name;
-		}
-		else 
-		{
-			winnerText = getString(R.string.draw);
-		}
-		winner.setText(getString(R.string.winner, winnerText));
-		
+		// @formatter:off 
 		AlertDialog.Builder builder = new AlertDialog.Builder(this)
-		.setTitle(getString(R.string.dlg_finish_title))
-		.setView(dlgContainer)
-		.setNegativeButton(getString(R.string.exit), new DialogInterface.OnClickListener(){
+		.setTitle(getString(R.string.dlg_exit_title))
+		.setMessage(getString(R.string.dlg_exit_message))
+		.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener(){
 			
 			@Override
 			public void onClick(DialogInterface dialog, int which)
 			{
-				if (which == DialogInterface.BUTTON_NEGATIVE) 
+				for (Player p : game.getPlayers())
 				{
-					finish();
+					if (p.getTeam() != up.getTeam())
+					{
+						p.getHand().clear();
+					}
+				}
+				
+				try
+				{
+					game.finishGame();
+				}
+				catch (GameFinished ex)
+				{ 
+					gameFinished();
 				}
 			}
 		})
-		.setPositiveButton(getString(R.string.dlg_finish_btn_play_again), new DialogInterface.OnClickListener(){
+		.setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener(){
 			
 			@Override
 			public void onClick(DialogInterface dialog, int which)
 			{
-				if (which == DialogInterface.BUTTON_POSITIVE) 
+				/*
+				 * nothing to do
+				 */
+			}
+		})
+		;
+		
+		// @formatter:on
+		
+		return builder.create();
+	}
+
+	private Dialog makeFinishDlg()
+	{
+		// @formatter:off
+		TextView[] atxvName = new TextView[4];
+		TextView[] atxvHand = new TextView[4];
+		
+		LinearLayout dlgContent = (LinearLayout) inflater.inflate(R.layout.dlg_finish, null);
+
+		int i = 0;
+	
+		for (i = 0; i < 4; i++)
+		{
+			atxvName[i] = (TextView) dlgContent.getChildAt(i * 2);
+			atxvHand[i] = (TextView) dlgContent.getChildAt(i * 2 + 1);
+
+			if (i > cCpu)
+			{
+				atxvName[i].setVisibility(View.GONE);
+				atxvHand[i].setVisibility(View.GONE);
+			}
+			else 
+			{
+				Player p = players.get(i);
+				if (p.hasCards())
 				{
-					startActivity(getIntent());
-					finish();
+					atxvName[i].setText(p.getName() + "  { " + game.scoreOf(p.getHand()) + " }");
+					atxvHand[i].setText(p.handString());
 				}
+				else 
+				{
+					atxvName[i].setVisibility(View.GONE);
+					atxvHand[i].setVisibility(View.GONE);
+				}
+			}
+		}
+		
+		AlertDialog.Builder builder = new AlertDialog.Builder(this)
+		.setTitle(R.string.dlg_finish_title)
+		.setView(dlgContent)
+		.setNeutralButton(android.R.string.ok, new DialogInterface.OnClickListener(){
+			
+			@Override
+			public void onClick(DialogInterface dialog, int which)
+			{
+				Intent intent = new Intent(AgoniaGame.this, GameSetActivity.class);
+				
+				intent.putExtra(ID_NEW_SET, false);
+				intent.putExtra(ID_GAMESET, set);
+				
+				startActivity(intent);
+				finish();
 			}
 		})
 		.setCancelable(false);
@@ -822,223 +1008,11 @@ public class AgoniaGame extends Activity implements DragSource, OnTouchListener
 		// @formatter:on
 		return builder.create();
 	}
-
-	private Dialog makeSaveGameDlg()
-	{
-		// @formatter:off
-		DialogInterface.OnClickListener dlgOnClick = new DialogInterface.OnClickListener(){
-
-			@Override
-			public void onClick(DialogInterface dialog, int which)
-			{
-				switch (which)
-				{
-				case DialogInterface.BUTTON_POSITIVE:
-					// Save game
-					{
-					try
-					{
-						FileOutputStream fos = openFileOutput(SAVE_FILE, MODE_PRIVATE);
-						
-						Editor pref = getSharedPreferences(PREF_SAVE, MODE_PRIVATE).edit();
-						pref.putBoolean(KEY_SAVE, true)
-						.commit();
-						
-						saveGame(fos);
-						fos.close();
-						finish();
-					}
-					catch (FileNotFoundException ex)
-					{
-						
-					}
-					catch (IOException ex)
-					{
-
-					}
-
-					}
-					break;
-				
-				case DialogInterface.BUTTON_NEUTRAL:
-					// Finish game
-					{
-					game.isGameFinished = true;
-					gameFinished();
-					}
-					break;
-				
-				case DialogInterface.BUTTON_NEGATIVE:
-					// Exit without save
-					{
-					finish();
-					}
-					break;
-
-				default:
-					break;
-				}
-			}
-		};
-		AlertDialog.Builder builder = new AlertDialog.Builder(this)
-		.setTitle(getString(R.string.dlg_save_title))
-		.setMessage(getString(R.string.dlg_save_message))
-		.setPositiveButton(R.string.dlg_save_btn_save, dlgOnClick)
-		.setNegativeButton(R.string.dlg_save_btn_exit, dlgOnClick)
-		.setNeutralButton(R.string.dlg_save_btn_finish_game, dlgOnClick)
-		.setCancelable(true)
-		;
-		// @formatter:on
-		return builder.create();
-	}
 	
-	private void saveGame(FileOutputStream f) throws IOException
-	{
-		DataOutputStream dos = new DataOutputStream(f);
-		
-		List<Card> list = up.getHand();
-		list.add(NULL_CARD);
-		list.addAll(ucp.getHand());
-		list.add(NULL_CARD);
-		list.add(stackTop.getCard());
-		list.addAll(game.getDeck().cards());
-		list.add(NULL_CARD);		
-		
-		// write to save file
-		dos.writeBoolean(game.canDraw(up.getPlayer()));
-		for (Card c : list)
-		{
-			dos.writeInt(c.getSuit());
-			dos.writeInt(c.getRank());
-		}
-	}
-
-	private Dialog makeLoadGameDlg()
-	{
-		// @formatter:off
-		DialogInterface.OnClickListener dlgOnClick = new DialogInterface.OnClickListener(){
-
-			@Override
-			public void onClick(DialogInterface dialog, int which)
-			{
-				switch (which)
-				{
-				case DialogInterface.BUTTON_POSITIVE:
-					// Load game
-					{
-					try
-					{
-						FileInputStream fis = openFileInput(SAVE_FILE);
-						loadGame(fis);
-						fis.close();
-					}
-					catch (FileNotFoundException ex)
-					{
-						
-					}
-					catch (IOException ex)
-					{
-
-					}
-
-					}
-					break;
-
-				case DialogInterface.BUTTON_NEGATIVE:
-					// Start new game
-					{
-					startActivity(getIntent());
-					finish();
-					}
-					break;
-
-				default:
-					break;
-				}
-				Editor pref = getSharedPreferences(PREF_SAVE, MODE_PRIVATE).edit();
-				pref.putBoolean(KEY_SAVE, false)
-				.commit();
-				deleteFile(SAVE_FILE);
-			}
-		};
-		AlertDialog.Builder builder = new AlertDialog.Builder(this)
-		.setTitle(getString(R.string.dlg_load_title))
-		.setMessage(getString(R.string.dlg_load_message))
-		.setPositiveButton(R.string.dlg_load_btn_load, dlgOnClick)
-		.setNegativeButton(R.string.dlg_load_btn_new_game, dlgOnClick)
-		.setCancelable(false)
-		;
-		// @formatter:on
-		return builder.create();
-	}
-	
-	private void loadGame(FileInputStream f) throws IOException
-	{
-		DataInputStream dis = new DataInputStream(f);
-		List<Card> p1hand = new ArrayList<Card>();
-		List<Card> p2hand = new ArrayList<Card>();
-		List<Card> newDeck = new ArrayList<Card>();
-		
-		game = new Agonia(deck.getDeck(), up.getPlayer(), ucp.getPlayer(), CardGame.DONT_DEAL);
-		deck.draw(deck.size());		// clear		
-		deck.put(NULL_CARD, false);		// to prevent game finish, cause of empty deck
-
-		boolean canDraw = dis.readBoolean();
-		
-		Card c = new Card(dis.readInt(), dis.readInt());
-		
-		// Diavazoume ta hartia pou eihe o player sto heri
-		// Uparhei periptosi na min kratouse tipota! (px petakse 8)
-		while (!c.equals(NULL_CARD))
-		{
-			p1hand.add(c);
-			c = new Card(dis.readInt(), dis.readInt());
-		}
-		deck.put(p1hand, false);
-		game.draw(up.getPlayer(), p1hand.size());
-		
-		// Diavazoume ta hartia pou eihe o cpu sto heri
-		c = new Card(dis.readInt(), dis.readInt());
-		
-		do
-		{
-			p2hand.add(c);
-			c = new Card(dis.readInt(), dis.readInt());
-		} while (!c.equals(NULL_CARD));
-		deck.put(p2hand, false);
-		game.draw(ucp.getPlayer(), p2hand.size());
-		
-		// Diavazoume to stackTop
-		c = new Card(dis.readInt(), dis.readInt());
-		
-		stackTop.setGame(game);
-		stackTop.setCardRefTo(game.getTop(0));
-		stackTop.setCard(c);
-		stackTop.postSetImage("");
-		
-		// Diavazoume to deck
-		c = new Card(dis.readInt(), dis.readInt());
-		
-		do
-		{
-			newDeck.add(c);
-			c = new Card(dis.readInt(), dis.readInt());
-		} while (!c.equals(NULL_CARD));		
-		deck.put(newDeck, true);
-		deck.cards().remove(NULL_CARD);
-		
-		if (!canDraw)
-		{	// simulate a draw to restore draw state
-			game.draw(up.getPlayer(), 0);
-			deck.showInfo();
-			deck.setImage("btn_paso");
-		}
-	}
-
 	@Override
 	public boolean onTouch(View v, MotionEvent event)
 	{
-		if (game.turn.equals(ucp.getPlayer()) || game.isGameFinished())
+		if (!game.turn.isRealPlayer() || game.isGameFinished())
 		{
 			return false;
 		}		
@@ -1099,7 +1073,6 @@ public class AgoniaGame extends Activity implements DragSource, OnTouchListener
 				try
 				{
 					game.draw(up.getPlayer());
-					deck.showInfo();
 					deck.setImage("btn_paso");
 				}
 				catch (GameFinished ex)
@@ -1119,8 +1092,73 @@ public class AgoniaGame extends Activity implements DragSource, OnTouchListener
 		dragging = false;
 	}
 
-	public static void l(String msg) 
+	private UIPlayer playerToUIPlayer(Player p)
 	{
-		Log.d("dbg", msg);
+		UIPlayer uip = null;
+
+		if (p.isRealPlayer())
+		{
+			uip = up;
+		}
+		else 
+		{
+			for (UIPlayer uiPlayer : aupCpu)
+			{
+				if (p.equals(uiPlayer.getPlayer()))
+				{
+					uip = uiPlayer;
+					break;
+				}
+			}
+		}
+		
+		return uip;
+	}
+	
+	private UIPlayer turnToUIPlayer()
+	{
+		return playerToUIPlayer(game.turn);
+	}
+	
+	private String GAME_EVENTS = "";
+	
+	@Override
+	public void initGameParams(int cPlayers, List<Card> stackTopCards)
+	{
+		GAME_EVENTS = "Players " + cPlayers + " | Top " + stackTopCards.get(0) + "\n";
+	}
+
+	@Override
+	public void onDrawFromDeck(Player who, int n)
+	{
+		GAME_EVENTS = GAME_EVENTS + who.getName() + " draw " + n + "\n";
+	}
+
+	@Override
+	public void onPlay(Player who, Card c)
+	{
+		GAME_EVENTS = GAME_EVENTS + who.getName() + " -> " + c + "\n" ;
+	}
+	
+	@Override
+	public void onAceSuitSelected(int selectedSuit)
+	{
+		GAME_EVENTS = GAME_EVENTS + "\t Ace -> " + Card.pszSUITS[selectedSuit] + "\n" ;
+	}
+
+	@Override
+	public void onPlay(Player who, List<Card> cards)
+	{ }
+
+	@Override
+	public void onPlay(Player who, int cCards)
+	{ }
+
+	@Override
+	public void onSwitchTurn(Player prev, Player cur)
+	{	
+		tcaGroup.pause(prev.getId());
+		
+		tcaGroup.start(cur.getId());
 	}
 }

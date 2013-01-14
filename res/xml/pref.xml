@@ -4,38 +4,43 @@
     <PreferenceCategory
         android:key="general"
         android:title="@string/pref_general_title" >
-        <EditTextPreference
+         
+		<EditTextPreference
             android:defaultValue="@string/default_p1_name"
             android:dialogTitle="@string/pref_p1_name_title"
             android:key="@string/key_p1_name"
             android:title="@string/pref_p1_name_title" />
-        <EditTextPreference
+<!--
+		<EditTextPreference
             android:defaultValue="@string/default_p2_name"
             android:dialogTitle="@string/pref_p2_name_title"
             android:key="@string/key_p2_name"
-            android:title="@string/pref_p2_name_title" />
+            android:title="@string/pref_p2_name_title" /> 
+-->
         <CheckBoxPreference
             android:defaultValue="true"
             android:key="@string/key_color_hints"
             android:summary="@string/pref_color_hints_summ"
             android:title="@string/pref_color_hints_title" />
 
-        <devN.games.agonia.pref.ResetScoresDlgPref
+<!--        <devN.games.agonia.pref.ResetScoresDlgPref
             android:dialogIcon="@android:drawable/ic_dialog_alert"
             android:key="@string/key_reset_dlg"
             android:title="@string/pref_reset_title" /> 
-       <!-- android:dialogMessage="@string/pref_reset_dlg_message" -->
+    	    android:dialogMessage="@string/pref_reset_dlg_message" 
+-->
     </PreferenceCategory>
     <PreferenceCategory
         android:key="ingame"
         android:title="@string/pref_ingame_title" >
+<!--
         <ListPreference
             android:defaultValue="@string/default_difficult_mode"
             android:entries="@array/difficult_modes"
             android:entryValues="@array/difficult_modes_values"
             android:key="@string/key_difficult"
             android:title="@string/pref_difficult_title" />
-        
+-->        
         <devN.etc.pref.ComboBoxPreference
             android:defaultValue="0"
             android:entries="@array/deck_finish_options"

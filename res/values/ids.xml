@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    
+    <item name="rbt0" type="id"/>
+    <item name="rbt1" type="id"/>
+    <item name="rbt2" type="id"/>
+    <item name="rbt3" type="id"/>
+    
+    <item name="p1_Info" type="id"/>
+    <item name="p2_Info" type="id"/>
+    <item name="p3_Info" type="id"/>
+    <item name="p4_Info" type="id"/>
+    <item name="deck_Info" type="id"/>
+    
+</resources>

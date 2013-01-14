@@ -1,25 +1,25 @@
 package devN.games.agonia;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import android.util.Log;
+import java.util.Random;
+import devN.etc.DBGLog;
 import devN.games.Card;
 import devN.games.CardGame;
 import devN.games.Deck;
+import devN.games.GameListener;
 import devN.games.Player;
 
-public class Agonia extends CardGame implements Serializable
+public class Agonia extends CardGame
 {
-	private static final long serialVersionUID = 5007865192211492281L;
 	protected final static int DRAW_WITH_SEVEN = 2;
 	public final static int START_DEAL_COUNT = 7;
 	private final static int ACE_SCORE = 20;
 	private final static int DECK_FINISH_RECYCLE = 0;
 	private final static int DECK_FINISH_PICK_NEW = 1; 
 	private final static int DECK_FINISH_FINISH_GAME = 2;
-	
+
 	protected Player lastDraw; // Last player who draw card (non-Special draw)
 	protected Player turn;
 	protected boolean isNineSpecial;
@@ -27,32 +27,68 @@ public class Agonia extends CardGame implements Serializable
 	private boolean aceOnAce;
 	private boolean aceFinish;
 	private int deckFinishOption;
-	
-	public Agonia(Deck d, Player p, Player cp)
+
+	/**
+	 * 
+	 * @param firstPlayerId the id of player that was playing first in previous game
+	 */
+	public Agonia(Deck d, List<Player> players, boolean shufflePlayers, int firstPlayerId)
 	{
-		super(d, p, cp, 
+		super(d, players,
 		      START_DEAL_COUNT, 	
 		      1); 	// STACK_TOP_COUNT
 	
-		init();
+		init(shufflePlayers, firstPlayerId);
 	}
 	
-	public Agonia(Deck d, Player p, Player cp, int customInitDeal)
+	public Agonia(Deck d, List<Player> players, int customInitDeal)
 	{
-		super(d, p, cp, 
+		super(d, players, 
 			customInitDeal, 	
 			1); 	// STACK_TOP_COUNT
 
-		init();
+		init(false, -1);
 	}
 
-	private void init()
+	private void init(boolean shufflePlayers, int firstPlayerId)
 	{
-		turn = p1;
+		if (shufflePlayers)
+		{
+			initPlayers(-1);
+		}
+		else 
+		{
+			initPlayers(firstPlayerId);
+		}
+		
+		turn = players.get(0);
 		lastDraw = null;
 		deckFinishOption = Integer.parseInt(F.getString(F.KEY_DECK_FINISH, "0"));
 		aceOnAce = F.getBoolean(F.KEY_ACE_ON_ACE, false);
 		aceFinish = F.getBoolean(F.KEY_ACE_FINISH, false);
+	}
+	
+	private void initPlayers(int firstPlayerId)
+	{
+		Player prev1st = getPlayerById(firstPlayerId);
+		int n = players.size();
+		int i = players.indexOf(prev1st); // index of first player
+
+		if (i == -1)
+		{
+			Random r = new Random();
+			i = r.nextInt(n); // index of first player
+		}
+		else 
+		{
+			i = (i + 1) % n;
+		}
+
+		for (int j = 0; i < n; j++, i++)
+		{// the players turn goes anti-clockwise 
+			Player p = players.remove(i);
+			players.add(j, p);
+		}
 	}
 
 	@Override
@@ -96,11 +132,16 @@ public class Agonia extends CardGame implements Serializable
 
 	private void handleEight()
 	{
-		switchTurn();
+		switchTurn(false);
 	}
 
 	private void handleNine()
 	{
+		if (turn.getHand().isEmpty())
+		{
+			finishGame();
+		}
+		
 		if (isNineSpecial)
 		{
 		    switchTurn();
@@ -214,6 +255,8 @@ public class Agonia extends CardGame implements Serializable
 			lastDraw = p;
 		}
 
+		informDraw(p, n);
+		
 		onDrawFromDeck();
 	}
 	
@@ -228,10 +271,14 @@ public class Agonia extends CardGame implements Serializable
 				Deck recycled = new Deck();
 				List<Card> top = new ArrayList<Card>(1);
 				top.add(getTop(0));
-				recycled.draw(p1.getHand());
-				recycled.draw(p2.getHand());
-				recycled.draw(top);
 				
+				for (Player p : players)
+				{
+					recycled.draw(p.getHand());
+				}
+				
+				recycled.draw(top);
+
 				deck.put(recycled.cards(), true);
 				}
 				break;
@@ -272,33 +319,71 @@ public class Agonia extends CardGame implements Serializable
 		switchTurn();
 		//TODO: Other exception should throwed here (in the end of methode)
 		if (p.getHand().isEmpty()
-		&& getTop(0).getRank() != 8
-		&& (getTop(0).getRank() != 9 || !isNineSpecial)
-		&& !Card.NULL_CARD.equals(c))
+		&& !p.equals(turn))
 		{
 			finishGame();
 		}
 	}
 	
-	private void finishGame()
+	public void finishGame()
 	{
+		gameListeners = new ArrayList<GameListener>();
 		isGameFinished = true;
+		setPlayerScores();
 		throw new GameFinished();		
 	}
 
 	public Player whoPlayNext()
 	{
-		if (turn.equals(super.p1))
+		int i = players.indexOf(turn);
+		
+		if (i == players.size() - 1)
 		{
-			return super.p2;
+			return players.get(0);
 		}
-		return super.p1;
+		
+		return players.get(i + 1);
 	}
 	
+	public Player whoIsPrev()
+	{
+		int i = players.indexOf(turn);
+		
+		if (i == 0)
+		{
+			return players.get(players.size() - 1);
+		}
+		
+		return players.get(i - 1);
+	}
+	
+	/**
+	 * equivalent to switchTurn(true)
+	 */
 	public void switchTurn()
 	{
 		turn = whoPlayNext();
 		lastDraw = null;
+		
+		informSwitchTurn(whoIsPrev(), turn);
+	}
+	
+	/**
+	 * 
+	 * @param toNext if its true, passes the turn to next player,
+	 * otherwise to previous 
+	 */
+	public void switchTurn(boolean toNext)
+	{
+		if (toNext)
+		{
+			switchTurn();
+		}
+		else 
+		{
+			turn = whoIsPrev();
+			lastDraw = null;
+		}
 	}
 	
 	public int scoreOf(List<Card> cards) 
@@ -325,4 +410,74 @@ public class Agonia extends CardGame implements Serializable
 	{
 		return isGameFinished;
 	}
+	
+	private void informSwitchTurn(Player prev, Player cur)
+	{
+		for (GameListener listener : gameListeners)
+		{
+			listener.onSwitchTurn(prev, cur);
+		}
+	}
+	
+	public void informAceSuitSelected(int selectedSuit)
+	{
+		for (GameListener listener : gameListeners)
+		{
+			((AgoniaGameListener)listener).onAceSuitSelected(selectedSuit);
+		}
+	}
+	
+	public static void addGameListener(AgoniaGameListener listener)
+	{
+		gameListeners.add(listener);
+	}
+
+	public void setPlayerScores()
+	{
+		for (Player player : players)
+		{
+			for (Player rivlal : players)
+			{
+				if (player.getTeam() != rivlal.getTeam())
+				{
+					player.addScore(scoreOf(rivlal.getHand()));
+				}
+			}
+		}
+	}
+
+//	/**
+//	 * Saved in form:
+//	 * 
+//	 * [lastDraw_ID] [turn_ID] [isNineSpecial] [aceOnAce] [aceFinish] [deckFinishOption]
+//	 * 
+//	 * if lastDraw_ID is -1, mean lastDraw == null
+//	 */
+//	@Override
+//	public void save(DataOutputStream d) throws IOException
+//	{
+//		super.save(d);
+//		
+//		int lastDrawId = lastDraw == null ? -1 : lastDraw.getId();
+//		
+//		d.writeInt(lastDrawId);
+//		d.writeInt(turn.getId());
+//		d.writeBoolean(isNineSpecial);
+//		d.writeBoolean(aceOnAce);
+//		d.writeBoolean(aceFinish);
+//		d.writeInt(deckFinishOption);
+//	}
+//
+//	@Override
+//	public void load(DataInputStream d) throws IOException
+//	{
+//		super.load(d);
+//		
+//		lastDraw = getPlayerById(d.readInt());
+//		turn = getPlayerById(d.readInt());
+//		isNineSpecial = d.readBoolean();
+//		aceOnAce = d.readBoolean();
+//		aceFinish = d.readBoolean();
+//		deckFinishOption = d.readInt();
+//	}
 }

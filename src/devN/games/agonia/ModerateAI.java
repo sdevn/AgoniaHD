@@ -12,8 +12,9 @@ import devN.games.Player;
 
 public class ModerateAI implements AgoniaAI
 {
-	private final static int SEVEN_PRIORITY = Card.MAX_RANK + 1;
-	private final static int EIGHT_NINE_PRIORITY = SEVEN_PRIORITY + 1;
+	private final static int NINE_PRIORITY = Card.MAX_RANK + 1;
+	private final static int SEVEN_PRIORITY = NINE_PRIORITY + 1;
+	private final static int EIGHT_PRIORITY = SEVEN_PRIORITY + 1;
 	
 	private boolean isNineSpecial = F.getBoolean(F.KEY_IS_NINE_SPECIAl, true);
 	private Random rand = new Random();
@@ -58,7 +59,8 @@ public class ModerateAI implements AgoniaAI
 
 	/**
 	 * Paizei to fullo sumfona me tin parakato seira:<br />
-	 * 8 - 9* (*an einai special)<br />
+	 * 8 <br />
+	 * 9* (*an einai special)<br />
 	 * 7<br />
 	 * getValue()<br />
 	 * An uparhei pano apo ena fullo me idia protereotita, dialegei auto
@@ -234,12 +236,12 @@ public class ModerateAI implements AgoniaAI
 			break;
 
 		case 8:
-			prio = EIGHT_NINE_PRIORITY;
+			prio = EIGHT_PRIORITY;
 			break;
 		case 9:
 			if (isNineSpecial)
 			{
-				prio = EIGHT_NINE_PRIORITY;
+				prio = NINE_PRIORITY;
 				break;
 			}
 		default:
@@ -248,5 +250,11 @@ public class ModerateAI implements AgoniaAI
 		}
 		
 		return prio;
+	}
+
+	@Override
+	public int getMode()
+	{
+		return MODE_MODERATE;
 	}
 }

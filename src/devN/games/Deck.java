@@ -10,7 +10,7 @@ public class Deck
 	// public static final int SIZE_EX = 54;
 
 	protected List<Card> deck;
-
+	
 	/**
 	 * Creates a new deck of cards. The deck is not shuffled.
 	 */
@@ -163,5 +163,4 @@ public class Deck
 	{
 		this.deck = deck;
 	}
-
 }

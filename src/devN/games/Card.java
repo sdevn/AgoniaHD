@@ -1,5 +1,6 @@
 package devN.games;
 
+
 public class Card implements Comparable<Card>
 {
 	// pszSUITS indices
@@ -20,19 +21,15 @@ public class Card implements Comparable<Card>
 	public static final int JOKER_RANK 		 = MAX_RANK + 1;
 
 	// bitwise masks
-	protected static final int MASK_COLOR = 1;
+	protected static final int MASK_COLOR 	= 1;
 	protected static final int MASK_RED 	= 1;
-	protected static final int MASK_BLACK = 0;
+	protected static final int MASK_BLACK 	= 0;
 
 	public static final Card NULL_CARD 	= new Card(-1, -1);
 	
-	protected int rank;
 	protected int suit;
-
-	/**
-	 * @param suit
-	 * @param rank
-	 */
+	protected int rank;
+	
 	public Card(int suit, int rank)
 	{
 		this.rank = rank;
@@ -251,5 +248,4 @@ public class Card implements Comparable<Card>
 		
 		return "[" + rank + pszSUITS[suit] + "]";
 	}
-
 }

@@ -47,4 +47,10 @@ public class MonkeyAI implements AgoniaAI
 
 		return Card.NULL_CARD;
 	}
+
+	@Override
+	public int getMode()
+	{
+		return MODE_MONKEY;
+	}
 }

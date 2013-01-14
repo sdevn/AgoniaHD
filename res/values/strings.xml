@@ -8,7 +8,7 @@
     <string name="dlg_finish_title">Game finished!</string>
     <string name="dlg_seven_btn_draw">Draw (%d)</string>
     <string name="dlg_seven_btn_play">Play it!</string>
-    <string name="dlg_seven_title">Play Seven or draw?</string>
+    <string name="dlg_seven_title">Choose a Seven or draw</string>
     <string name="exit">Exit</string>
     <string name="dlg_finish_btn_play_again">Play again</string>
     <string name="default_p1_name">Player</string>
@@ -40,8 +40,6 @@
     <string name="mode_easy">Easy</string>
     <string name="mode_moderate">Moderate</string>
     <string name="mode_megamind">MegaMind !</string>
-    <string name="dlg_about_message"><![CDATA[<font color="white">Custom buttons made with: <a href="http://www.cooltext.com" target="_blank">cooltext.com</a><br /><br />Cards - Deck icons downloaded from: <a href="http://freeware.esoterica.free.fr/html/freecards.html" target="_blank">freeware.esoterica.free.fr</a><br />(Authors: Jesse Fuchs and Tom Hart)<br /><br />This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by/3.0/gr/deed.en">Creative Commons Attribution 3.0 Greece License</a>.</font><br /> ]]></string>
-    <string name="dlg_comming_soon_message">➤new deck!\n➤hard mode\n➤more preferences for more special cards\n➤game history when game finished\n</string>
     <string name="pref_name_aborted_message" formatted="false">Names length should between %d and %d\nwithout any punctuation character or whitespace </string>
     <string name="menu_btn_new_game">New game</string>
     <string name="menu_btn_pref">Preferences</string>
@@ -51,15 +49,6 @@
     <string name="deck_finish_recycle">Use already played cards as deck</string>
     <string name="deck_finish_pick_new">Pick a new deck</string>
     <string name="deck_finish_finish_game">Finish the game</string>
-    <string name="dlg_save_title">Save game</string>
-    <string name="dlg_save_message">The game is not finished!\nWhat do you want to do?\n(press back button again to continue play)</string>
-    <string name="dlg_save_btn_save">Save and exit</string>
-    <string name="dlg_save_btn_exit">Don\'t save</string>
-    <string name="dlg_save_btn_finish_game">Finish the game</string>
-    <string name="dlg_load_title">Load game</string>
-    <string name="dlg_load_message">There is a saved game!\nDo you want to continue it?</string>
-    <string name="dlg_load_btn_load">Continue last game</string>
-    <string name="dlg_load_btn_new_game">Start new</string>
     <string name="points">Points</string>
     <string name="draw">Draw</string>
     <string name="wins">Wins</string>
@@ -74,14 +63,14 @@
     <string name="how_special_card_ace_title">Ace</string>
     <string name="how_special_card_seven_title">Seven</string>
     <string name="how_special_card_eight_title">Eight</string>
-    <string name="how_special_card_content">Some cards don\'t follows the normal an have some special effects.</string>
+    <string name="how_special_card_content">Some cards don\'t follows the normal rules and have some special effects.</string>
     <string name="how_special_card_ace_content">Ace can be played over any card (regardless of suit and rank). If a player play an ace then he can choose any suit he wants. The next player will play with the claimed suit.</string>
     <string name="how_special_card_seven_content">If a player play 7, then the next player draws two cards from the deck, unless he has 7, so playing it the next player will draw 4 cards from the deck and so until a player has no 7. If the player who gets the cards do not have an appropriate card to play, then he must draw a card from the deck. If a player draw cards after of the previously played 7 and finds a 7 in these cards, he can play it, but it would act as the first 7 (the next player will draw 2 cards).</string>
     <string name="how_special_card_eight_content">If a player play 8 he must play again. If he have not any corresponding card, then he must draw a card from the deck. If he still do not find an appropriate card then he say "passo". A player can play as many 8s in a row as he wants to.</string>
     <string name="next">Next</string>
     <string name="previous">Previous</string>
-    <string name="how_cpu_cards">These is your opponent cards</string>
-    <string name="how_your_cards">These is your cards</string>
+    <string name="how_cpu_cards">These are your opponent cards</string>
+    <string name="how_your_cards">These are your cards</string>
     <string name="how_deck">Deck</string>
     <string name="done">Done</string>
 
@@ -93,4 +82,31 @@
     
     <string name="pref_ace_finish_title">Ace The Last</string>
     <string name="pref_ace_finish_summ">Allow players to go out with Ace</string>
+    
+    <string name="dlg_exit_title">Quit game?</string>
+    <string name="dlg_exit_message">If you quit the game, it will count as lose!!\nAre you sure?</string>
+
+	<string name="cpu1">Cpu1</string>
+	<string name="cpu2">Cpu2</string>
+	<string name="cpu3">Cpu3</string>
+	<string name="friend">Friend</string>
+	
+	<string name="set_type_goal">Set Type/Goal</string>
+	<string name="players">Players</string>
+	<string name="set_btn_start">Start new set</string>
+
+	<string name="set_btn_continue_next">Start next game</string>
+	<string name="set_btn_continue_winner">Show winner team</string>
+	<string name="winner_team">Winner team: %s</string>
+	<string name="teams">Teams</string>
+	<string name="set_info" formatted="false">Type: %s, Goal: %d, Round: %d</string>
+	<string name="set_player_info" formatted="false">%d. %s [%s]</string> <!-- player.team, player.name, player.ai.string -->
+	<string name="set_team_info" formatted="false">%s: %d\n%s: %d</string> <!-- @string/wins, set.team.wins, @string/points, set.team.points -->
+
+	<string name="dlg_rate_title">You like Agonia?</string>
+    <string name="dlg_rate_message">If you enjoy to play Agonia, please rate it with five stars and a good comment!!\nIf you dont, say me what you didn\'t like and i will fix it soon.\nThank you!!</string>
+
+    <string name="dlg_about_message"><![CDATA[<font color="white">Custom buttons made with: <a href="http://www.cooltext.com" target="_blank">cooltext.com</a><br /><br />Cards - Deck icons downloaded from: <a href="http://freeware.esoterica.free.fr/html/freecards.html" target="_blank">freeware.esoterica.free.fr</a><br />(Authors: Jesse Fuchs and Tom Hart)<br /><br />This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by/3.0/gr/deed.en">Creative Commons Attribution 3.0 Greece License</a>.</font><br /> ]]></string>
+    <string name="dlg_comming_soon_message">➤save/load GameSet\n➤new deck!\n➤hard mode\n➤more preferences for more special cards\n➤game history when game finished\n</string>
+    
 </resources>

@@ -1,23 +1,31 @@
 package devN.games.agonia;
 
+import java.util.Random;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.webkit.WebView;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.Toast;
 
 public class AgoniaMenu extends Activity
 {
 	private static final int DIALOG_ABOUT_ID = 0;
 	private static final int DIALOG_COMMING_SOON_ID = 1;
-
+	private static final int DIALOG_RATE_ID = 2;
+	
+	private static final double CHANCE_COMMING_DIALOG = 1.0D / 9.0D;
+	
+	private ImageButton ibtRate;
+	private ImageButton ibtFacebook;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
 	{
@@ -32,9 +40,13 @@ public class AgoniaMenu extends Activity
 		Button pref = (Button) findViewById(R.id.btPref);
 		Button game = (Button) findViewById(R.id.btGame);
 		Button how = (Button) findViewById(R.id.btHow);
+		
 		ImageButton about = (ImageButton) findViewById(R.id.ibtAbout);
-		Button exit = (Button) findViewById(R.id.btExit);
-
+		ImageButton exit = (ImageButton) findViewById(R.id.ibtExit);
+		
+		ibtRate = (ImageButton) findViewById(R.id.ibtRate);
+		ibtFacebook = (ImageButton) findViewById(R.id.ibtFacebook);
+		
 		pref.setOnClickListener(new OnClickListener(){
 
 			@Override
@@ -49,7 +61,7 @@ public class AgoniaMenu extends Activity
 			@Override
 			public void onClick(View v)
 			{
-				startActivity(new Intent(AgoniaMenu.this, AgoniaGame.class));
+				startActivity(new Intent(AgoniaMenu.this, GameSetActivity.class));
 			}
 		});
 
@@ -65,6 +77,7 @@ public class AgoniaMenu extends Activity
 		
 		about.setOnClickListener(new OnClickListener(){
 
+			@SuppressWarnings("deprecation")
 			@Override
 			public void onClick(View v)
 			{
@@ -80,6 +93,10 @@ public class AgoniaMenu extends Activity
 				atExit();
 			}
 		});
+		
+		ibtRate.setOnClickListener(oclRate);
+		
+		ibtFacebook.setVisibility(View.GONE);
 	}
 	
 	@Override
@@ -88,11 +105,6 @@ public class AgoniaMenu extends Activity
         atExit();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see android.app.Activity#onCreateDialog(int)
-	 */
 	@Override
 	protected Dialog onCreateDialog(int id)
 	{
@@ -106,14 +118,14 @@ public class AgoniaMenu extends Activity
 
 			WebView wv = new WebView (this);
 			wv.loadData(message, "text/html", "utf-8");
-			wv.setBackgroundColor(Color.TRANSPARENT);
+			wv.setBackgroundColor(getResources().getColor(R.color.tsoha));
 			wv.getSettings().setBuiltInZoomControls(false);
 			wv.getSettings().setDefaultFontSize(14);
 
 			AlertDialog.Builder builder = new AlertDialog.Builder(this)
 			.setTitle("About")
 			.setView(wv)
-			.setPositiveButton("OK", new DialogInterface.OnClickListener(){
+			.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener(){
 				
 				@Override
 				public void onClick(DialogInterface dialog, int which)
@@ -132,7 +144,7 @@ public class AgoniaMenu extends Activity
 			AlertDialog.Builder builder = new AlertDialog.Builder(this)
 			.setTitle("Comming soon!")
 			.setMessage(R.string.dlg_comming_soon_message)
-			.setPositiveButton("OK", new DialogInterface.OnClickListener(){
+			.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener(){
 				
 				@Override
 				public void onClick(DialogInterface dialog, int which)
@@ -153,7 +165,41 @@ public class AgoniaMenu extends Activity
 			dialog = builder.create();
 			}
 			break;
-			
+		case DIALOG_RATE_ID:
+			{
+			AlertDialog.Builder builder = new AlertDialog.Builder(this)
+			.setTitle(R.string.dlg_rate_title)
+			.setMessage(R.string.dlg_rate_message)
+			.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener(){
+				
+				@Override
+				public void onClick(DialogInterface dialog, int which)
+				{
+					if (which == DialogInterface.BUTTON_POSITIVE)
+					{
+						try
+						{
+							Uri appUri = Uri.parse("market://details?id=" + getPackageName());
+							Intent intent = new Intent(Intent.ACTION_VIEW, appUri);
+							startActivity(intent);
+						}
+						catch (Exception ex)
+						{
+							Toast.makeText(AgoniaMenu.this, "No Google Play Store installed!!", Toast.LENGTH_SHORT).show();
+						}
+					}
+				}
+			})
+			.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener(){
+				
+				@Override
+				public void onClick(DialogInterface dialog, int which)
+				{ /* just close the dialog */}
+			})
+			;
+			dialog = builder.create();
+			}
+			break;
 		default:
 			{
 			dialog = null;
@@ -164,9 +210,28 @@ public class AgoniaMenu extends Activity
 		return dialog;
 	}
 	
+	@SuppressWarnings("deprecation")
 	private void atExit()
 	{
-//		showDialog(DIALOG_COMMING_SOON_ID);
-		finish();
+		Random random = new Random();
+		
+		if (random.nextDouble() < CHANCE_COMMING_DIALOG)
+		{
+			showDialog(DIALOG_COMMING_SOON_ID);
+		}
+		else 
+		{
+			finish();
+		}
 	}
+	
+	private View.OnClickListener oclRate = new View.OnClickListener(){
+		
+		@SuppressWarnings("deprecation")
+		@Override
+		public void onClick(View v)
+		{
+			showDialog(DIALOG_RATE_ID);
+		}
+	};
 }

@@ -20,5 +20,10 @@ public interface GameListener
 
 	public void onPlay(Player who, List<Card> cards);
 	
+	/**
+	 * Use it only when the played cards is hidden from other players
+	 */
 	public void onPlay(Player who, int cCards);
+	
+	public void onSwitchTurn(Player prev, Player cur);
 }

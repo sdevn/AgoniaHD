@@ -65,6 +65,11 @@ public class UICard extends ImageButton
 
 	public void setCard(Card card)
 	{
+		setCard(card, true);
+	}
+	
+	public void setCard(Card card, boolean refreshImage)
+	{
 		if (this.card != null)
 		{
 			this.card.setRank(card.getRank());
@@ -75,7 +80,10 @@ public class UICard extends ImageButton
 			this.card = card;
 		}
 		
-		setImage();
+		if (refreshImage)
+		{
+			setImage();
+		}
 	}
 	
 	public void setCardRefTo(Card card)

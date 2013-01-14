@@ -6,42 +6,60 @@
     android:layout_height="fill_parent"
     android:background="@color/tsoha" >
 
-    <LinearLayout
+    <RelativeLayout
+        android:id="@+id/gameContainer"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:clipChildren="false"
-        android:orientation="vertical"
-        android:weightSum="3.0" >
-
+        android:clipChildren="false" >
+
         <devN.games.UIPlayer
-            android:id="@+id/computer"
+            android:id="@+id/player"
             android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentLeft="true"
             android:clipChildren="false"
-            android:gravity="top"
-            android:layoutAnimation="@anim/cpu_in"
-            devn:playCardAnimation="@anim/cpu_play"
-			devn:drawCardAnimation="@anim/cpu_draw"
-            devn:team="2"
-            devn:visible="false" >
-        </devN.games.UIPlayer>
-        
+            android:gravity="bottom"
+            android:layoutAnimation="@anim/player_in"
+            devn:drawCardAnimation="false"
+            devn:info="@id/p1_Info"
+            devn:playCardAnimation="false"
+            devn:team="1"
+            devn:visible="true" />
+
         <RelativeLayout
             android:id="@+id/table"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
-			android:clipChildren="false"
-            android:layout_weight="1" >
+            android:layout_centerInParent="true"
+            android:clipChildren="false" >
 
-            <devN.games.UIDeck
-                android:id="@+id/deck"
-                style="@style/UICard"
+            <RelativeLayout
+                android:id="@+id/deckContainer"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_alignParentLeft="true"
                 android:layout_centerVertical="true"
-                devn:cardRank="-1"
-                devn:cardSuit="-1"
-                devn:visible="false" />
+                android:clipChildren="false" >
+
+                <TextView
+                    android:id="@id/deck_Info"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:text="@string/blank"
+                    android:textAppearance="?android:attr/textAppearanceLarge" />
+
+                <devN.games.UIDeck
+                    android:id="@+id/deck"
+                    style="@style/UICard"
+                    android:layout_alignParentLeft="true"
+                    android:layout_below="@id/deck_Info"
+                    devn:cardRank="-1"
+                    devn:cardSuit="-1"
+                    devn:info="@id/deck_Info"
+                    devn:visible="false" />
+            </RelativeLayout>
 
             <devN.games.UIStackTop
                 android:id="@+id/stackTop"
@@ -50,46 +68,100 @@
                 devn:cardRank="-1"
                 devn:cardSuit="-1"
                 devn:visible="true" />
-
-            <TextView
-                android:id="@+id/deckSize"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_above="@id/deck"
-                android:layout_alignLeft="@id/deck"
-                android:text="@string/blank"
-                android:textAppearance="?android:attr/textAppearanceLarge" />
-
-            <TextView
-                android:id="@+id/cpName"
+
+            <LinearLayout
+                android:id="@+id/infosContainer"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
-                android:layout_marginTop="4dp"
-                android:text="@string/default_p2_name"
-                android:textAppearance="?android:attr/textAppearanceLarge" />
+                android:layout_centerVertical="true"
+                android:orientation="vertical" >
 
-            <TextView
-                android:id="@+id/pName"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
-                android:layout_below="@+id/cpName"
-                android:text="@string/default_p1_name"
-                android:textAppearance="?android:attr/textAppearanceLarge" />
+                <TextView
+                    android:id="@id/p1_Info"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/default_p1_name"
+                    android:textAppearance="?android:attr/textAppearanceLarge" />
+
+                <TextView
+                    android:id="@id/p2_Info"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/cpu1"
+                    android:textAppearance="?android:attr/textAppearanceLarge" />
+
+                <TextView
+                    android:id="@id/p3_Info"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/cpu2"
+                    android:textAppearance="?android:attr/textAppearanceLarge" />
+
+                <TextView
+                    android:id="@id/p4_Info"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/friend"
+                    android:textAppearance="?android:attr/textAppearanceLarge" />
+            </LinearLayout>
         </RelativeLayout>
 
-        <devN.games.UIPlayer
-            android:id="@+id/player"
+        <LinearLayout
+            android:id="@+id/cpusContainer"
             android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
             android:clipChildren="false"
-            android:gravity="bottom"
-            android:layoutAnimation="@anim/player_in"
-            devn:team="1"
-            devn:visible="true" >
-        </devN.games.UIPlayer>
-    </LinearLayout>
+            android:gravity="top"
+            android:orientation="horizontal" >
 
+            <devN.games.UIPlayer
+                android:id="@+id/cpu1"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_weight="1"
+                android:clipChildren="false"
+                android:clipToPadding="false"
+                android:gravity="top"
+                android:layoutAnimation="@anim/cpu_in"
+                devn:drawCardAnimation="true"
+                devn:info="@id/p2_Info"
+                devn:playCardAnimation="true"
+                devn:team="2"
+                devn:visible="false" />
+
+            <devN.games.UIPlayer
+                android:id="@+id/cpu3"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_weight="1"
+                android:clipChildren="false"
+                android:clipToPadding="false"
+                android:gravity="top"
+                android:layoutAnimation="@anim/cpu_in"
+                devn:drawCardAnimation="true"
+                devn:info="@id/p4_Info"
+                devn:playCardAnimation="true"
+                devn:team="1"
+                devn:visible="false" />
+            
+            <devN.games.UIPlayer
+                android:id="@+id/cpu2"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_weight="1"
+                android:clipChildren="false"
+                android:clipToPadding="false"
+                android:gravity="top"
+                android:layoutAnimation="@anim/cpu_in"
+                devn:drawCardAnimation="true"
+                devn:info="@id/p3_Info"
+                devn:playCardAnimation="true"
+                devn:team="3"
+                devn:visible="false" />
+
+        </LinearLayout>
+    </RelativeLayout>
 </devN.etc.dragdrop.DragLayer>

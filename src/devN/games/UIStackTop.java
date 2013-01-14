@@ -16,17 +16,23 @@ public class UIStackTop extends UICard implements DropTarget
 	private static boolean colorHints;
 	
 	private CardGame game;
-	
+	 
 	public UIStackTop(Context context, AttributeSet attrs, int defStyle)
 	{
 		super(context, attrs, defStyle);
-		colorHints = F.getBoolean(F.KEY_COLOR_HINTS, true);
+		if (!isInEditMode())
+		{
+			colorHints = F.getBoolean(F.KEY_COLOR_HINTS, true);
+		}
 	}
 
 	public UIStackTop(Context context, AttributeSet attrs)
 	{
 		super(context, attrs);
-		colorHints = F.getBoolean(F.KEY_COLOR_HINTS, true);
+		if (!isInEditMode())
+		{
+			colorHints = F.getBoolean(F.KEY_COLOR_HINTS, true);
+		}
 	}
 
 	public UIStackTop(Context context)
@@ -72,6 +78,7 @@ public class UIStackTop extends UICard implements DropTarget
 		resetBackground();
 	}
 
+	@SuppressWarnings("deprecation")
 	@Override
 	public void onDragEnter(DragSource source, int x, int y, int xOffset, int yOffset,
 							Object dragInfo)
@@ -128,5 +135,4 @@ public class UIStackTop extends UICard implements DropTarget
 		
 		return b;
 	}
-
 }

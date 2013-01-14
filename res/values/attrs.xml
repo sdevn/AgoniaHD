@@ -12,7 +12,7 @@
     
     <declare-styleable name="UIPlayer">
         <attr name="team" format="integer" />
-        <attr name="playCardAnimation" format="reference" />
-        <attr name="drawCardAnimation" format="reference" />
+        <attr name="playCardAnimation" format="boolean|reference" />
+        <attr name="drawCardAnimation" format="boolean|reference" />
     </declare-styleable>
 </resources>

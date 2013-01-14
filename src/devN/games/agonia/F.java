@@ -2,9 +2,11 @@ package devN.games.agonia;
 
 import java.util.Map;
 import android.app.Activity;
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
+import android.content.res.Resources;
 import android.preference.PreferenceManager;
 
 public class F
@@ -23,6 +25,7 @@ public class F
 	public static String KEY_ACE_FINISH;
 	
 	public static SharedPreferences settings;
+	private static Resources resources;
 	
 	public F(Activity a)
 	{
@@ -39,6 +42,7 @@ public class F
 		KEY_ACE_ON_ACE = a.getString(R.string.key_ace_on_ace);
 		KEY_ACE_FINISH = a.getString(R.string.key_ace_finish);
 		
+		resources = a.getResources();
 		settings = PreferenceManager.getDefaultSharedPreferences(a);
 	}
 	
@@ -75,6 +79,11 @@ public class F
 	public static long getLong(String key, long defValue)
 	{
 		return settings.getLong(key, defValue);
+	}
+
+	public static Resources getResources()
+	{
+		return resources;
 	}
 
 	public static String getString(String key, String defValue)

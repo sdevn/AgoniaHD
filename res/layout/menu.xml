@@ -5,21 +5,20 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:background="@color/tsoha"
-	android:layoutAnimation="@anim/menu_in" > 
-	<!-- --> 
-    
-	<com.google.ads.AdView
+    android:layoutAnimation="@anim/menu_in" >
+ 
+    <com.google.ads.AdView
         android:id="@+id/adView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
         ads:adSize="SMART_BANNER"
         ads:adUnitId="a15007e97f87daa"
         ads:loadAdOnCreate="true"
         ads:testDevices="TEST_EMULATOR" />
 
- 	<ImageView
+    <ImageView
         android:id="@+id/imageView1"
         android:layout_width="320dp"
         android:layout_height="165dp"
@@ -46,20 +45,37 @@
         android:layout_below="@id/btPref"
         android:text="@string/menu_btn_how_to_play" />
 
-    <Button
-        android:id="@+id/btExit"
-        style="@style/menu_button"
-        android:layout_below="@id/btHow"
-        android:text="@string/exit" />
-
-    <ImageButton
-        android:id="@+id/ibtAbout"
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/btExit"
+        android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
-        android:background="@drawable/sel_bkgr_touched"
-        android:contentDescription="@string/blank"
-        android:src="@drawable/about" />
+        android:layout_marginBottom="12dp"
+        android:orientation="vertical" >
+
+        <ImageButton
+            android:id="@+id/ibtFacebook"
+            style="@style/menu_side_icon"
+            android:contentDescription="@string/blank"
+            android:src="@drawable/ic_facebook" />
+
+         <ImageButton
+            android:id="@+id/ibtRate"
+            style="@style/menu_side_icon"
+            android:contentDescription="@string/blank"
+            android:src="@drawable/ic_rate" />
+        
+        <ImageButton
+            android:id="@+id/ibtAbout"
+            style="@style/menu_side_icon"
+            android:contentDescription="@string/blank"
+            android:src="@drawable/ic_about" />
+
+        <ImageButton
+            android:id="@+id/ibtExit"
+            style="@style/menu_side_icon"
+            android:contentDescription="@string/blank"
+            android:src="@drawable/ic_x" />
+    </LinearLayout>
 
 </RelativeLayout>
