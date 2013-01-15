@@ -106,11 +106,11 @@
                     android:textAppearance="?android:attr/textAppearanceLarge" />
             </LinearLayout>
         </RelativeLayout>
-
+
         <LinearLayout
             android:id="@+id/cpusContainer"
             android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="fill_parent"
             android:layout_alignParentLeft="true"
             android:layout_alignParentTop="true"
             android:clipChildren="false"

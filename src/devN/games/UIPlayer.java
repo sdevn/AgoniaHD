@@ -133,10 +133,11 @@ public class UIPlayer extends LinearLayout implements AnimationListener, DropTar
 		parentHeight = height;
 		parentWidth = width;
 		
-											// ean o player minei horis kartes alla den bgei
-		getLayoutParams().height = height;	// (px petakse 8), to height epeidi einai WRAP_CONTENT
-											// midenizete, me apotelesma na min mporei na kanei draw
-
+		if (visible) /* v 2.0a */
+		{										// ean o player minei horis kartes alla den bgei
+			getLayoutParams().height = parentHeight;	// (px petakse 8), to height epeidi einai WRAP_CONTENT
+		}										// midenizete, me apotelesma na min mporei na kanei draw
+		
 		parentFullHeight = fullHeight;
 		parentFullWidth = fullWidth;
 

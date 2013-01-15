@@ -29,6 +29,8 @@ import android.view.ViewGroup.OnHierarchyChangeListener;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
+import android.widget.RelativeLayout.LayoutParams;
 import android.widget.TextView;
 import android.widget.Toast;
 import devN.etc.TextColorAnimation;
@@ -76,6 +78,8 @@ public class AgoniaGame extends Activity implements DragSource, OnTouchListener,
 	private TextColorAnimationGroup tcaGroup;
 	private boolean isNewSet;
 
+	private LinearLayout cpusContainer; /* v2.0a */
+	private RelativeLayout.LayoutParams rlpCpuContainer; /* v2.0a */
 	/**
 	 * paiktes pou anamihtikan se Seven-Seven...
 	 * wste na kseroume an kapoios petakse to teleutaio tou filo
@@ -180,6 +184,9 @@ public class AgoniaGame extends Activity implements DragSource, OnTouchListener,
 		dragController = (DragController) findViewById(R.id.dragLayer);
 		
 		infosContainer = (LinearLayout) findViewById(R.id.infosContainer);
+		
+		cpusContainer = (LinearLayout) findViewById(R.id.cpusContainer);
+		rlpCpuContainer = (RelativeLayout.LayoutParams) cpusContainer.getLayoutParams();
 		
 		stackTop = (UIStackTop) findViewById(R.id.stackTop);
 		
@@ -492,18 +499,30 @@ public class AgoniaGame extends Activity implements DragSource, OnTouchListener,
 					game.informAceSuitSelected(aceSuit);
 					
 					stackTop.setCard(new Card(aceSuit, 1), false);
-					stackTop.postSetImage("", cpuDelay);
 					game.switchTurn();
 					
-					if (!game.turn.isRealPlayer())
-					{
-					    new Handler().postDelayed(new Runnable() {
-						    public void run()
-						    {
-						        cpuAutoPlay();
-						    }
-					    }, cpuDelay);
-                    }     
+					/* v2.0a modified */
+				    new Handler().postDelayed(new Runnable() {
+					    public void run()
+					    {
+					    	if (!game.turn.isRealPlayer())
+							{
+					    		cpuAutoPlay();
+							}
+					    	
+					    	stackTop.postSetImage("");
+					    	stackTop.postInvalidate();
+					    	
+					    	stackTop.postDelayed(new Runnable(){
+								public void run()
+								{
+									stackTop.postInvalidate();
+								}
+							}, 150);
+					    	
+					    }
+				    }, cpuDelay);
+				    /* v2.0a end */
 				}
 				catch (final SevenPlayed e)
 				{
@@ -583,31 +602,10 @@ public class AgoniaGame extends Activity implements DragSource, OnTouchListener,
 		tcaGroup.pauseAll();	// just to be safe...
 
 		onSwitchTurn(game.turn, game.turn);
-			
-		final View table = findViewById(R.id.table);
-		final View cpusContainer = findViewById(R.id.cpusContainer);
-		Runnable r = new Runnable(){
-			public void run()
-			{
-				cpusContainer.postInvalidate();
-				cpusContainer.requestLayout();
-				table.postInvalidate();
-				table.requestLayout();
-			}
-		};
 		
 		try
 		{
 			game.draw(game.turn, sevenDraw, true);
-			
-			for (int i = 15; i > 0; i--)
-			{
-				cpusContainer.postDelayed(r, cpuDelay / i);
-				table.postDelayed(r, cpuDelay / i);
-			}
-
-			cpusContainer.postDelayed(r, cpuDelay + 50);
-			table.postDelayed(r, cpuDelay + 50);
 		}
 		catch (GameFinished ex) // maybe deck finished
 		{
@@ -637,8 +635,17 @@ public class AgoniaGame extends Activity implements DragSource, OnTouchListener,
 		sevenPlayers.clear();
 		
 		if (!game.turn.isRealPlayer()) 
-		{
-			cpuAutoPlay();
+		{	/* v2.0a modified */
+			new Handler().postDelayed(new Runnable(){
+				@SuppressWarnings("deprecation")
+				public void run()
+				{
+					cpuAutoPlay();
+					rlpCpuContainer.height = LayoutParams.FILL_PARENT;
+					cpusContainer.setLayoutParams(rlpCpuContainer);
+					cpusContainer.invalidate();
+				}
+			}, 200);
 		}
 	}
 	
@@ -1154,11 +1161,37 @@ public class AgoniaGame extends Activity implements DragSource, OnTouchListener,
 	public void onPlay(Player who, int cCards)
 	{ }
 
+	@SuppressWarnings("deprecation")
 	@Override
-	public void onSwitchTurn(Player prev, Player cur)
+	public void onSwitchTurn(Player prev, final Player cur)
 	{	
-		tcaGroup.pause(prev.getId());
+		tcaGroup.pauseAll(); /*be safe, cause nine causes two TextViews to animate */
 		
 		tcaGroup.start(cur.getId());
+		
+		/* v2.0a */
+		long delay = 10;
+		Handler handler = new Handler();
+		
+		if (cur.isRealPlayer())
+		{
+			delay = cpuDelay;
+		}
+		
+		handler.postDelayed(new Runnable(){
+			public void run()
+			{	
+				if (cur.isRealPlayer())
+				{
+					rlpCpuContainer.height = LayoutParams.WRAP_CONTENT;
+				}
+				else 
+				{
+					rlpCpuContainer.height = LayoutParams.FILL_PARENT;
+				}
+				cpusContainer.setLayoutParams(rlpCpuContainer);
+				cpusContainer.invalidate();
+			}
+		}, delay);
 	}
 }

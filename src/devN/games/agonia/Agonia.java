@@ -137,14 +137,10 @@ public class Agonia extends CardGame
 
 	private void handleNine()
 	{
-		if (turn.getHand().isEmpty())
-		{
-			finishGame();
-		}
-		
 		if (isNineSpecial)
 		{
-		    switchTurn();
+			turn = whoPlayNext();
+			lastDraw = null;
 		}
 	}
 
