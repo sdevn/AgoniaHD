@@ -1,45 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string-array name="difficult_modes">
-        
+    <string-array name="difficult_modes">        
         <item>@string/mode_monkey</item>
 		<item>@string/mode_easy</item>
 		<item>@string/mode_moderate</item>
 <!--    <item>@string/mode_megamind</item>	 -->
-        
     </string-array>
     
     <string-array name="difficult_modes_values">
-        
         <item>0</item>
         <item>1</item>
 	    <item>2</item>
 <!--    <item>3</item>		 -->
-        
     </string-array>
     
     <string-array name="deck_finish_options">
-    
 	    <item>@string/deck_finish_recycle</item>
 		<item>@string/deck_finish_pick_new</item>
 		<item>@string/deck_finish_finish_game</item>
-		
 	</string-array>	
     
     <string-array name="deck_finish_values">
-        
         <item>0</item>
         <item>1</item>
         <item>2</item>
-        
     </string-array>
     
     <string-array name="set_types">
-        
         <item>@string/points</item>
         <item>@string/wins</item>
-        
     </string-array>
     
     <string-array name="players_num">
@@ -47,5 +37,27 @@
         <item>1 v 1 v 1</item>
         <item>2 v 2</item>
     </string-array>
-
+    
+    <!-- v2.1 -->
+	<string-array name="player_turn_colors">
+	    <item>@string/color_red</item>
+	    <item>@string/color_blue</item>
+	    <item>@string/color_yellow</item>
+	    <item>@string/color_green</item>
+	    <item>@string/color_cyan</item>
+	    <item>@string/color_magenta</item>
+	    <item>@string/color_black</item>
+	    <item>@string/color_none</item>
+	</string-array>
+	
+	<string-array name="player_turn_color_values">
+	    <item>red</item>
+	    <item>blue</item>
+	    <item>yellow</item>
+	    <item>green</item>
+	    <item>cyan</item>
+	    <item>magenta</item>
+	    <item>black</item>
+	    <item>white</item>
+	</string-array>
 </resources>

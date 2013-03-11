@@ -5,53 +5,64 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:background="@color/tsoha"
-    android:layoutAnimation="@anim/menu_in" >
- 
-    <com.google.ads.AdView
-        android:id="@+id/adView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true"
-        ads:adSize="SMART_BANNER"
-        ads:adUnitId="a15007e97f87daa"
-        ads:loadAdOnCreate="true"
-        ads:testDevices="TEST_EMULATOR" />
+    android:layoutAnimation="@anim/menu_in_delayed" >
 
-    <ImageView
-        android:id="@+id/imageView1"
-        android:layout_width="320dp"
-        android:layout_height="165dp"
-        android:layout_below="@id/adView"
-        android:layout_centerHorizontal="true"
-        android:contentDescription="@string/blank"
-        android:src="@drawable/ic_deck" />
+    <!-- inner layout -->
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:gravity="center_horizontal"
+        android:layoutAnimation="@anim/menu_in"
+        android:orientation="vertical" >
 
-    <Button
-        android:id="@+id/btGame"
-        style="@style/menu_button"
-        android:layout_below="@id/imageView1"
-        android:text="@string/menu_btn_new_game" />
+        <com.google.ads.AdView
+            android:id="@+id/adView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            ads:adSize="SMART_BANNER"
+            ads:adUnitId="a15007e97f87daa"
+            ads:loadAdOnCreate="true"
+            ads:testDevices="TEST_EMULATOR" />
 
-    <Button
-        android:id="@+id/btPref"
-        style="@style/menu_button"
-        android:layout_below="@id/btGame"
-        android:text="@string/menu_btn_pref" />
+        <ImageView
+            android:id="@+id/imageView1"
+            android:layout_width="fill_parent"
+            android:layout_height="@dimen/menu_ic_deck_height"
+            android:contentDescription="@string/blank"
+            android:scaleType="fitXY"
+            android:src="@drawable/ic_deck" />
 
-    <Button
-        android:id="@+id/btHow"
-        style="@style/menu_button"
-        android:layout_below="@id/btPref"
-        android:text="@string/menu_btn_how_to_play" />
+        <Button
+            android:id="@+id/btGame"
+            style="@style/menu_button"
+            android:text="@string/menu_btn_new_game" />
+
+        <Button
+            android:id="@+id/btPref"
+            style="@style/menu_button"
+            android:layout_marginTop="@dimen/menu_btn_top_marg"
+            android:text="@string/menu_btn_pref" />
+
+        <Button
+            android:id="@+id/btHow"
+            style="@style/menu_button"
+            android:layout_marginTop="@dimen/menu_btn_top_marg"
+            android:text="@string/menu_btn_how_to_play" />
+    </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/menu_side_icons_container"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
-        android:layout_marginBottom="12dp"
         android:orientation="vertical" >
+
+        <!--
+        	android:layout_gravity="right"
+        	android:gravity="right"
+       		android:layout_marginTop="@dimen/menu_side_icon_top_marg"
+        -->
 
         <ImageButton
             android:id="@+id/ibtFacebook"
@@ -59,12 +70,12 @@
             android:contentDescription="@string/blank"
             android:src="@drawable/ic_facebook" />
 
-         <ImageButton
+        <ImageButton
             android:id="@+id/ibtRate"
             style="@style/menu_side_icon"
             android:contentDescription="@string/blank"
             android:src="@drawable/ic_rate" />
-        
+
         <ImageButton
             android:id="@+id/ibtAbout"
             style="@style/menu_side_icon"
@@ -74,6 +85,7 @@
         <ImageButton
             android:id="@+id/ibtExit"
             style="@style/menu_side_icon"
+            android:layout_height="wrap_content"
             android:contentDescription="@string/blank"
             android:src="@drawable/ic_x" />
     </LinearLayout>

@@ -37,10 +37,10 @@ public class UIDeck extends UICard
 		a.recycle();
 	}
 
-	public UIDeck(Context context, TextView info)
-	{
-		super(context, new Card(Card.NULL_CARD), false);
-	}
+//	public UIDeck(Context context, TextView info)
+//	{
+//		super(context, new Card(Card.NULL_CARD), false);
+//	}
 
 	public List<Card> draw()
 	{

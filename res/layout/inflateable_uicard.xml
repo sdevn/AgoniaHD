@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<devN.games.UICard xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:devn="http://schemas.android.com/apk/res/devN.games.agonia"
+	style="@style/UICard"
+	devn:cardRank="-1"
+	devn:cardSuit="-1"
+	devn:visible="false" />

@@ -73,28 +73,21 @@
     <string name="how_your_cards">These are your cards</string>
     <string name="how_deck">Deck</string>
     <string name="done">Done</string>
-
     <string name="pref_color_hints_title">Color hints</string>
     <string name="pref_color_hints_summ">Varius color hints to guide you in game</string>
-    
     <string name="pref_ace_on_ace_title">Ace-On-Ace</string>
     <string name="pref_ace_on_ace_summ">Ace could be played on top of Ace</string>
-    
     <string name="pref_ace_finish_title">Ace The Last</string>
     <string name="pref_ace_finish_summ">Allow players to go out with Ace</string>
-    
     <string name="dlg_exit_title">Quit game?</string>
     <string name="dlg_exit_message">If you quit the game, it will count as lose!!\nAre you sure?</string>
-
 	<string name="cpu1">Cpu1</string>
 	<string name="cpu2">Cpu2</string>
 	<string name="cpu3">Cpu3</string>
 	<string name="friend">Friend</string>
-	
 	<string name="set_type_goal">Set Type/Goal</string>
 	<string name="players">Players</string>
 	<string name="set_btn_start">Start new set</string>
-
 	<string name="set_btn_continue_next">Start next game</string>
 	<string name="set_btn_continue_winner">Show winner team</string>
 	<string name="winner_team">Winner team: %s</string>
@@ -102,11 +95,42 @@
 	<string name="set_info" formatted="false">Type: %s, Goal: %d, Round: %d</string>
 	<string name="set_player_info" formatted="false">%d. %s [%s]</string> <!-- player.team, player.name, player.ai.string -->
 	<string name="set_team_info" formatted="false">%s: %d\n%s: %d</string> <!-- @string/wins, set.team.wins, @string/points, set.team.points -->
-
 	<string name="dlg_rate_title">You like Agonia?</string>
     <string name="dlg_rate_message">If you enjoy to play Agonia, please rate it with five stars and a good comment!!\nIf you dont, say me what you didn\'t like and i will fix it soon.\nThank you!!</string>
-
-    <string name="dlg_about_message"><![CDATA[<font color="white">Custom buttons made with: <a href="http://www.cooltext.com" target="_blank">cooltext.com</a><br /><br />Cards - Deck icons downloaded from: <a href="http://freeware.esoterica.free.fr/html/freecards.html" target="_blank">freeware.esoterica.free.fr</a><br />(Authors: Jesse Fuchs and Tom Hart)<br /><br />This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by/3.0/gr/deed.en">Creative Commons Attribution 3.0 Greece License</a>.</font><br /> ]]></string>
-    <string name="dlg_comming_soon_message">➤save/load GameSet\n➤new deck!\n➤hard mode\n➤more preferences for more special cards\n➤game history when game finished\n</string>
+    <string name="dlg_about_message"><![CDATA[<font color="white">Old-style Deck icons downloaded from: <a href="http://freeware.esoterica.free.fr/html/freecards.html" target="_blank">freeware.esoterica.free.fr</a><br />(Authors: Jesse Fuchs and Tom Hart)<br /><br />This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by/3.0/gr/deed.en">Creative Commons Attribution 3.0 Greece License</a>.</font><br /> ]]></string>
     
+    <!-- unused -->
+    <string name="dlg_comming_soon_message">➤save/load GameSet/Game\n➤hard mode\n➤more preferences for more special cards\n➤game history when game finished\n</string>
+    
+    <!-- v2.1 -->
+    <string name="custom_font">fonts/BLACKR.ttf</string>
+    <string name="key_p3_name">p3_name</string>
+    <string name="key_p4_name">p4_name</string> <!-- friend -->
+    <string name="dlg_change_name_title">Set new name for "%s"</string>    
+    <string name="key_old_deck">old_deck</string>
+    <string name="pref_old_deck_summ">Use old-style deck</string>
+    <string name="pref_old_deck_title">Old-style deck</string>
+    <string name="key_old_anim">old_anim</string>
+    <string name="pref_old_anim_summ">Use low quality animations for CPUs</string>
+    <string name="pref_old_anim_title">Low quality animations</string>
+    <string name="pref_player_turn_default_color">red</string>
+    <string name="key_player_turn_color1">key_player_turn_color1</string>
+    <string name="pref_player_turn_color_title1">Player\'s turn color</string>
+    <string name="key_player_turn_color2">key_player_turn_color2</string>
+    <string name="pref_player_turn_color_title2">Player\'s turn flashing color</string>
+    <string name="color_red">Red</string>
+	<string name="color_blue">Blue</string>
+	<string name="color_yellow">Yellow</string>
+	<string name="color_green">Green</string>
+	<string name="color_cyan">Cyan</string>
+	<string name="color_magenta">Magenta</string>
+	<string name="color_black">Black</string>
+	<string name="color_none">None</string>
+	<string name="key_game_music">key_music</string>
+    <string name="pref_game_music_title">Background music</string>
+    <string name="key_game_sfx">key_sfx</string>
+    <string name="pref_game_sfx_title">Game sound effects</string>
+	
+    <string name="dlg_whats_new_message">➤New HD deck\n➤New button\n➤Background music and sound effects\n➤Low quality animations\n\n<b>Comming soon!</b>\n➤save/load GameSet/Game\n➤hard mode\n➤more preferences for more special cards\n➤game history when game finished\n</string>
+    <string name="key_dlg_whats_new_once">key_dlg_whats_new_once_v2.1</string>
 </resources>

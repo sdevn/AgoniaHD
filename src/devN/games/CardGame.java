@@ -23,22 +23,13 @@ public abstract class CardGame
 		init(d, players, startDeal);
 
 //		List<Card> debugDraw = new ArrayList<Card>();
-//		debugDraw.add(new Card(0, 8));
-//		debugDraw.add(new Card(1, 8));
-//		debugDraw.add(new Card(2, 8));
-//		debugDraw.add(new Card(3, 8));
-//		
-//		for (Player p : players)
-//		{
-//			if (p.isRealPlayer())
-//			{
-//				p.draw(debugDraw);
-//			}
-//			else 
-//			{
-//				p.draw();
-//			}
-//		}
+//		debugDraw.add(new Card(0, 7));
+//		debugDraw.add(new Card(1, 7));
+//		debugDraw.add(new Card(2, 7));
+//		debugDraw.add(new Card(3, 7));
+//
+//		players.get(0).draw(debugDraw.subList(0, 3));
+//		players.get(1).draw(debugDraw);
 		
 		STACK_TOP_COUNT = stackTopSize;		
 		

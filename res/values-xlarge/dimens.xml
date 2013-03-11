@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- v2.1 -->
+    <dimen name="dlg_set_finish_ic_height">560dp</dimen> <!-- TODO: change it if needed -->
+    <dimen name="UICard_height">256dp</dimen>
+	<dimen name="UICard_width">184dp</dimen>
+	<dimen name="menu_side_icon_top_marg">-224dp</dimen>
+	<dimen name="menu_ic_deck_height">515dp</dimen>
+	<dimen name="menu_btn_top_marg">-170dp</dimen>
+</resources>

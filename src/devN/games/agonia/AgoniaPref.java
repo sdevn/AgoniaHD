@@ -8,10 +8,11 @@ import android.widget.Toast;
 
 public class AgoniaPref extends PreferenceActivity 
 {	
-	private final static int NAME_MAX_LENGTH = 9;
-	private final static int NAME_MIN_LENGTH = 3;
-	private final static String REGEX_NAME_FILTER = "(^[a-zA-Z0-9\\p{InGreek}]{" + NAME_MIN_LENGTH + "," + NAME_MAX_LENGTH + "}$)";
+	public final static int NAME_MAX_LENGTH = 9;
+	public final static int NAME_MIN_LENGTH = 3;
+	public final static String REGEX_NAME_FILTER = "(^[a-zA-Z0-9\\p{InGreek}]{" + NAME_MIN_LENGTH + "," + NAME_MAX_LENGTH + "}$)";
 
+	/** v2.1 merged this {@link android.app.Activity#onStart()} */
 	@SuppressWarnings("deprecation")
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
@@ -19,14 +20,7 @@ public class AgoniaPref extends PreferenceActivity
 		super.onCreate(savedInstanceState);
 		
 		addPreferencesFromResource(R.xml.pref);
-	}
 
-	@SuppressWarnings("deprecation")
-	@Override
-	protected void onStart()
-	{
-		super.onStart();
-		
 		Preference.OnPreferenceChangeListener namesOnSumm = new Preference.OnPreferenceChangeListener(){
 			
 			@Override
@@ -82,5 +76,4 @@ public class AgoniaPref extends PreferenceActivity
 		lp.setOnPreferenceChangeListener(namesOnSumm);
 */
 	}
-	
 }

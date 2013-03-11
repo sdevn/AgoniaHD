@@ -6,5 +6,6 @@
     <color name="delete_color_filter">#A5FF0000</color>
     <color name="snag_callout_color">#F444</color>
     <color name="touched_backround">#B5363636</color>
-    
+	<color name="UICard_accept">#025DD5</color>
+	<color name="UICard_reject">#E11717</color>
 </resources>

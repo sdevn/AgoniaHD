@@ -26,8 +26,8 @@ public class HowToPlay extends Activity
 		flipperLast = flipper.getChildAt(flipper.getChildCount() - 1);
 		flipperFirst = flipper.getChildAt(0);
 		
-		flipper.setInAnimation(getApplicationContext(), R.anim.right_to_original_pos);
-		flipper.setOutAnimation(getApplicationContext(), R.anim.out_to_left);
+		flipper.setInAnimation(HowToPlay.this, R.anim.right_to_original_pos);
+		flipper.setOutAnimation(HowToPlay.this, R.anim.out_to_left);
 		
 		prev = (Button) findViewById(R.id.how_btn_prev);
 		next = (Button) findViewById(R.id.how_btn_next);
@@ -39,8 +39,8 @@ public class HowToPlay extends Activity
 			@Override
 			public void onClick(View v)
 			{			
-				flipper.setInAnimation(getApplicationContext(), R.anim.left_to_original_pos);
-				flipper.setOutAnimation(getApplicationContext(), R.anim.out_to_right);
+				flipper.setInAnimation(HowToPlay.this, R.anim.left_to_original_pos);
+				flipper.setOutAnimation(HowToPlay.this, R.anim.out_to_right);
 				flipper.showPrevious();
 				onFlipperSwitched();
 			}
@@ -58,8 +58,8 @@ public class HowToPlay extends Activity
 				}
 				else
 				{
-					flipper.setInAnimation(getApplicationContext(), R.anim.right_to_original_pos);
-					flipper.setOutAnimation(getApplicationContext(), R.anim.out_to_left);
+					flipper.setInAnimation(HowToPlay.this, R.anim.right_to_original_pos);
+					flipper.setOutAnimation(HowToPlay.this, R.anim.out_to_left);
 					flipper.showNext();
 					onFlipperSwitched();
 				}
@@ -89,6 +89,7 @@ public class HowToPlay extends Activity
 			next.setText(R.string.next);
 		}
 		
+		// TODO: Hide/Show it when animation ends. (not on click)
 		if (cur.equals(flipperFirst)) 
 		{
 			prev.setVisibility(View.INVISIBLE);

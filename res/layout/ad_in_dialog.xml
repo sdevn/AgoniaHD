@@ -14,5 +14,4 @@
         ads:adUnitId="a15007e97f87daa"
         ads:loadAdOnCreate="true" >
     </com.google.ads.AdView>
-
 </HorizontalScrollView>

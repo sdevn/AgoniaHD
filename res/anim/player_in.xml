@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layoutAnimation xmlns:android="http://schemas.android.com/apk/res/android"
     android:animationOrder="normal"
-    android:delay="50%"
+    android:delay="@integer/anim_in_delay"
     android:animation="@anim/right_to_original_pos" > 
 </layoutAnimation>

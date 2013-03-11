@@ -2,7 +2,6 @@ package devN.games.agonia;
 
 import java.util.Map;
 import android.app.Activity;
-import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
@@ -13,6 +12,8 @@ public class F
 {
 	public static String KEY_P1_NAME;
 	public static String KEY_P2_NAME;
+	public static String KEY_P3_NAME;
+	public static String KEY_P4_NAME;
 	public static String KEY_P1_SCORE;
 	public static String KEY_P2_SCORE;
 	public static String KEY_P1_WINS;
@@ -23,6 +24,8 @@ public class F
 	public static String KEY_COLOR_HINTS;
 	public static String KEY_ACE_ON_ACE;
 	public static String KEY_ACE_FINISH;
+	public static String KEY_OLD_DECK;
+	public static String KEY_OLD_ANIM;
 	
 	public static SharedPreferences settings;
 	private static Resources resources;
@@ -31,6 +34,8 @@ public class F
 	{
 		KEY_P1_NAME = a.getString(R.string.key_p1_name);
 		KEY_P2_NAME = a.getString(R.string.key_p2_name);
+		KEY_P3_NAME = a.getString(R.string.key_p3_name);
+		KEY_P4_NAME = a.getString(R.string.key_p4_name);
 		KEY_P1_SCORE = a.getString(R.string.key_p1_score);
 		KEY_P2_SCORE = a.getString(R.string.key_p2_score);
 		KEY_P1_WINS = a.getString(R.string.key_p1_wins);
@@ -41,6 +46,8 @@ public class F
 		KEY_COLOR_HINTS = a.getString(R.string.key_color_hints);
 		KEY_ACE_ON_ACE = a.getString(R.string.key_ace_on_ace);
 		KEY_ACE_FINISH = a.getString(R.string.key_ace_finish);
+		KEY_OLD_DECK = a.getString(R.string.key_old_deck);
+		KEY_OLD_ANIM = a.getString(R.string.key_old_anim);
 		
 		resources = a.getResources();
 		settings = PreferenceManager.getDefaultSharedPreferences(a);

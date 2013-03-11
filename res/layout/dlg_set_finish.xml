@@ -5,7 +5,7 @@
     android:layout_height="wrap_content"
     android:background="@color/tsoha"
     android:orientation="vertical" >
-
+    
     <ImageView
         android:id="@+id/dlg_set_finish_ic"
         android:layout_width="fill_parent"

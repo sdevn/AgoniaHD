@@ -10,14 +10,21 @@ import java.util.List;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnCancelListener;
 import android.content.DialogInterface.OnDismissListener;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.Color;
+import android.graphics.Typeface;
+import android.media.AudioManager;
+import android.media.MediaPlayer;
+import android.media.SoundPool;
 import android.os.Bundle;
 import android.os.Handler;
+import android.preference.PreferenceManager;
 import android.util.DisplayMetrics;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -25,16 +32,24 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
+import android.view.ViewGroup;
 import android.view.ViewGroup.OnHierarchyChangeListener;
+import android.view.animation.Animation;
+import android.view.animation.Animation.AnimationListener;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.RelativeLayout.LayoutParams;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
+import devN.etc.DBGLog;
+import devN.etc.DevnDialogUtils;
 import devN.etc.TextColorAnimation;
 import devN.etc.TextColorAnimationGroup;
+import devN.etc.TypefaceUtils;
 import devN.etc.dragdrop.DragController;
 import devN.etc.dragdrop.DragSource;
 import devN.games.Card;
@@ -48,17 +63,45 @@ import devN.games.agonia.AgoniaAI.AgoniaAIBuilder;
 
 public class AgoniaGame extends Activity implements DragSource, OnTouchListener, AgoniaGameListener
 {
+	private final static boolean DEBUG = false;
+	
 	// TODO: GameHistory dialog
 	// TODO: Save / Load game
 	// TODO: Statistics for game wins/loses/total games
+	// TODO: Menu button function. {Enable/Disable music/sfx, how to play, see preferences}
 	
 	public static final int DIALOG_ACE_ID			= 0;
 	public static final int DIALOG_SEVEN_ID			= 1;
 	public static final int DIALOG_FINISH_ID		= 2; 	// game finished
 	public static final int DIALOG_EXIT_ID			= 3;
 
-	public static final String TAG = "dbg";
+	/** v2.1 added
+	 * epeidi ta deltaX, deltaY tou playAnimation den einai akrives
+	 * prepei na kanoume invalidate wste na min fenetai oti i karta
+	 * den paei akrivws panw ap to UIStackTop (hanei merika pixels)
+	 */
+	private final AnimationListener invalidateListener = new AnimationListener(){
+		
+		@Override
+		public void onAnimationStart(Animation animation)
+		{ }
+		
+		@Override
+		public void onAnimationRepeat(Animation animation)
+		{ }
+		
+		@Override
+		public void onAnimationEnd(Animation animation)
+		{
+			((ViewGroup) dragController).requestLayout();
+			((ViewGroup) dragController).postInvalidate();
+			stackTop.requestLayout();
+			stackTop.postInvalidate();
+		}
+	};
 
+	public static final float MUSIC_GAME_VOLUME		= .2f;
+	
 	protected Agonia game;
 	protected UIPlayer up;
 	protected UIPlayer[] aupCpu = new UIPlayer[3];
@@ -80,12 +123,18 @@ public class AgoniaGame extends Activity implements DragSource, OnTouchListener,
 
 	private LinearLayout cpusContainer; /* v2.0a */
 	private RelativeLayout.LayoutParams rlpCpuContainer; /* v2.0a */
-	/**
-	 * paiktes pou anamihtikan se Seven-Seven...
-	 * wste na kseroume an kapoios petakse to teleutaio tou filo
-	 */
-	private List<Player> sevenPlayers = new ArrayList<Player>();
 	
+	/* v2.1 */
+	private boolean useSFX;
+	private boolean useMusic;
+	private MediaPlayer mediaPlayer;
+	private static SoundPool soundPool;
+	private static int sound_deal_cards;
+	private static int sound_draw_card;
+	private static int sound_play_card;
+	private static int sound_fail_game;
+	private static int sound_win_game;
+
 	/**
 	 * Bundle should contains params for GameSet.
 	 */
@@ -93,9 +142,20 @@ public class AgoniaGame extends Activity implements DragSource, OnTouchListener,
 	public void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
-       	setContentView(R.layout.game);
-
-		AgoniaAI cpuAI;
+       	       	
+       	SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+       	
+       	useSFX = prefs.getBoolean(getString(R.string.key_game_sfx), true);
+       	initSoundPool(this, useSFX);
+       	useMusic = prefs.getBoolean(getString(R.string.key_game_music), false);
+       	
+       	boolean oldDeck = prefs.getBoolean(getString(R.string.key_old_deck), false);
+       	boolean oldAnim = prefs.getBoolean(getString(R.string.key_old_anim), false);
+       	       	
+       	UICard.setUseOldDeck(oldDeck);
+       	UIPlayer.setUseOldAnim(oldAnim);
+       	
+       	AgoniaAI cpuAI;
 		String p1Name;
 		String[] aCpuNames = new String[3];;
 		Resources res = getResources();
@@ -123,6 +183,8 @@ public class AgoniaGame extends Activity implements DragSource, OnTouchListener,
 		
 		cpuDelay = res.getInteger(R.integer.cpu_delay);
 
+		setContentView(R.layout.game);
+		
 		p1Name = F.getString(F.KEY_P1_NAME, getString(R.string.default_p1_name));
 		up = (UIPlayer) findViewById(R.id.player);
 		up.setInfo();
@@ -130,10 +192,11 @@ public class AgoniaGame extends Activity implements DragSource, OnTouchListener,
 		up.initDimensions(displayMetrics.widthPixels, displayMetrics.heightPixels / 3,
 							displayMetrics.widthPixels, displayMetrics.heightPixels);
 		up.setOnTouchListener(this);
+		up.setOnPlayAnimListener(invalidateListener);
 
-		aCpuNames[0] = getString(R.string.cpu1);
-		aCpuNames[1] = getString(R.string.cpu2);
-		aCpuNames[2] = getString(R.string.friend);
+		aCpuNames[0] = F.getString(F.KEY_P2_NAME, getString(R.string.cpu1));
+		aCpuNames[1] = F.getString(F.KEY_P3_NAME, getString(R.string.cpu2));
+		aCpuNames[2] = F.getString(F.KEY_P4_NAME, getString(R.string.friend));
 		
 		aupCpu[0] = (UIPlayer) findViewById(R.id.cpu1);
 		aupCpu[1] = (UIPlayer) findViewById(R.id.cpu2);
@@ -179,6 +242,7 @@ public class AgoniaGame extends Activity implements DragSource, OnTouchListener,
 										displayMetrics.widthPixels, displayMetrics.heightPixels);
 			aupCpu[i].setOnTouchListener(this);
 			aupCpu[i].setAnimationsDuration(cpuDelay);
+			aupCpu[i].setOnPlayAnimListener(invalidateListener);
 		}
 
 		dragController = (DragController) findViewById(R.id.dragLayer);
@@ -186,12 +250,19 @@ public class AgoniaGame extends Activity implements DragSource, OnTouchListener,
 		infosContainer = (LinearLayout) findViewById(R.id.infosContainer);
 		
 		cpusContainer = (LinearLayout) findViewById(R.id.cpusContainer);
-		rlpCpuContainer = (RelativeLayout.LayoutParams) cpusContainer.getLayoutParams();
+		rlpCpuContainer = new RelativeLayout.LayoutParams(cpusContainer.getLayoutParams());
+		cpusContainer.setLayoutParams(rlpCpuContainer);
+		
+		if (DEBUG)
+		{// v2.1
+			cpusContainer.setBackgroundColor(Color.WHITE);
+		}
 		
 		stackTop = (UIStackTop) findViewById(R.id.stackTop);
 		
 		deck = (UIDeck) findViewById(R.id.deck);
 		deck.setInfo();
+		deck.setImage();
 		deck.setOnTouchListener(this);
 		deck.setOnClickListener(new OnClickListener(){
 
@@ -239,22 +310,98 @@ public class AgoniaGame extends Activity implements DragSource, OnTouchListener,
 	}
 
 	@Override
+	protected void onStart()
+	{
+		if (useMusic && mediaPlayer == null)
+		{
+			mediaPlayer = MediaPlayer.create(this, R.raw.game_back_sound);
+			mediaPlayer.setLooping(true);
+		}
+		
+		initSoundPool(this, useSFX);
+		
+		super.onStart();
+	}
+
+	@Override
+	protected void onResume()
+	{
+		if (useMusic && mediaPlayer != null)
+		{
+			mediaPlayer.setVolume(MUSIC_GAME_VOLUME, MUSIC_GAME_VOLUME);
+			mediaPlayer.start();
+		}
+		
+		super.onResume();
+	}
+
+	@Override
+	protected void onPause()
+	{
+		if (useMusic && mediaPlayer != null)
+		{
+			mediaPlayer.reset();
+		}
+		
+		super.onPause();
+	}
+	
+	@Override
 	protected void onDestroy()
 	{
+		if (mediaPlayer != null)
+		{
+			mediaPlayer.release();
+			mediaPlayer = null;
+		}
+		
+		if (soundPool != null)
+		{
+			soundPool.release();
+			soundPool = null;
+		}
+		
 		tcaGroup.stopAll();		
 		super.onDestroy();
+	}
+	
+	public static void initSoundPool(Context context, boolean prefUseSFX)
+	{
+		if (prefUseSFX && soundPool == null)
+		{
+			soundPool = new SoundPool(9, AudioManager.STREAM_MUSIC, 0);
+			
+			sound_deal_cards = soundPool.load(context, R.raw.deal_cards, 1);
+			sound_draw_card = soundPool.load(context, R.raw.draw_card, 1);
+			sound_play_card = soundPool.load(context, R.raw.play_card, 1);
+			sound_fail_game = soundPool.load(context, R.raw.fail_game, 1);
+			sound_win_game = soundPool.load(context, R.raw.win_game, 1);
+		}
 	}
 
 	private void newGame()
 	{
-		int[] colors = {Color.YELLOW, Color.RED};
-
+		String prefColor, defColor;
+		int[] colors = new int[2];
+		Typeface typeface = TypefaceUtils.get(this, getString(R.string.custom_font));
+		
 		Agonia.addGameListener(this);
+
+		defColor = getString(R.string.pref_player_turn_default_color);
+		
+		prefColor = PreferenceManager.getDefaultSharedPreferences(this)
+						.getString(getString(R.string.key_player_turn_color1), defColor);
+		colors[0] = Color.parseColor(prefColor);
+		
+		prefColor = PreferenceManager.getDefaultSharedPreferences(this)
+						.getString(getString(R.string.key_player_turn_color2), defColor);
+		colors[1] = Color.parseColor(prefColor);
 
 		game = new Agonia(deck.getDeck(), players, isNewSet, set.getFirstPlayerId());
 		
 		stackTop.setGame(game);
 		stackTop.setCardRefTo(game.getTop(0));
+		deck.getInfo().setTypeface(typeface);
 		
 		infosContainer.removeAllViews();
 		
@@ -262,6 +409,7 @@ public class AgoniaGame extends Activity implements DragSource, OnTouchListener,
 		{
 			UIPlayer uip = playerToUIPlayer(p);
 			TextView infos = uip.getInfo();
+			infos.setTypeface(typeface);
 			
 			infosContainer.addView(infos);
 
@@ -272,6 +420,8 @@ public class AgoniaGame extends Activity implements DragSource, OnTouchListener,
 			
 			set.addPlayer(p);
 		}
+		
+		TypefaceUtils.setAllTypefaces(infosContainer, this, getString(R.string.custom_font));
 		
 		set.setFirstPlayerId(game.turn.getId());
 		
@@ -344,16 +494,36 @@ public class AgoniaGame extends Activity implements DragSource, OnTouchListener,
 		set.gameFinished();
 		
 		long delay = 200;
+		final int soundId;
+		Player winner = players.get(0);
 		
 		if (!game.whoIsPrev().isRealPlayer())
 		{
 			delay += cpuDelay;
 		}
 		
+		for (Player p : players)
+		{
+			if (winner.getScore() <= p.getScore())
+			{
+				winner = p;
+			}
+		}
+		
+		if (winner.getTeam() == up.getTeam())
+		{
+			soundId = sound_win_game;
+		}
+		else 
+		{
+			soundId = sound_fail_game;
+		}
+		
 		new Handler().postDelayed(new Runnable(){
 			public void run()
 			{
 				showDialog(DIALOG_FINISH_ID);
+				soundPool.play(soundId, 1.0f, 1.0f, 1, 0, 1.0f);
 			}
 		}, delay);
 	}
@@ -386,6 +556,18 @@ public class AgoniaGame extends Activity implements DragSource, OnTouchListener,
 	public void onBackPressed()
 	{
 		showDialog(DIALOG_EXIT_ID);
+	}
+
+	/* v2.0b added. */
+	/** Hopefully it will resolve any NullPointerException on F.get... */
+	@Override
+	public void onWindowFocusChanged(boolean hasFocus)
+	{
+		if (hasFocus && F.settings == null)
+		{
+			new F(this);
+		}
+		super.onWindowFocusChanged(hasFocus);
 	}
 
 	@SuppressWarnings("deprecation")
@@ -446,7 +628,7 @@ public class AgoniaGame extends Activity implements DragSource, OnTouchListener,
 							// TODO customize it, personalize it for each cpu
 							int gravity;
 							int xOffset = 0;
-							Toast t = Toast.makeText(getApplicationContext(),
+							Toast t = Toast.makeText(AgoniaGame.this,
 									"Passo",
 									Toast.LENGTH_SHORT);
 							
@@ -474,6 +656,7 @@ public class AgoniaGame extends Activity implements DragSource, OnTouchListener,
 					{
 						game.play(ucp.getPlayer(), choosed);
 					}
+					
 					if (game.turn.equals(ucp.getPlayer()))
 					{
 						// gia na emfanizonte ola ta fila otan paizei
@@ -485,12 +668,14 @@ public class AgoniaGame extends Activity implements DragSource, OnTouchListener,
 					else
 					{
 						stackTop.postSetImage("", cpuDelay);
+						
+						/* v2.1 modified - delete */
+				    	
 						if (!game.turn.isRealPlayer())
 						{
 							cpuAutoPlay();
 						}      
 					}
-					
 				}
 				catch (AcePlayed e)
 				{
@@ -512,14 +697,6 @@ public class AgoniaGame extends Activity implements DragSource, OnTouchListener,
 					    	
 					    	stackTop.postSetImage("");
 					    	stackTop.postInvalidate();
-					    	
-					    	stackTop.postDelayed(new Runnable(){
-								public void run()
-								{
-									stackTop.postInvalidate();
-								}
-							}, 150);
-					    	
 					    }
 				    }, cpuDelay);
 				    /* v2.0a end */
@@ -527,7 +704,7 @@ public class AgoniaGame extends Activity implements DragSource, OnTouchListener,
 				catch (final SevenPlayed e)
 				{
 					stackTop.postSetImage("", cpuDelay);
-					
+			    	
 					new Handler().postDelayed(new Runnable() {
 						public void run()
 						{
@@ -548,10 +725,16 @@ public class AgoniaGame extends Activity implements DragSource, OnTouchListener,
 	/**
 	 * game.turn == playerOfSeven 
 	 */
+	@SuppressWarnings("deprecation")
 	public void handleSeven(int suit)
 	{
 		sevenDraw += Agonia.DRAW_WITH_SEVEN;
-		sevenPlayers.add(game.turn);
+
+		/* v2.0b added */
+		rlpCpuContainer.height = LayoutParams.FILL_PARENT;
+		cpusContainer.setLayoutParams(rlpCpuContainer);
+		cpusContainer.requestLayout();
+		cpusContainer.invalidate();
 		
 		game.switchTurn();
 		
@@ -560,7 +743,6 @@ public class AgoniaGame extends Activity implements DragSource, OnTouchListener,
 			if (game.turn.isRealPlayer())
 			{
 				new Handler().postDelayed(new Runnable(){
-					@SuppressWarnings("deprecation")
 					public void run()
 					{
 						showDialog(DIALOG_SEVEN_ID);
@@ -576,7 +758,7 @@ public class AgoniaGame extends Activity implements DragSource, OnTouchListener,
 					game.play(ucp.getPlayer(), ucp.playSeven());
 				}
 				catch (GameFinished e)
-				{  /*
+				{	/*
 					* will handled on sevenDraw()
 					*/
 				}
@@ -605,7 +787,7 @@ public class AgoniaGame extends Activity implements DragSource, OnTouchListener,
 		
 		try
 		{
-			game.draw(game.turn, sevenDraw, true);
+			game.draw(game.turn, sevenDraw, true);	
 		}
 		catch (GameFinished ex) // maybe deck finished
 		{
@@ -615,7 +797,8 @@ public class AgoniaGame extends Activity implements DragSource, OnTouchListener,
 		
 		deck.setImage();
 		
-		for (Player p : sevenPlayers)
+		/* v2.0b modified. sevenPlayers to game.getPlayers() */
+		for (Player p : game.getPlayers())
 		{
 			if (p.getHand().isEmpty())
 			{
@@ -632,20 +815,17 @@ public class AgoniaGame extends Activity implements DragSource, OnTouchListener,
 		}
 		
 		sevenDraw = 0;
-		sevenPlayers.clear();
 		
 		if (!game.turn.isRealPlayer()) 
-		{	/* v2.0a modified */
-			new Handler().postDelayed(new Runnable(){
-				@SuppressWarnings("deprecation")
-				public void run()
-				{
-					cpuAutoPlay();
-					rlpCpuContainer.height = LayoutParams.FILL_PARENT;
-					cpusContainer.setLayoutParams(rlpCpuContainer);
-					cpusContainer.invalidate();
-				}
-			}, 200);
+		{
+			cpuAutoPlay();
+		}
+		else 
+		{	/* v2.0b added */
+			rlpCpuContainer.height = LayoutParams.WRAP_CONTENT;
+			cpusContainer.setLayoutParams(rlpCpuContainer);
+			cpusContainer.requestLayout();
+			cpusContainer.invalidate();
 		}
 	}
 	
@@ -686,7 +866,7 @@ public class AgoniaGame extends Activity implements DragSource, OnTouchListener,
 			}
 			break;
 		}
-
+		
 		return dialog;
 	}
 
@@ -705,15 +885,20 @@ public class AgoniaGame extends Activity implements DragSource, OnTouchListener,
 			
 			sevenContainer.removeAllViews();
 			for (Card c : sevens)
-			{
-				UICard seven = new UICard(this, c, true);
-				sevenContainer.addView(seven);
+			{	/* v2.1 modified */
+				getLayoutInflater().inflate(R.layout.inflateable_uicard, sevenContainer);
+				UICard seven = (UICard) sevenContainer.getChildAt(sevenContainer.getChildCount() - 1);
+				seven.setVisible(true);
+				seven.setCard(c, true);
+//				sevenContainer.addView(seven);
 			}
 			break;
 
 		default:
 			break;
 		}
+		
+		DevnDialogUtils.customize(dialog);
 		
 		super.onPrepareDialog(id, dialog);
 	}
@@ -722,7 +907,7 @@ public class AgoniaGame extends Activity implements DragSource, OnTouchListener,
 	{
 		final Dialog retVal;
 		
-		LinearLayout dlgContent = (LinearLayout) inflater.inflate(R.layout.dlg_ace, null);
+		ScrollView dlgContent = (ScrollView) inflater.inflate(R.layout.dlg_ace, null);
 		ImageButton suitButtons[] = new ImageButton[4];
 		
 		suitButtons[Card.iSPADES] = (ImageButton) dlgContent.findViewById(R.id.spades);
@@ -786,31 +971,36 @@ public class AgoniaGame extends Activity implements DragSource, OnTouchListener,
 		btnPlay.setText(getString(R.string.dlg_seven_btn_play));
 
 		sevenContainer.setOnHierarchyChangeListener(new OnHierarchyChangeListener(){
-				private OnClickListener sevenClickListener = new OnClickListener(){
-				int cchilds;
+			/* v2.1 fixed + modified */
+			private final static int UNSELECTED_ALPHA = 0x55;
+			private final static int SELECTED_ALPHA = 0xFF;
+			
+			@SuppressWarnings("deprecation")
+			private OnClickListener sevenClickListener = new OnClickListener(){
 				
-				private void select(LinearLayout container, View selected)
+				private void select(LinearLayout container, ImageView selected)
 				{
-					cchilds = container.getChildCount();
 					clean(container);
 					
-					selected.setBackgroundResource(R.drawable.accept);
+					selected.setAlpha(SELECTED_ALPHA);
 				}
 				
 				private void clean(LinearLayout container)
 				{
+					int cchilds = container.getChildCount();
+					
 					for (int i = 0; i < cchilds; i++)
 					{
-						View v = container.getChildAt(i);
+						ImageView iv = (ImageView) container.getChildAt(i);
 						
-						v.setBackgroundResource(0);
+						iv.setAlpha(UNSELECTED_ALPHA);
 					}
 				}
 				
 				@Override
 				public void onClick(View v)
 				{
-					select((LinearLayout) v.getParent(), v);
+					select((LinearLayout) v.getParent(), (ImageView) v);
 					selectedSeven = ((UICard) v).getCard();
 					btnPlay.setEnabled(true);
 				}
@@ -818,23 +1008,25 @@ public class AgoniaGame extends Activity implements DragSource, OnTouchListener,
 			
 			@Override
 			public void onChildViewRemoved(View parent, View child)
-			{
-								
-			}
+			{ }
 			
+			@SuppressWarnings("deprecation")
 			@Override
 			public void onChildViewAdded(View parent, View child)
 			{
+				((ImageView) child).setAlpha(UNSELECTED_ALPHA);	
 				child.setOnClickListener(sevenClickListener);
 			}
 		});
 		
 		for (Card c : sevens)
-		{
-			UICard seven = new UICard(this, c, true);
-			sevenContainer.addView(seven);
+		{	/* v2.1 modified */
+			getLayoutInflater().inflate(R.layout.inflateable_uicard, sevenContainer);
+			UICard seven = (UICard) sevenContainer.getChildAt(sevenContainer.getChildCount() - 1);
+			seven.setVisible(true);
+			seven.setCard(c, true);
 		}
-		
+
 		// @formatter:off
 		AlertDialog.Builder builder = new AlertDialog.Builder(this)
 		.setTitle(getString(R.string.dlg_seven_title))
@@ -966,7 +1158,7 @@ public class AgoniaGame extends Activity implements DragSource, OnTouchListener,
 		LinearLayout dlgContent = (LinearLayout) inflater.inflate(R.layout.dlg_finish, null);
 
 		int i = 0;
-	
+		
 		for (i = 0; i < 4; i++)
 		{
 			atxvName[i] = (TextView) dlgContent.getChildAt(i * 2);
@@ -980,6 +1172,7 @@ public class AgoniaGame extends Activity implements DragSource, OnTouchListener,
 			else 
 			{
 				Player p = players.get(i);
+				
 				if (p.hasCards())
 				{
 					atxvName[i].setText(p.getName() + "  { " + game.scoreOf(p.getHand()) + " }");
@@ -1007,6 +1200,9 @@ public class AgoniaGame extends Activity implements DragSource, OnTouchListener,
 				intent.putExtra(ID_GAMESET, set);
 				
 				startActivity(intent);
+				
+				overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out); /* v2.1 */
+				
 				finish();
 			}
 		})
@@ -1133,18 +1329,50 @@ public class AgoniaGame extends Activity implements DragSource, OnTouchListener,
 	public void initGameParams(int cPlayers, List<Card> stackTopCards)
 	{
 		GAME_EVENTS = "Players " + cPlayers + " | Top " + stackTopCards.get(0) + "\n";
+		
+		if (useSFX)
+		{
+			int r = soundPool.play(sound_deal_cards, 1.0F, 1.0F, 1, 0, 1.0F);
+			DBGLog.dbg("" + sound_deal_cards + " ||>> " + r);
+		}		
 	}
 
 	@Override
 	public void onDrawFromDeck(Player who, int n)
 	{
 		GAME_EVENTS = GAME_EVENTS + who.getName() + " draw " + n + "\n";
+		
+		if (useSFX && n != 7)
+		{
+			long delay = cpuDelay / n;
+			
+			for (int i = 0; i < n; i++)
+			{
+				Runnable r = new Runnable(){
+					public void run()
+					{
+						soundPool.play(sound_draw_card, 1.0F, 1.0F, 1, 0, 1.0F);
+					}
+				};
+				
+				new Handler().postDelayed(r, delay * i);
+			}
+		}
 	}
 
 	@Override
 	public void onPlay(Player who, Card c)
 	{
 		GAME_EVENTS = GAME_EVENTS + who.getName() + " -> " + c + "\n" ;
+		
+		Runnable r = new Runnable(){
+			public void run()
+			{
+				soundPool.play(sound_play_card, 1.0F, 1.0F, 1, 0, 1.0F);
+			}
+		};
+		
+		new Handler().postDelayed(r, who.isRealPlayer() ? 0 : cpuDelay - 410);
 	}
 	
 	@Override
@@ -1168,6 +1396,12 @@ public class AgoniaGame extends Activity implements DragSource, OnTouchListener,
 		tcaGroup.pauseAll(); /*be safe, cause nine causes two TextViews to animate */
 		
 		tcaGroup.start(cur.getId());
+		
+		/* v2.0b */
+		if (sevenDraw > 0)
+		{
+			return;
+		}
 		
 		/* v2.0a */
 		long delay = 10;

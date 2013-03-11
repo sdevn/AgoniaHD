@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- game layout animation -->
+    <item name="anim_in_delay" format="fraction" type="integer">45%</item>
+    
+    <!-- menu inner layout animation -->
+    <item name="menu_in_delay" format="fraction" type="integer">75%</item>
+    <!-- menu layout animation 
+    value = getChildsCount(menuInnerLayout) * menu_in_delay + (1 - menu_in_delay) -->
+    <item name="menu_in_parent_delay" format="fraction" type="integer">375%</item>
+</resources>

@@ -19,9 +19,9 @@
     <include layout="@layout/ad_in_dialog" />
 
     <LinearLayout
-        style="?android:attr/buttonBarStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@android:color/darker_gray"
         android:measureWithLargestChild="true"
         android:minHeight="54dip"
         android:orientation="horizontal"
@@ -30,7 +30,6 @@
         android:paddingTop="4dip" >
 
         <LinearLayout
-            android:id="@+id/leftSpacer"
             android:layout_width="0dip"
             android:layout_height="wrap_content"
             android:layout_weight="0.25"
@@ -39,17 +38,15 @@
 
         <Button
             android:id="@+id/dlg_seven_btn_play"
-            style="?android:attr/buttonBarButtonStyle"
             android:enabled="false"
             android:layout_width="0dip"
             android:layout_height="wrap_content"
             android:layout_gravity="left"
             android:layout_weight="1"
             android:maxLines="2" />
-
+        
         <Button
             android:id="@+id/dlg_seven_btn_draw"
-            style="?android:attr/buttonBarButtonStyle"
             android:layout_width="0dip"
             android:layout_height="wrap_content"
             android:layout_gravity="right"
@@ -57,7 +54,6 @@
             android:maxLines="2" />
 
         <LinearLayout
-            android:id="@+id/rightSpacer"
             android:layout_width="0dip"
             android:layout_height="wrap_content"
             android:layout_weight="0.25"

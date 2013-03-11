@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.util.Log;
 import devN.games.agonia.AgoniaAI;
 
 public class Player implements AgoniaAI, Parcelable

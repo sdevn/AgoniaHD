@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
-import devN.etc.DBGLog;
 import devN.games.Card;
 import devN.games.CardGame;
 import devN.games.Deck;
@@ -250,6 +249,10 @@ public class Agonia extends CardGame
 		{
 			lastDraw = p;
 		}
+		else 
+		{
+			lastDraw = null;
+		}
 
 		informDraw(p, n);
 		
@@ -313,8 +316,10 @@ public class Agonia extends CardGame
 			}
 		}
 		switchTurn();
-		//TODO: Other exception should throwed here (in the end of methode)
+		//TODO: Other exception should throwed here (in the end of method)
 		if (p.getHand().isEmpty()
+		&& c.getRank() != 7				// v2.1 added
+		&& !Card.NULL_CARD.equals(c)	// v2.1 added
 		&& !p.equals(turn))
 		{
 			finishGame();

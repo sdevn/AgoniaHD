@@ -50,34 +50,49 @@
     <string name="how_your_cards">Τα φύλλα σου</string>
     <string name="how_deck">Τράπουλα</string>
     <string name="done">Τέλος</string>
-
     <string name="pref_color_hints_title">Χρωματικές ενδείξεις</string>
     <string name="pref_color_hints_summ">Διάφορες ενδείξεις που σε καθοδηγούν όταν παίζεις</string>
-    
     <string name="pref_ace_on_ace_summ">Ο Άσσος μπορεί να παιχτεί πάνω σε Άσσο</string>
     <string name="pref_ace_finish_summ">Οι παίκτες μπορούν να βγουν με Άσσο</string>
-    
     <string name="dlg_exit_title">Θα εγκαταλείψεις;</string>
-    <string name="dlg_exit_message">Αν εγκαταλειψεις το παιχνίδι θα μετρήσει ως ήττα!!\nΕίσαι σίγορος;</string>
-    
+    <string name="dlg_exit_message">Αν εγκαταλειψεις το παιχνίδι θα μετρήσει ως ήττα!!\nΕίσαι σίγουρος;</string>
 	<string name="cpu1">Υπολ1</string>
 	<string name="cpu2">Υπολ2</string>
 	<string name="cpu3">Υπολ3</string>
 	<string name="friend">Φίλος</string>
-	
 	<string name="set_type_goal">Παρτίδα με:</string>
 	<string name="players">Παίχτες:</string>
-	
 	<string name="set_btn_start">Νέα παρτίδα</string>
-	
 	<string name="set_btn_continue_next">Επόμενο παιχνίδι</string>
 	<string name="set_btn_continue_winner">Δείξε το νικητή</string>
 	<string name="winner_team">Νικήτρια ομάδα: %s</string>
 	<string name="teams">Ομάδες</string>
 	<string name="set_info" formatted="false">Τύπος: %s, Στόχος: %d, Γύρος: %d</string>
-
 	<string name="dlg_rate_title">Σου αρέσει η Αγωνία;</string>
     <string name="dlg_rate_message">Αν σου αρέσει η Αγωνία βαθμολόγισε την με πέντε αστεράκια και ένα καλό σχόλιο!!\nΑν πιστεύεις οτι λείπει κατι ή κάτι δεν σου αρέσει, πες το μου και θα το φτιάξω.\nΕυχαριστώ!!</string>
-	
-        <string name="dlg_comming_soon_message">Δυστυχώς αυτή η αναβάθμιση άργησε αρκετά. Η επόμενη θα βγει στο τέλος Φεβρουαρίου.\nΘα έχει αλλαγές στα γραφικά (κυρίως στην τράπουλα και στα κουμπιά) καθώς και δυνατότητα αποθήκευσης Παιχνιδιού αλλά και Παρτίδας.\nΕυχαριστώ πολύ για τη στήριξη σας!! :)</string>
+    
+    <!-- unused!! -->
+    <string name="dlg_comming_soon_message">Η επόμενη έκδοση θα βγει στα τέλη του Μάη.\nΘα έχει δυνατότητα αποθήκευσης Παιχνιδιού αλλά και Παρτίδας και στατιστικά από νίκες/ήττες.\nΕυχαριστώ πολύ για τη στήριξη σας!! :)</string>
+
+	<!-- v2.1 -->
+    <string name="custom_font">fonts/GFSOlga.otf</string>
+    <string name="dlg_change_name_title">Νέο όνομα για τον/την "%s"</string>
+    <string name="pref_old_deck_summ">Χρήση κλασικής τράπουλας</string>
+    <string name="pref_old_deck_title">Κλασική τράπουλα</string>
+    <string name="pref_old_anim_summ">Χρήση χαμηλής ποιότητας animations</string>
+    <string name="pref_old_anim_title">Χαμηλής ποιότητας animations</string>
+    <string name="pref_player_turn_color_title1">Χρώμα παίκτη που παίζει</string>
+    <string name="pref_player_turn_color_title2">Δεύτερο χρώμα παίκτη που παίζει</string>
+    <string name="color_red">Κόκκινο</string>
+	<string name="color_blue">Μπλε</string>
+	<string name="color_yellow">Κίτρινο</string>
+	<string name="color_green">Πράσινο</string>
+	<string name="color_cyan">Γαλάζιο</string>
+	<string name="color_magenta">Μωβ</string>
+	<string name="color_black">Μαύρο</string>
+	<string name="color_none">Κανένα</string>
+    <string name="pref_game_music_title">Μουσική υπόκρουση</string>
+    <string name="pref_game_sfx_title">Ηχητικά εφέ</string>
+
+    <string name="dlg_whats_new_message">➤Νέα HD τράπουλα\n➤Νέα κουμπιά\n➤Background music και ηχητικά εφέ\n➤Δυνατότητα χρήσης των παλιών animations\n\n<u>Γιαυτό πριν παίξετε ρίξτε μία ματιά στις Προτιμήσεις</u>\n\n<b>Στην επόμενη αναβάθμιση!</b>\n\nΘα έχει δυνατότητα αποθήκευσης Παιχνιδιού αλλά και Παρτίδας και στατιστικά από νίκες/ήττες.\nΚαλή διασκέδαση κι ευχαριστώ πολύ για τη στήριξη σας!! :)\n</string>
 </resources>

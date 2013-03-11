@@ -3,7 +3,7 @@
     android:interpolator="@android:anim/linear_interpolator" >
 
     <scale
-        android:duration="1500"
+        android:duration="@integer/cpu_delay"
         android:fromXScale="1.0"
         android:fromYScale="1.0"
         android:pivotX="50%"

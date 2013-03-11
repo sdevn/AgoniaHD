@@ -11,7 +11,7 @@
         android:layout_height="wrap_content"
         android:text="@string/default_p1_name"
         android:textAppearance="?android:attr/textAppearanceLarge" />
-
+    
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -24,7 +24,8 @@
         android:layout_height="wrap_content"
         android:text="@string/default_p2_name"
         android:textAppearance="?android:attr/textAppearanceLarge" />
-
+
+
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -37,7 +38,8 @@
         android:layout_height="wrap_content"
         android:text="@string/default_p2_name"
         android:textAppearance="?android:attr/textAppearanceLarge" />
-
+
+
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -50,7 +52,8 @@
         android:layout_height="wrap_content"
         android:text="@string/default_p2_name"
         android:textAppearance="?android:attr/textAppearanceLarge" />
-
+
+
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

@@ -1,31 +1,44 @@
 package devN.games.agonia;
 
+import static devN.games.agonia.AgoniaPref.REGEX_NAME_FILTER;
+import static devN.games.agonia.AgoniaPref.NAME_MIN_LENGTH;
+import static devN.games.agonia.AgoniaPref.NAME_MAX_LENGTH;
 import java.util.ArrayList;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.media.MediaPlayer;
+import android.media.MediaPlayer.OnCompletionListener;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.ViewFlipper;
+import devN.etc.DevnDialogUtils;
+import devN.etc.TypefaceUtils;
 import devN.games.GameSet;
 
 public class GameSetActivity extends Activity
 {
 	// TODO: Save / Load GameSet
-	// TODO: Change Cpu names
-	// TODO Statistics for GameSets wins/loses
+	// TODO: Statistics for GameSets wins/loses
 	
 	public static final int DIALOG_SET_FINISH_ID	= 0;
+	public static final int DIALOG_CHANGE_NAME_ID	= 1;
 
 	private final static int iSET_TYPE_POINTS 	= 0;
 	private final static int iSET_TYPE_WINS 	= 1;
@@ -41,6 +54,11 @@ public class GameSetActivity extends Activity
 
 	private boolean isNewSet;
 	private Button btnStart;
+	private String changeNameKey;
+	private TextView txvCpuToChangeName;
+	private String newName;
+	private boolean useSFX;
+	private MediaPlayer player;
 	
 	// NewSet Views
 	private ViewFlipper vfpSetTypeSelection;
@@ -48,6 +66,7 @@ public class GameSetActivity extends Activity
 	private Spinner spnPlayersNum;
 	private Spinner[] aspnAIModes = new Spinner[3];
 	private RadioGroup[] argpSetGoal = new RadioGroup[2];
+	private TextView[] atxvCpuNames = new TextView[3];
 	
 	// ContinueSet Views
 	private TextView[] atxvPlayerSetInfos = new TextView[5];
@@ -59,6 +78,9 @@ public class GameSetActivity extends Activity
 	protected void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
+		
+		useSFX = PreferenceManager.getDefaultSharedPreferences(this)
+					.getBoolean(getString(R.string.key_game_sfx), true);
 		
 		Intent intent = getIntent();
 		
@@ -75,8 +97,46 @@ public class GameSetActivity extends Activity
 			set = intent.getParcelableExtra(ID_GAMESET);
 			continueSet();
 		}
+		
+		ViewGroup root = (ViewGroup) findViewById(R.id.gameset_root);
+		
+		TypefaceUtils.setAllTypefaces(root, this, getString(R.string.custom_font));
+	}
+	
+	@Override
+	protected void onDestroy()
+	{
+		releasePlayer();
+		
+		super.onDestroy();
 	}
 
+	/* v2.0b added. */
+	/** Hopefully it will resolve any NullPointerException on F.get... */
+	@Override
+	public void onWindowFocusChanged(boolean hasFocus)
+	{
+		if (hasFocus && F.settings == null)
+		{
+			new F(this);
+		}
+
+		super.onWindowFocusChanged(hasFocus);
+	}
+
+	private void playSound(int resId)
+	{
+		if (!useSFX)
+		{
+			return;
+		}
+		
+		player = MediaPlayer.create(this, resId);
+		player.start();
+		
+		player.setOnCompletionListener(mediaPlayerReleaser);
+	}
+	
 	private void continueSet()
 	{
 		int playerId;
@@ -150,6 +210,9 @@ public class GameSetActivity extends Activity
 		aspnAIModes[0] = (Spinner) findViewById(R.id.spn_AI_1);
 		aspnAIModes[1] = (Spinner) findViewById(R.id.spn_AI_2);
 		aspnAIModes[2] = (Spinner) findViewById(R.id.spn_AI_3);
+		atxvCpuNames[0] = (TextView) findViewById(R.id.txvCpu1);
+		atxvCpuNames[1] = (TextView) findViewById(R.id.txvCpu2);
+		atxvCpuNames[2] = (TextView) findViewById(R.id.txvFriendOp);
 		btnStart = (Button) findViewById(R.id.set_btn_start);
 		
 		argpSetGoal[iSET_TYPE_POINTS] = (RadioGroup) vfpSetTypeSelection.getChildAt(iSET_TYPE_POINTS);
@@ -205,9 +268,23 @@ public class GameSetActivity extends Activity
 			
 		});
 		
+		if (F.settings == null)
+		{
+			new F(GameSetActivity.this); 
+		}
+		
+		atxvCpuNames[0].setText(F.getString(F.KEY_P2_NAME, getString(R.string.cpu1)));
+		atxvCpuNames[1].setText(F.getString(F.KEY_P3_NAME, getString(R.string.cpu2)));
+		atxvCpuNames[2].setText(F.getString(F.KEY_P4_NAME, getString(R.string.friend)));
+		
 		for (Spinner spn : aspnAIModes)
 		{
 			spn.setSelection(AgoniaAI.MODE_MODERATE);
+		}
+		
+		for (TextView txv : atxvCpuNames)
+		{
+			txv.setOnClickListener(cpuNamesClickListener);
 		}
 		
 		btnStart.setOnClickListener(newSetClickListener);
@@ -225,6 +302,12 @@ public class GameSetActivity extends Activity
 			dialog = makeSetFinishDlg();
 			}
 			break;
+		
+		case DIALOG_CHANGE_NAME_ID:
+			{
+			dialog = makeChangeNameDlg();
+			}
+			break;
 			
 		default:
 			{
@@ -236,16 +319,37 @@ public class GameSetActivity extends Activity
 		return dialog;
 	}
 	
+	@Override
+	@Deprecated
+	protected void onPrepareDialog(int id, Dialog dialog)
+	{
+		DevnDialogUtils.customize(dialog);
+
+		switch (id)
+		{
+		case DIALOG_CHANGE_NAME_ID:
+			{
+			String title = getString(R.string.dlg_change_name_title, txvCpuToChangeName.getText().toString());
+ 			dialog.setTitle(title);
+ 			}
+			break;
+		}
+		
+		super.onPrepareDialog(id, dialog);
+	}
+
 	private Dialog makeSetFinishDlg()
 	{
 		// @formatter:off			
 		LinearLayout dlgContainer = (LinearLayout) getLayoutInflater().inflate(R.layout.dlg_set_finish, null);
 		ImageView dlgIcon = (ImageView) dlgContainer.findViewById(R.id.dlg_set_finish_ic);
 		ArrayList<Integer> winners = set.getWinningTeams();
+		int soundId = R.raw.win_set;
 		
 		if (!winners.contains(1))
 		{	// looser!
 			dlgIcon.setImageResource(R.drawable.ic_thumb_down);
+			soundId = R.raw.fail_set;
 		}
 		
 		AlertDialog.Builder builder = new AlertDialog.Builder(this)
@@ -256,12 +360,106 @@ public class GameSetActivity extends Activity
 			public void onClick(DialogInterface dialog, int which)
 			{
 				finish();
+				
+				overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out); /* v2.1 */
 			}
 		})
 		.setCancelable(false);
 		
 		// @formatter:on
+		
+		playSound(soundId);
+		
 		return builder.create();	
+	}
+	
+	private Dialog makeChangeNameDlg()
+	{
+		final EditText edt = new EditText(this);
+		
+		DialogInterface.OnClickListener diocl = new DialogInterface.OnClickListener(){
+
+			@Override
+			public void onClick(DialogInterface dialog, int which)
+			{
+				switch (which)
+				{
+				case DialogInterface.BUTTON_POSITIVE:
+					newName = edt.getText().toString();
+					
+					//Filter
+					if (!newName.matches(REGEX_NAME_FILTER))
+					{
+						Toast.makeText(GameSetActivity.this, 
+						               getString(R.string.pref_name_aborted_message, NAME_MIN_LENGTH, NAME_MAX_LENGTH), 
+						               Toast.LENGTH_SHORT).show();
+					}
+					else
+					{
+						PreferenceManager.getDefaultSharedPreferences(GameSetActivity.this)
+						.edit()
+						.putString(changeNameKey, newName)
+						.commit();
+						
+						txvCpuToChangeName.setText(newName);
+					}	
+					break;
+					
+				default:
+					break;
+				}
+			}
+		};
+		
+		AlertDialog.Builder builder = new AlertDialog.Builder(this)
+		.setTitle(getString(R.string.dlg_change_name_title, txvCpuToChangeName.getText().toString()))
+		.setView(edt)
+		.setPositiveButton(android.R.string.ok, diocl)
+		.setNegativeButton(android.R.string.cancel, diocl)
+		;
+		// @formatter:on
+		
+		final Dialog dialog = builder.create();
+		
+		edt.setOnFocusChangeListener(new View.OnFocusChangeListener(){
+			
+			@Override
+		    public void onFocusChange(View v, boolean hasFocus) 
+			{
+				Window window = dialog.getWindow();
+				
+		        if (hasFocus) 
+		        {
+		            window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+		        }
+		        else 
+				{
+					window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+				}
+		    }
+		});
+
+		dialog.setOnShowListener(new DialogInterface.OnShowListener(){
+			
+			@Override
+			public void onShow(DialogInterface dialog)
+			{
+				edt.setText(txvCpuToChangeName.getText());
+			}
+		});
+		
+		return dialog;
+	}
+	
+	private void releasePlayer()
+	{
+		if (player != null && player.isPlaying())
+		{
+			player.stop();
+			player.release();
+			
+			player = null;
+		}
 	}
 	
 	private View.OnClickListener newSetClickListener = new View.OnClickListener(){
@@ -292,6 +490,9 @@ public class GameSetActivity extends Activity
 			intent.putExtra(ID_GAMESET, set);
 			
 			startActivity(intent);
+			
+			overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out); /* v2.1 */
+			
 			finish();
 		}
 	};
@@ -314,8 +515,54 @@ public class GameSetActivity extends Activity
 				intent.putExtra(ID_GAMESET, set);
 				
 				startActivity(intent);
+				
+				overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out); /* v2.1 */
+				
 				finish();
 			}
+		}
+	};
+	
+	/** v2.1 */
+	private View.OnClickListener cpuNamesClickListener = new View.OnClickListener(){
+		
+		@SuppressWarnings("deprecation")
+		@Override
+		public void onClick(View v)
+		{
+			String key = "";
+			
+			switch (v.getId())
+			{
+			case R.id.txvCpu1:
+				key = getString(R.string.key_p2_name);
+				break;
+				
+			case R.id.txvCpu2:
+				key = getString(R.string.key_p3_name);
+				break;
+			
+			case R.id.txvFriendOp:
+				key = getString(R.string.key_p4_name);
+				break;
+				
+			default:
+				return;
+			}
+			
+			changeNameKey = key;
+			txvCpuToChangeName = (TextView) v;
+			
+			showDialog(DIALOG_CHANGE_NAME_ID);
+		}
+	};
+	
+	private OnCompletionListener mediaPlayerReleaser = new OnCompletionListener(){
+		
+		@Override
+		public void onCompletion(MediaPlayer mp)
+		{
+			releasePlayer();
 		}
 	};
 }

@@ -2,7 +2,6 @@ package devN.etc;
 
 import java.util.Hashtable;
 import java.util.Map;
-import android.util.Log;
 
 public class TextColorAnimationGroup
 {

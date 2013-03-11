@@ -22,6 +22,43 @@
             android:key="@string/key_color_hints"
             android:summary="@string/pref_color_hints_summ"
             android:title="@string/pref_color_hints_title" />
+        
+        <!-- v2.1 -->        
+		<CheckBoxPreference
+            android:defaultValue="false"
+            android:key="@string/key_game_music"
+            android:title="@string/pref_game_music_title" />
+        
+		<CheckBoxPreference
+            android:defaultValue="true"
+            android:key="@string/key_game_sfx"
+            android:title="@string/pref_game_sfx_title" />
+        
+		<devN.etc.pref.ComboBoxPreference
+            android:defaultValue="@string/pref_player_turn_default_color"
+            android:entries="@array/player_turn_colors"
+            android:entryValues="@array/player_turn_color_values"
+            android:key="@string/key_player_turn_color1"
+            android:title="@string/pref_player_turn_color_title1" />
+		
+		<devN.etc.pref.ComboBoxPreference
+            android:defaultValue="@string/pref_player_turn_default_color"
+            android:entries="@array/player_turn_colors"
+            android:entryValues="@array/player_turn_color_values"
+            android:key="@string/key_player_turn_color2"
+            android:title="@string/pref_player_turn_color_title2" />
+		
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="@string/key_old_deck"
+            android:summary="@string/pref_old_deck_summ"
+            android:title="@string/pref_old_deck_title" />
+
+		<CheckBoxPreference
+            android:defaultValue="false"
+            android:key="@string/key_old_anim"
+            android:summary="@string/pref_old_anim_summ"
+            android:title="@string/pref_old_anim_title" />
 
 <!--        <devN.games.agonia.pref.ResetScoresDlgPref
             android:dialogIcon="@android:drawable/ic_dialog_alert"

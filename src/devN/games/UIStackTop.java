@@ -1,7 +1,6 @@
 package devN.games;
 
 import android.content.Context;
-import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import devN.etc.dragdrop.DragSource;
 import devN.etc.dragdrop.DropTarget;
@@ -10,9 +9,6 @@ import devN.games.agonia.R;
 
 public class UIStackTop extends UICard implements DropTarget
 {
-	@SuppressWarnings("unused")
-	private final static String tag = "dragdrop";
-	
 	private static boolean colorHints;
 	
 	private CardGame game;
@@ -20,35 +16,31 @@ public class UIStackTop extends UICard implements DropTarget
 	public UIStackTop(Context context, AttributeSet attrs, int defStyle)
 	{
 		super(context, attrs, defStyle);
-		if (!isInEditMode())
-		{
-			colorHints = F.getBoolean(F.KEY_COLOR_HINTS, true);
-		}
+		init(context, attrs);
 	}
 
 	public UIStackTop(Context context, AttributeSet attrs)
 	{
 		super(context, attrs);
+		init(context, attrs);
+	}
+
+	private void init(Context context, AttributeSet attrs)
+	{
 		if (!isInEditMode())
 		{
 			colorHints = F.getBoolean(F.KEY_COLOR_HINTS, true);
 		}
 	}
-
-	public UIStackTop(Context context)
-	{
-		super(context);
-	}
-
-	public UIStackTop(Context context, Card c, boolean visible)
-	{
-		super(context, c, visible);
-	}
-
-	public UIStackTop(UICard c)
-	{
-		super(c);
-	}
+//	public UIStackTop(Context context, Card c, boolean visible)
+//	{
+//		super(context, c, visible);
+//	}
+//
+//	public UIStackTop(UICard c)
+//	{
+//		super(c);
+//	}
 
 	public CardGame getGame()
 	{
@@ -66,8 +58,11 @@ public class UIStackTop extends UICard implements DropTarget
 		{
 			return;
 		}
-		
+
 		setBackgroundResource(0);
+		setPadding(0, 0, 0, 0);
+
+		requestLayout();
 		invalidate();
 	}
 
@@ -78,7 +73,6 @@ public class UIStackTop extends UICard implements DropTarget
 		resetBackground();
 	}
 
-	@SuppressWarnings("deprecation")
 	@Override
 	public void onDragEnter(DragSource source, int x, int y, int xOffset, int yOffset,
 							Object dragInfo)
@@ -89,23 +83,15 @@ public class UIStackTop extends UICard implements DropTarget
 		}
 		
 		UICard draggedCard = (UICard) dragInfo;
+
+		boolean can = game.canPlay(draggedCard.getCard());
 		
-		boolean b = game.canPlay(draggedCard.getCard());
+		int bkgrId = can ? R.drawable.bkgr_uicard_accept : R.drawable.bkgr_uicard_reject;
 		
-		Drawable bgdDrawable;
+		setBackgroundResource(bkgrId);
 		
-		if (b)
-		{
-			bgdDrawable = getResources().getDrawable(R.drawable.accept);
-		}
-		else 
-		{
-			bgdDrawable = getResources().getDrawable(R.drawable.reject);
-		}
-		
-		setBackgroundDrawable(bgdDrawable);
-		
-		invalidate();
+		requestLayout();
+		invalidate();		
 	}
 
 	@Override

@@ -16,4 +16,10 @@
     <dimen name="dlg_finish_txv_handString">15dp</dimen>
     
     <dimen name="menu_btn_margin_bottom">20dp</dimen>
+    
+    <!-- v2.1 -->
+    <dimen name="card_hover_padding">0.8mm</dimen>
+    <dimen name="card_hover_corner_radius">1.6mm</dimen>
+    	<!-- small & normal screens -->
+	<dimen name="menu_ic_deck_height">157dp</dimen>
 </resources>

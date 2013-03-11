@@ -13,7 +13,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_centerVertical="true"
-        android:src="@drawable/card_back_blue_1"
+        android:src="@drawable/card_back"
         devn:cardRank="-1"
         devn:cardSuit="-1"
         devn:visible="false" />
@@ -25,7 +25,7 @@
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
-        android:src="@drawable/card_3_5" 
+        android:src="@drawable/card_3_5"
         devn:cardRank="5"
         devn:cardSuit="3"
         devn:visible="true" />
@@ -37,7 +37,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_toRightOf="@+id/uICard1"
-        android:src="@drawable/card_1_3" 
+        android:src="@drawable/card_1_3"
         devn:cardRank="3"
         devn:cardSuit="1"
         devn:visible="true" />
@@ -49,7 +49,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_toLeftOf="@+id/uICard1"
-        android:src="@drawable/card_0_4" 
+        android:src="@drawable/card_0_4"
         devn:cardRank="4"
         devn:cardSuit="0"
         devn:visible="true" />
@@ -61,7 +61,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_toLeftOf="@+id/uICard1"
-        android:src="@drawable/card_back_blue_1" 
+        android:src="@drawable/card_back"
         devn:cardRank="-1"
         devn:cardSuit="-1"
         devn:visible="false" />
@@ -73,7 +73,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_toRightOf="@+id/uICard4"
-        android:src="@drawable/card_back_blue_1" 
+        android:src="@drawable/card_back"
         devn:cardRank="-1"
         devn:cardSuit="-1"
         devn:visible="false" />
@@ -85,11 +85,11 @@
         android:layout_height="wrap_content"
         android:layout_alignLeft="@+id/uICard3"
         android:layout_alignParentTop="true"
-        android:src="@drawable/card_back_blue_1" 
+        android:src="@drawable/card_back"
         devn:cardRank="-1"
         devn:cardSuit="-1"
         devn:visible="false" />
-
+
     <TextView
         android:id="@+id/how_tv_cpu"
         android:layout_width="wrap_content"
@@ -100,7 +100,7 @@
         android:background="@color/tsoha"
         android:text="@string/how_cpu_cards"
         android:textAppearance="?android:attr/textAppearanceLarge" />
-
+
     <TextView
         android:id="@+id/how_tv_player"
         android:layout_width="wrap_content"
@@ -111,7 +111,7 @@
         android:background="@color/tsoha"
         android:text="@string/how_your_cards"
         android:textAppearance="?android:attr/textAppearanceLarge" />
-
+
     <TextView
         android:id="@+id/how_tv_deck"
         android:layout_width="wrap_content"

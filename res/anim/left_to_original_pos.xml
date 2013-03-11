@@ -5,7 +5,7 @@
 
     <translate
         android:duration="@integer/menu_anim_duration"
-        android:fromXDelta="-100%p"
+        android:fromXDelta="-101%p"
         android:toXDelta="0%" />
 
 </set>

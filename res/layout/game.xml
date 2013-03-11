@@ -11,7 +11,7 @@
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:clipChildren="false" >
-
+
         <devN.games.UIPlayer
             android:id="@+id/player"
             android:layout_width="fill_parent"
@@ -63,24 +63,26 @@
 
             <devN.games.UIStackTop
                 android:id="@+id/stackTop"
-                style="@style/UICard"
                 android:layout_centerInParent="true"
+                style="@style/UIStackTop"
                 devn:cardRank="-1"
                 devn:cardSuit="-1"
                 devn:visible="true" />
-
+
             <LinearLayout
                 android:id="@+id/infosContainer"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
                 android:layout_centerVertical="true"
+                android:layout_toRightOf="@id/stackTop"
                 android:orientation="vertical" >
 
                 <TextView
                     android:id="@id/p1_Info"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="right"
                     android:text="@string/default_p1_name"
                     android:textAppearance="?android:attr/textAppearanceLarge" />
 
@@ -88,6 +90,7 @@
                     android:id="@id/p2_Info"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="right"
                     android:text="@string/cpu1"
                     android:textAppearance="?android:attr/textAppearanceLarge" />
 
@@ -95,6 +98,7 @@
                     android:id="@id/p3_Info"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="right"
                     android:text="@string/cpu2"
                     android:textAppearance="?android:attr/textAppearanceLarge" />
 
@@ -102,11 +106,13 @@
                     android:id="@id/p4_Info"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="right"
                     android:text="@string/friend"
                     android:textAppearance="?android:attr/textAppearanceLarge" />
+
             </LinearLayout>
         </RelativeLayout>
-
+
         <LinearLayout
             android:id="@+id/cpusContainer"
             android:layout_width="fill_parent"
@@ -140,13 +146,13 @@
                 android:clipChildren="false"
                 android:clipToPadding="false"
                 android:gravity="top"
-                android:layoutAnimation="@anim/cpu_in"
+                android:layoutAnimation="@anim/cpu_in2"
                 devn:drawCardAnimation="true"
                 devn:info="@id/p4_Info"
                 devn:playCardAnimation="true"
                 devn:team="1"
                 devn:visible="false" />
-            
+
             <devN.games.UIPlayer
                 android:id="@+id/cpu2"
                 android:layout_width="fill_parent"
@@ -155,13 +161,13 @@
                 android:clipChildren="false"
                 android:clipToPadding="false"
                 android:gravity="top"
-                android:layoutAnimation="@anim/cpu_in"
+                android:layoutAnimation="@anim/cpu_in3"
                 devn:drawCardAnimation="true"
                 devn:info="@id/p3_Info"
                 devn:playCardAnimation="true"
                 devn:team="3"
                 devn:visible="false" />
-
         </LinearLayout>
     </RelativeLayout>
+
 </devN.etc.dragdrop.DragLayer>

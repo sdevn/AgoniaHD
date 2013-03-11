@@ -8,6 +8,7 @@ import android.content.res.TypedArray;
 import android.os.Handler;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
@@ -23,8 +24,10 @@ import devN.games.agonia.R;
 public class UIPlayer extends LinearLayout implements AnimationListener, DropTarget,
 											AgoniaAI
 {
-	@SuppressWarnings("unused")
-	private static final String tag = "dbg";
+	/**
+	 * v2.1 added
+	 */
+	private static boolean useOldAnim;
 	
 	private boolean bAnimOnRemove;
 	private boolean bAnimOnAdd;
@@ -36,7 +39,7 @@ public class UIPlayer extends LinearLayout implements AnimationListener, DropTar
 	private TextView tvInfo;
 	private boolean visible;
 	private boolean layoutAnimFinisdhed = false; 
-	private LayoutParams lpCards = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+	private LayoutParams lpCards;	/* v2.1 modified */
 	private OnTouchListener onTouchListener;
 	
 	private int infoId;
@@ -55,9 +58,15 @@ public class UIPlayer extends LinearLayout implements AnimationListener, DropTar
 	private int animDeltaX;
 	private long animDuration;
 	
+	/* v2.1 added */
+	private LayoutInflater inflater; 
+	private AnimationListener onPlayAnimListener;
+	
 	public UIPlayer(Context context, AttributeSet attrs, int defStyle)
 	{
 		super(context, attrs);
+		
+		inflater = LayoutInflater.from(context);
 		initAttrs(context, attrs);
 	}
 
@@ -133,7 +142,7 @@ public class UIPlayer extends LinearLayout implements AnimationListener, DropTar
 		parentHeight = height;
 		parentWidth = width;
 		
-		if (visible) /* v 2.0a */
+		if (visible) /* v2.0a */
 		{										// ean o player minei horis kartes alla den bgei
 			getLayoutParams().height = parentHeight;	// (px petakse 8), to height epeidi einai WRAP_CONTENT
 		}										// midenizete, me apotelesma na min mporei na kanei draw
@@ -141,10 +150,18 @@ public class UIPlayer extends LinearLayout implements AnimationListener, DropTar
 		parentFullHeight = fullHeight;
 		parentFullWidth = fullWidth;
 
-		UICard c = new UICard(getContext(), new Card(-1, -1), false);
-		c.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
-		childWidth = c.getMeasuredWidth();
-		childHeight = c.getMeasuredHeight();
+		/* v2.1 modified */
+		inflater.inflate(R.layout.inflateable_uicard, this);
+		
+		UICard c = (UICard) getChildAt(0);
+		
+		lpCards = new LayoutParams(c.getLayoutParams());
+		
+		childWidth = getResources().getDimensionPixelSize(R.dimen.UICard_width);
+		childHeight = getResources().getDimensionPixelSize(R.dimen.UICard_height);
+		
+		removeViewAt(0);
+		/* v2.1 modified end */
 		
 		animDeltaY = parentHeight + (parentHeight - childHeight) / 2;
 	}
@@ -191,16 +208,15 @@ public class UIPlayer extends LinearLayout implements AnimationListener, DropTar
 		
 		delta = -(rightmostEdge - childWidth);
 		
-//		Log.d("anim", player.getName() + " aW " + rightmostEdge);
-		
 		return delta;
 	}
 	
 	private Animation getNewDrawAnim()
 	{
 		TranslateAnimation anim;
-		
-		anim = new TranslateAnimation(animDeltaX, 0, animDeltaY, 0);
+		int delta = (int) (tvInfo.getTextSize() / 2.0 + 0.5);
+
+		anim = new TranslateAnimation(animDeltaX, 0, animDeltaY + delta, 0);
 		
 		anim.setDuration(animDuration);
 		
@@ -239,25 +255,53 @@ public class UIPlayer extends LinearLayout implements AnimationListener, DropTar
 	private void addToContainer(List<Card> viewsToAdd)
 	{
 		boolean shouldAnimate = bAnimOnAdd && layoutAnimFinisdhed;
+	
+		/* v2.1 modified */
+		int n = viewsToAdd.size();
+		int i = n;
 		
-		lpCards.rightMargin = getRightMarg(getChildCount() + viewsToAdd.size());
-		requestLayout();
-		int i = viewsToAdd.size();
+		int marg = getRightMarg(getChildCount() + i);
 
 		for (Card c : viewsToAdd)
 		{
-			UICard child = new UICard(getContext(), c, visible);
+			inflater.inflate(R.layout.inflateable_uicard, this);
+			UICard child = (UICard) getChildAt(getChildCount() - 1);
+			child.setVisible(visible);
+			child.setCardRefTo(c);
 			child.setOnTouchListener(onTouchListener);
 			child.setLayoutParams(lpCards);
-			addView(child);
+			lpCards.rightMargin = marg;
 			
+			requestLayout();
+			invalidate();		
+		/* v2.1 modified end */
+	
 			if (shouldAnimate)
 			{
+				long offs = n - i;
+				long dur;
+				
+				if (useOldAnim)
+				{
+					offs *= 100;
+					dur = animDuration - offs;
+					dur = dur >= 200 ? dur : 200;
+					
+					animOnAdd.setStartOffset(offs);
+					animOnAdd.setDuration(dur);
+				}
+				else
+				{
+					dur = animDuration / n; 
+	
+					animDeltaX = calcDrawDeltaX(child);
+					animOnAdd = getNewDrawAnim();
+					animOnAdd.setDuration(dur);
+					animOnAdd.setStartOffset((offs * dur) / 2);
+				}
+				
+				child.startAnimation(animOnAdd);
 				i--;
-				animDeltaX = calcDrawDeltaX(child);
-				animOnAdd = getNewDrawAnim();
-				animOnAdd.setDuration(animDuration - i * 100);
-				child.startAnimation(animOnAdd);	
 			}
 		}
 	}
@@ -322,7 +366,7 @@ public class UIPlayer extends LinearLayout implements AnimationListener, DropTar
 			{
 				animDeltaX = calcPlayDeltaX((UICard) v);
 				
-				if (bAnimOnRemove)
+				if (bAnimOnRemove && !useOldAnim)
 				{
 					animOnRemove = getNewPlayAnim();
 					((UICard) v).setVisible(true);
@@ -385,6 +429,11 @@ public class UIPlayer extends LinearLayout implements AnimationListener, DropTar
 		return animOnRemove;
 	}
 	
+	public void setOnPlayAnimListener(AnimationListener onPlayAnimListener)
+	{
+		this.onPlayAnimListener = onPlayAnimListener;
+	}
+	
 	public void setOnDrawAnimation(Animation anim)
 	{
 		this.animOnAdd = anim;
@@ -421,8 +470,7 @@ public class UIPlayer extends LinearLayout implements AnimationListener, DropTar
 		
 //		Log.d("dbg", getName() + " par " + parent);
 		
-		setInfo((TextView) parent.findViewById(infoId));
-		
+		setInfo((TextView) parent.findViewById(infoId));		
 	}
 
 	@Override
@@ -476,6 +524,11 @@ public class UIPlayer extends LinearLayout implements AnimationListener, DropTar
 		final View v;
 		v = toRemove.remove(0);
 
+		if (onPlayAnimListener != null)
+		{
+			onPlayAnimListener.onAnimationEnd(animation); /* v2.1 added */
+		}
+		
 		post(new Runnable(){
 
 			@Override
@@ -484,25 +537,19 @@ public class UIPlayer extends LinearLayout implements AnimationListener, DropTar
 				removeView(v);
 			}
 		});
+		
 		if (!toRemove.isEmpty())
-		{
+		{	/* v2.1 modified */
 			final View next = toRemove.get(0);
-			next.post(new Runnable(){
-				
+			next.postDelayed(new Runnable(){
+
 				@Override
 				public void run()
 				{
-					next.postDelayed(new Runnable(){
-
-						@Override
-						public void run()
-						{
-							next.startAnimation(animation);
-						}
-						
-					}, 200);
+					next.startAnimation(animation);
 				}
-			});
+				
+			}, 200);
 		}
 	}
 	
@@ -663,6 +710,16 @@ public class UIPlayer extends LinearLayout implements AnimationListener, DropTar
 		player.setPlayingInSet(true);
 	}
 		
+	public static boolean isUseOldAnim()
+	{
+		return useOldAnim;
+	}
+
+	public static void setUseOldAnim(boolean useOldAnim)
+	{
+		UIPlayer.useOldAnim = useOldAnim;
+	}
+
 	public class InnerPlayer extends Player
 	{
 		public InnerPlayer()

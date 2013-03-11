@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- v2.1 -->
+	<dimen name="dlg_set_finish_ic_height">238dp</dimen> 
+	<dimen name="UICard_height">127dp</dimen>
+	<dimen name="UICard_width">91dp</dimen>
+	<dimen name="menu_side_icon_top_marg">-375dp</dimen>
+	<dimen name="menu_btn_top_marg">-186dp</dimen>
+</resources>

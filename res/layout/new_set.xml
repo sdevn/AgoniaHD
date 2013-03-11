@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@id/gameset_root"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:background="@color/tsoha"
@@ -36,7 +37,7 @@
 
         <include layout="@layout/set_wins" />
     </ViewFlipper>
-
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -57,7 +58,7 @@
             android:layout_weight="1"
             android:entries="@array/players_num" />
     </LinearLayout>
-
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -65,6 +66,7 @@
         android:orientation="horizontal" >
 
         <TextView
+            android:id="@+id/txvCpu1"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -78,7 +80,7 @@
             android:layout_weight="1"
             android:entries="@array/difficult_modes" />
     </LinearLayout>
-
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -86,6 +88,7 @@
         android:orientation="horizontal" >
 
         <TextView
+            android:id="@+id/txvCpu2"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -99,14 +102,14 @@
             android:layout_weight="1"
             android:entries="@array/difficult_modes" />
     </LinearLayout>
-
+
     <LinearLayout
         android:id="@+id/friendOp_AI"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
         android:orientation="horizontal" >
-
+
         <TextView
             android:id="@+id/txvFriendOp"
             android:layout_width="0dp"
@@ -125,15 +128,13 @@
 
     <Button
         android:id="@+id/set_btn_start"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:background="@drawable/btn_menu"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="@dimen/ad_top_bottom_margin"
-        android:text="@string/set_btn_start" />
+        android:text="@string/set_btn_start"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
 
-    <include
-        layout="@layout/ad_in_dialog" />
+    <include layout="@layout/ad_in_dialog" />
 
 </LinearLayout>
