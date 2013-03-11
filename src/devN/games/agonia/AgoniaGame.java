@@ -369,7 +369,7 @@ public class AgoniaGame extends Activity implements DragSource, OnTouchListener,
 	{
 		if (prefUseSFX && soundPool == null)
 		{
-			soundPool = new SoundPool(9, AudioManager.STREAM_MUSIC, 0);
+			soundPool = new SoundPool(5, AudioManager.STREAM_MUSIC, 0);
 			
 			sound_deal_cards = soundPool.load(context, R.raw.deal_cards, 1);
 			sound_draw_card = soundPool.load(context, R.raw.draw_card, 1);
@@ -379,6 +379,44 @@ public class AgoniaGame extends Activity implements DragSource, OnTouchListener,
 		}
 	}
 
+	/**
+	 * v2.1a
+	 * solving a soondpool {@link java.lang.NullPointerException}
+	 */
+	private void playSound(int soundId)
+	{
+		if (!useSFX)
+		{
+			return;
+		}
+
+		if (soundPool == null)
+		{
+			initSoundPool(this, true);
+		}
+		
+		try
+		{
+			soundPool.play(soundId, 1.0f, 1.0f, 1, 0, 1.0f);
+		}
+		catch (Exception ex)
+		{
+			PreferenceManager.getDefaultSharedPreferences(this)
+			.edit()
+			.putBoolean(getString(R.string.key_game_sfx), false)
+			.commit();
+			
+			useSFX = false;
+			
+			// TODO: localize it!
+			Toast
+			.makeText(this, 
+						"A problem with sound effects occurred.\nSound effects turned off", 
+						Toast.LENGTH_SHORT)
+			.show();
+		}
+	}
+	
 	private void newGame()
 	{
 		String prefColor, defColor;
@@ -523,7 +561,7 @@ public class AgoniaGame extends Activity implements DragSource, OnTouchListener,
 			public void run()
 			{
 				showDialog(DIALOG_FINISH_ID);
-				soundPool.play(soundId, 1.0f, 1.0f, 1, 0, 1.0f);
+				playSound(soundId);
 			}
 		}, delay);
 	}
@@ -1330,11 +1368,7 @@ public class AgoniaGame extends Activity implements DragSource, OnTouchListener,
 	{
 		GAME_EVENTS = "Players " + cPlayers + " | Top " + stackTopCards.get(0) + "\n";
 		
-		if (useSFX)
-		{
-			int r = soundPool.play(sound_deal_cards, 1.0F, 1.0F, 1, 0, 1.0F);
-			DBGLog.dbg("" + sound_deal_cards + " ||>> " + r);
-		}		
+		playSound(sound_deal_cards);	
 	}
 
 	@Override
@@ -1342,7 +1376,7 @@ public class AgoniaGame extends Activity implements DragSource, OnTouchListener,
 	{
 		GAME_EVENTS = GAME_EVENTS + who.getName() + " draw " + n + "\n";
 		
-		if (useSFX && n != 7)
+		if (n != 7)
 		{
 			long delay = cpuDelay / n;
 			
@@ -1351,7 +1385,7 @@ public class AgoniaGame extends Activity implements DragSource, OnTouchListener,
 				Runnable r = new Runnable(){
 					public void run()
 					{
-						soundPool.play(sound_draw_card, 1.0F, 1.0F, 1, 0, 1.0F);
+						playSound(sound_draw_card);
 					}
 				};
 				
@@ -1368,7 +1402,7 @@ public class AgoniaGame extends Activity implements DragSource, OnTouchListener,
 		Runnable r = new Runnable(){
 			public void run()
 			{
-				soundPool.play(sound_play_card, 1.0F, 1.0F, 1, 0, 1.0F);
+				playSound(sound_play_card);
 			}
 		};
 		
