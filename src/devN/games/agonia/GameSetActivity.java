@@ -131,10 +131,16 @@ public class GameSetActivity extends Activity
 			return;
 		}
 		
-		player = MediaPlayer.create(this, resId);
-		player.start();
-		
-		player.setOnCompletionListener(mediaPlayerReleaser);
+		try
+		{
+			player = MediaPlayer.create(this, resId);
+			player.start();
+			player.setOnCompletionListener(mediaPlayerReleaser);
+		}
+		catch (Exception ex) 
+		{
+			AgoniaGame.onPlaySoundFail(this, true);
+		}
 	}
 	
 	private void continueSet()
@@ -453,7 +459,7 @@ public class GameSetActivity extends Activity
 	
 	private void releasePlayer()
 	{
-		if (player != null && player.isPlaying())
+		if (player != null)
 		{
 			player.stop();
 			player.release();

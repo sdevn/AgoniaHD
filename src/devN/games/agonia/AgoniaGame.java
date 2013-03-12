@@ -45,7 +45,6 @@ import android.widget.RelativeLayout.LayoutParams;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
-import devN.etc.DBGLog;
 import devN.etc.DevnDialogUtils;
 import devN.etc.TextColorAnimation;
 import devN.etc.TextColorAnimationGroup;
@@ -125,8 +124,8 @@ public class AgoniaGame extends Activity implements DragSource, OnTouchListener,
 	private RelativeLayout.LayoutParams rlpCpuContainer; /* v2.0a */
 	
 	/* v2.1 */
-	private boolean useSFX;
-	private boolean useMusic;
+	private static boolean useSFX;
+	private static boolean useMusic;
 	private MediaPlayer mediaPlayer;
 	private static SoundPool soundPool;
 	private static int sound_deal_cards;
@@ -314,8 +313,15 @@ public class AgoniaGame extends Activity implements DragSource, OnTouchListener,
 	{
 		if (useMusic && mediaPlayer == null)
 		{
-			mediaPlayer = MediaPlayer.create(this, R.raw.game_back_sound);
-			mediaPlayer.setLooping(true);
+			try
+			{
+				mediaPlayer = MediaPlayer.create(this, R.raw.game_back_sound);
+				mediaPlayer.setLooping(true);
+			}
+			catch (Exception ex)
+			{
+				onPlaySoundFail(this, false);
+			}
 		}
 		
 		initSoundPool(this, useSFX);
@@ -328,8 +334,15 @@ public class AgoniaGame extends Activity implements DragSource, OnTouchListener,
 	{
 		if (useMusic && mediaPlayer != null)
 		{
-			mediaPlayer.setVolume(MUSIC_GAME_VOLUME, MUSIC_GAME_VOLUME);
-			mediaPlayer.start();
+			try
+			{
+				mediaPlayer.setVolume(MUSIC_GAME_VOLUME, MUSIC_GAME_VOLUME);
+				mediaPlayer.start();
+			}
+			catch (Exception ex)
+			{
+				onPlaySoundFail(this, false);
+			}
 		}
 		
 		super.onResume();
@@ -371,17 +384,24 @@ public class AgoniaGame extends Activity implements DragSource, OnTouchListener,
 		{
 			soundPool = new SoundPool(5, AudioManager.STREAM_MUSIC, 0);
 			
-			sound_deal_cards = soundPool.load(context, R.raw.deal_cards, 1);
-			sound_draw_card = soundPool.load(context, R.raw.draw_card, 1);
-			sound_play_card = soundPool.load(context, R.raw.play_card, 1);
-			sound_fail_game = soundPool.load(context, R.raw.fail_game, 1);
-			sound_win_game = soundPool.load(context, R.raw.win_game, 1);
+			try
+			{
+				sound_deal_cards = soundPool.load(context, R.raw.deal_cards, 1);
+				sound_draw_card = soundPool.load(context, R.raw.draw_card, 1);
+				sound_play_card = soundPool.load(context, R.raw.play_card, 1);
+				sound_fail_game = soundPool.load(context, R.raw.fail_game, 1);
+				sound_win_game = soundPool.load(context, R.raw.win_game, 1);
+			}
+			catch (Exception ex)
+			{
+				
+			}
 		}
 	}
 
 	/**
 	 * v2.1a
-	 * solving a soondpool {@link java.lang.NullPointerException}
+	 * solving a soundpool {@link java.lang.NullPointerException}
 	 */
 	private void playSound(int soundId)
 	{
@@ -401,20 +421,40 @@ public class AgoniaGame extends Activity implements DragSource, OnTouchListener,
 		}
 		catch (Exception ex)
 		{
-			PreferenceManager.getDefaultSharedPreferences(this)
-			.edit()
-			.putBoolean(getString(R.string.key_game_sfx), false)
-			.commit();
-			
-			useSFX = false;
-			
-			// TODO: localize it!
-			Toast
-			.makeText(this, 
-						"A problem with sound effects occurred.\nSound effects turned off", 
-						Toast.LENGTH_SHORT)
-			.show();
+			onPlaySoundFail(this, true);
 		}
+	}
+	
+	/**
+	 * v2.1b
+	 * Handles the failback of a {@link MediaPlayer} or {@link SoundPool} creation/play
+	 * @param wasSFX true means SoundPool fail, otherwise MediaPlayer fail
+	 */
+	public static void onPlaySoundFail(Context context, boolean wasSFX)
+	{
+		int prefKey = wasSFX ? R.string.key_game_sfx : R.string.key_game_music;
+		String problemPref = wasSFX ? " sound effects " : " background music ";
+		
+		PreferenceManager.getDefaultSharedPreferences(context)
+		.edit()
+		.putBoolean(context.getString(prefKey), false)
+		.commit();
+				
+		if (wasSFX)
+		{
+			useSFX = false;
+		}
+		else 
+		{
+			useMusic = false; 
+		}
+		
+		// TODO: localize it!
+		Toast
+		.makeText(context, 
+					"A problem with" + problemPref + "occurred.\n" + problemPref + "turned off", 
+					Toast.LENGTH_SHORT)
+		.show();
 	}
 	
 	private void newGame()
