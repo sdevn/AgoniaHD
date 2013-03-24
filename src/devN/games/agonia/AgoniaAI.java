@@ -22,6 +22,9 @@ public interface AgoniaAI extends AIPlayer
 	{
 		private static final int MODE_TO_STRING_LEN = 3;
 
+		/**
+		 * @param mode if its {@link AgoniaAI#MODE_NO_AI} null is returned
+		 */
 		public static AgoniaAI createById(int mode, Player p)
 		{
 			AgoniaAI cpuAI;

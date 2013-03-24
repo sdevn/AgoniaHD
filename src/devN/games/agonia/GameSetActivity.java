@@ -4,6 +4,9 @@ import static devN.games.agonia.AgoniaPref.REGEX_NAME_FILTER;
 import static devN.games.agonia.AgoniaPref.NAME_MIN_LENGTH;
 import static devN.games.agonia.AgoniaPref.NAME_MAX_LENGTH;
 import java.util.ArrayList;
+import com.adsdk.sdk.Ad;
+import com.adsdk.sdk.AdListener;
+import com.adsdk.sdk.AdManager;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -12,6 +15,7 @@ import android.content.Intent;
 import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnCompletionListener;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.preference.PreferenceManager;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,6 +24,7 @@ import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
@@ -28,6 +33,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ViewFlipper;
+import devN.etc.DBGLog;
 import devN.etc.DevnDialogUtils;
 import devN.etc.TypefaceUtils;
 import devN.games.GameSet;
@@ -60,6 +66,12 @@ public class GameSetActivity extends Activity
 	private boolean useSFX;
 	private MediaPlayer player;
 	
+	/**
+	 * v2.2 <br />
+	 * Load if {@link #isNewSet} otherwise Save 
+	 */
+	private ImageButton ibtLoad;
+	
 	// NewSet Views
 	private ViewFlipper vfpSetTypeSelection;
 	private Spinner spnSetType;
@@ -73,6 +85,7 @@ public class GameSetActivity extends Activity
 	private TextView[] atxvTeamSetInfos = new TextView[3];
 	private TextView txvSetInfo;
 	private GameSet set;
+	private AdManager adManager;	// v2.2 added
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
@@ -107,6 +120,11 @@ public class GameSetActivity extends Activity
 	protected void onDestroy()
 	{
 		releasePlayer();
+		
+		if (adManager != null)
+		{
+			adManager.release();
+		}
 		
 		super.onDestroy();
 	}
@@ -146,6 +164,8 @@ public class GameSetActivity extends Activity
 	private void continueSet()
 	{
 		int playerId;
+		
+		ibtLoad = (ImageButton) findViewById(R.id.set_ibt_save);
 		
 		btnStart = (Button) findViewById(R.id.set_btn_continue);
 		
@@ -220,6 +240,7 @@ public class GameSetActivity extends Activity
 		atxvCpuNames[1] = (TextView) findViewById(R.id.txvCpu2);
 		atxvCpuNames[2] = (TextView) findViewById(R.id.txvFriendOp);
 		btnStart = (Button) findViewById(R.id.set_btn_start);
+		ibtLoad = (ImageButton) findViewById(R.id.set_ibt_load);
 		
 		argpSetGoal[iSET_TYPE_POINTS] = (RadioGroup) vfpSetTypeSelection.getChildAt(iSET_TYPE_POINTS);
 		argpSetGoal[iSET_TYPE_WINS] = (RadioGroup) vfpSetTypeSelection.getChildAt(iSET_TYPE_WINS);
@@ -365,9 +386,47 @@ public class GameSetActivity extends Activity
 			@Override
 			public void onClick(DialogInterface dialog, int which)
 			{
-				finish();
+				adManager = new AdManager(GameSetActivity.this, 
+								"http://my.mobfox.com/vrequest.php",
+								"819563d36a65ebca90245302554ddb33", false);
 				
-				overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out); /* v2.1 */
+				adManager.setListener(new AdListener(){
+					
+					@Override
+					public void noAdFound()
+					{
+						DBGLog.dbg("no mobfox vAd found.");
+						
+						adClosed(null, false);
+					}
+					
+					@Override
+					public void adShown(Ad arg0, boolean arg1)
+					{ }
+					
+					@Override
+					public void adLoadSucceeded(Ad arg0)
+					{
+						if (adManager != null && adManager.isAdLoaded())
+						{
+							adManager.showAd();
+						}
+					}
+					
+					@Override
+					public void adClosed(Ad arg0, boolean arg1)
+					{
+						finish();
+						
+						overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+					}
+					
+					@Override
+					public void adClicked()
+					{ }
+				});
+				
+				adManager.requestAd();
 			}
 		})
 		.setCancelable(false);
@@ -493,7 +552,7 @@ public class GameSetActivity extends Activity
 			}
 			intent.putExtra(ID_AI_MODES, modes);
 			intent.putExtra(ID_NEW_SET, true);
-			intent.putExtra(ID_GAMESET, set);
+			intent.putExtra(ID_GAMESET, (Parcelable) set);
 			
 			startActivity(intent);
 			
@@ -511,6 +570,7 @@ public class GameSetActivity extends Activity
 		{
 			if (set.isSetFinished())
 			{
+				findViewById(R.id.adView).setVisibility(View.GONE); // v2.2 added
 				showDialog(DIALOG_SET_FINISH_ID);
 			}
 			else
@@ -518,7 +578,7 @@ public class GameSetActivity extends Activity
 				Intent intent = new Intent(GameSetActivity.this, AgoniaGame.class);
 				
 				intent.putExtra(ID_NEW_SET, false);
-				intent.putExtra(ID_GAMESET, set);
+				intent.putExtra(ID_GAMESET, (Parcelable) set);
 				
 				startActivity(intent);
 				

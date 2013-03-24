@@ -1,5 +1,8 @@
 package devN.games;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.LinkedList;
 import java.util.List;
 import android.content.Context;
@@ -722,6 +725,11 @@ public class UIPlayer extends LinearLayout implements AnimationListener, DropTar
 
 	public class InnerPlayer extends Player
 	{
+		/**
+		 * v2.2
+		 */
+		private static final long serialVersionUID = 670009548982056040L;
+
 		public InnerPlayer()
 		{
 			super();
@@ -788,6 +796,19 @@ public class UIPlayer extends LinearLayout implements AnimationListener, DropTar
 		{
 			super.addScore(points);
 			refreshInfo();
+		}
+
+		@Override
+		protected void writeObject(ObjectOutputStream s) throws IOException
+		{
+			super.writeObject(s);
+		}
+
+		@Override
+		protected void readObject(ObjectInputStream s) throws IOException,
+														ClassNotFoundException
+		{
+			super.readObject(s);
 		}
 	}
 }

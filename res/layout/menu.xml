@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:ads="http://schemas.android.com/apk/lib/com.google.ads"
     android:id="@+id/menuLayout"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
@@ -14,15 +13,16 @@
         android:gravity="center_horizontal"
         android:layoutAnimation="@anim/menu_in"
         android:orientation="vertical" >
-
-        <com.google.ads.AdView
-            android:id="@+id/adView"
+        
+        <com.adsdk.sdk.banner.AdView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            ads:adSize="SMART_BANNER"
-            ads:adUnitId="a15007e97f87daa"
-            ads:loadAdOnCreate="true"
-            ads:testDevices="TEST_EMULATOR" />
+            android:layout_gravity="center"
+            animation="true"
+            location="false"
+            publisherId="819563d36a65ebca90245302554ddb33"
+            request_url="http://my.mobfox.com/request.php"
+            android:background="#00000000" />
 
         <ImageView
             android:id="@+id/imageView1"

@@ -1,5 +1,9 @@
 package devN.games;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Map;
@@ -13,13 +17,23 @@ import android.os.Parcelable;
  * Partida paihnidiwn
  *
  */
-public class GameSet implements Parcelable
+public class GameSet implements Serializable, Parcelable
 {	
+		
+	/**
+	 * v2.2
+	 */
+	private static final long serialVersionUID = 302367206500912043L;
+
 	public final static int TYPE_POINTS = 0;
 	public final static int TYPE_WINS 	= 1;
 	public final static int NO_WINNER 	= -1;
 	
-	private Map<Integer, ArrayList<Player>> teams; // <teamID, playersList>
+	/**
+	 * v2.2 modified to transient <br />
+	 * it will manually serialized to {@link ObjectOutputStream} 
+	 */
+	private transient Map<Integer, ArrayList<Player>> teams; // <teamID, playersList>
 	private int firstPlayerId;
 	private int cGame;
 	private int goalScore;
@@ -285,7 +299,51 @@ public class GameSet implements Parcelable
 		
 		return sb.toString();
 	}
+	
+	//
+	// Serializable implementation
+	//
+	
+	/**
+	 * v2.2 added to implement {@link Serializable } interface
+	 */
+	protected GameSet() { }
 
+	private void writeObject(ObjectOutputStream s) throws IOException 
+	{
+		s.defaultWriteObject();
+		
+		s.writeInt(getPlayersCount());
+		
+		for (ArrayList<Player> players : teams.values())
+		{
+			for (Player p : players)
+			{
+				s.writeObject(p);
+			}
+		}
+	}
+
+	private void readObject(ObjectInputStream s) throws IOException, ClassNotFoundException 
+	{
+		s.defaultReadObject();
+		
+		teams = new Hashtable<Integer, ArrayList<Player>>(); 
+		
+		int cPlayers = s.readInt();
+		
+		for (int i = 0; i < cPlayers; i++)
+		{
+			Player player = (Player) s.readObject();
+			
+			addPlayer(player);
+		}
+	}
+	
+	//
+	// Parcelable implementation
+	//
+	
 	public static final Parcelable.Creator<GameSet> CREATOR = new Parcelable.Creator<GameSet>()
 	{
 		@Override

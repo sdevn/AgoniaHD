@@ -1,20 +1,49 @@
 package devN.games;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import android.os.Parcel;
 import android.os.Parcelable;
 import devN.games.agonia.AgoniaAI;
 
-public class Player implements AgoniaAI, Parcelable
+public class Player implements AgoniaAI, Parcelable, Serializable
 {
+	/**
+	 * v2.2
+	 */
+	private static final long serialVersionUID = -3883828405433368181L;
+
 	private static int cIDs = 0;
 
-	protected Deck deck;
+	/**
+	 * v2.2 modified to transient <br />
+	 * it will serialized for {@link GameSet}  
+	 */
+	protected transient Deck deck;
+	
+	/**
+	 * v2.2 modified to transient <br />
+	 * it will serialized for {@link GameSet}  
+	 */
+	protected transient List<Card> hand;
+	
+	/**
+	 * v2.2 modified to transient <br />
+	 * it will serialized for {@link GameSet}  
+	 */
+	protected transient List<Card> owned;
+	
+	/**
+	 * v2.2 modified to transient <br />
+	 * it will serialized for {@link GameSet}  
+	 */
+	protected transient CardGame game;
+	
 	protected String name;
-	protected List<Card> hand;
-	protected List<Card> owned;
-	protected CardGame game;
 	protected int setScore;
 	protected int setWins;
 	protected boolean playingInSet;
@@ -22,7 +51,12 @@ public class Player implements AgoniaAI, Parcelable
 	protected int team;
 	protected int id;
 	protected int wins;
-	protected AgoniaAI ai;
+	
+	/**
+	 * v2.2 modified to transient <br />
+	 * it will manually serialized to {@link ObjectOutputStream} 
+	 */
+	protected transient AgoniaAI ai;
 	
 	public Player()
 	{
@@ -351,12 +385,11 @@ public class Player implements AgoniaAI, Parcelable
 	public void setAI(AgoniaAI ai)
 	{
 		this.ai = ai;
-		if (this.ai != null)
-		{
-			
-		}
 	}
 	
+	/**
+	 * @return {@link AgoniaAI#getMode() getMode()} or {@link AgoniaAI#MODE_NO_AI} if its not an AI
+	 */
 	@Override
 	public int getMode()
 	{
@@ -385,6 +418,30 @@ public class Player implements AgoniaAI, Parcelable
 	{
 		return ai.playSeven();
 	}
+	
+	//
+	// Serializable implementation
+	//
+	
+	protected void writeObject(ObjectOutputStream s) throws IOException 
+	{// v2.2 GameSet serialization
+		
+		s.defaultWriteObject();
+		
+		s.writeInt(getMode());
+	}
+
+	protected void readObject(ObjectInputStream s) throws IOException, ClassNotFoundException 
+	{// v2.2 GameSet deserialization
+		
+		s.defaultReadObject();
+		
+		ai = AgoniaAIBuilder.createById(s.readInt(), this);
+	}
+	
+	//
+	// Parcelable implementation
+	//
 	
 	public static final Parcelable.Creator<Player> CREATOR = new Parcelable.Creator<Player>(){
 		@Override
@@ -435,5 +492,4 @@ public class Player implements AgoniaAI, Parcelable
 		setWins = in.readInt();
 		setScore = in.readInt();
     }
-
 }

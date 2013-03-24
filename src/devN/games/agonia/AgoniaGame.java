@@ -24,6 +24,7 @@ import android.media.MediaPlayer;
 import android.media.SoundPool;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Parcelable;
 import android.preference.PreferenceManager;
 import android.util.DisplayMetrics;
 import android.view.Gravity;
@@ -1275,7 +1276,7 @@ public class AgoniaGame extends Activity implements DragSource, OnTouchListener,
 				Intent intent = new Intent(AgoniaGame.this, GameSetActivity.class);
 				
 				intent.putExtra(ID_NEW_SET, false);
-				intent.putExtra(ID_GAMESET, set);
+				intent.putExtra(ID_GAMESET, (Parcelable) set);
 				
 				startActivity(intent);
 				
