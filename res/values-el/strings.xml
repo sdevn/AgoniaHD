@@ -94,5 +94,14 @@
     <string name="pref_game_music_title">Μουσική υπόκρουση</string>
     <string name="pref_game_sfx_title">Ηχητικά εφέ</string>
 
-    <string name="dlg_whats_new_message">➤Νέα HD τράπουλα\n➤Νέα κουμπιά\n➤Background music και ηχητικά εφέ\n➤Δυνατότητα χρήσης των παλιών animations\n\n<u>Γιαυτό πριν παίξετε ρίξτε μία ματιά στις Προτιμήσεις</u>\n\n<b>Στην επόμενη αναβάθμιση!</b>\n\nΘα έχει δυνατότητα αποθήκευσης Παιχνιδιού αλλά και Παρτίδας και στατιστικά από νίκες/ήττες.\nΚαλή διασκέδαση κι ευχαριστώ πολύ για τη στήριξη σας!! :)\n</string>
+    <string name="dlg_whats_new_message">Δυνατότητα αποθήκευσης/συνέχισης Παρτίδας\n\n<b>Στην επόμενη αναβάθμιση!</b>\n\nΣτατιστικά από νίκες/ήττες.\n\nΚαλή διασκέδαση κι ευχαριστώ πολύ για τη στήριξη σας!! :)\n</string>
+
+    <!-- v2.2 -->
+    
+	<string name="dlg_set_load_title">Συνέχιση παιχνιδιού</string>
+    <string name="dlg_set_delete_games_title">Επέλεξε τα παιχνίδια που θα διαγράψεις</string>
+    <string name="dlg_btn_set_delete_games_delete">Διαγραφή</string>
+    <string name="set_toast_on_delete_games">%d αποθηκευμένα παιχνίδια διαγράφηκαν</string>
+    <string name="set_toast_on_save_game">Αποθηκεύτηκε ως %s</string>
+    <string name="set_toast_no_saved_games">Δε βρέθηκαν αποθηκευμένα παιχνίδια...</string>
 </resources>

@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import android.os.Parcel;
 import android.os.Parcelable;
+import devN.etc.DBGLog;
 import devN.games.agonia.AgoniaAI;
 
 public class Player implements AgoniaAI, Parcelable, Serializable
@@ -423,20 +424,24 @@ public class Player implements AgoniaAI, Parcelable, Serializable
 	// Serializable implementation
 	//
 	
-	protected void writeObject(ObjectOutputStream s) throws IOException 
+	private void writeObject(ObjectOutputStream s) throws IOException 
 	{// v2.2 GameSet serialization
-		
+
 		s.defaultWriteObject();
 		
 		s.writeInt(getMode());
+		
+		DBGLog.srlz(name + " ai mode:" + getMode());
 	}
 
-	protected void readObject(ObjectInputStream s) throws IOException, ClassNotFoundException 
+	private void readObject(ObjectInputStream s) throws IOException, ClassNotFoundException 
 	{// v2.2 GameSet deserialization
 		
 		s.defaultReadObject();
 		
 		ai = AgoniaAIBuilder.createById(s.readInt(), this);
+		
+		DBGLog.srlz("des " + name + " ai mode:" + getMode());
 	}
 	
 	//

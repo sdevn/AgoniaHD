@@ -3,7 +3,16 @@ package devN.games.agonia;
 import static devN.games.agonia.AgoniaPref.REGEX_NAME_FILTER;
 import static devN.games.agonia.AgoniaPref.NAME_MIN_LENGTH;
 import static devN.games.agonia.AgoniaPref.NAME_MAX_LENGTH;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.LinkedHashMap;
+import java.util.List;
 import com.adsdk.sdk.Ad;
 import com.adsdk.sdk.AdListener;
 import com.adsdk.sdk.AdManager;
@@ -12,6 +21,7 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnCompletionListener;
 import android.os.Bundle;
@@ -21,7 +31,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
+import android.view.animation.Animation;
+import android.view.animation.BounceInterpolator;
+import android.view.animation.ScaleAnimation;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -45,7 +59,9 @@ public class GameSetActivity extends Activity
 	
 	public static final int DIALOG_SET_FINISH_ID	= 0;
 	public static final int DIALOG_CHANGE_NAME_ID	= 1;
-
+	public static final int DIALOG_LOAD_GAME_ID		= 2;
+	public static final int DIALOG_DELETE_GAMES_ID	= 3;
+	
 	private final static int iSET_TYPE_POINTS 	= 0;
 	private final static int iSET_TYPE_WINS 	= 1;
 	
@@ -58,6 +74,8 @@ public class GameSetActivity extends Activity
 	public final static String ID_PLAYERS_NUM 	= "devN.games.agonia.PLAYERS_NUM";
 	public final static String ID_AI_MODES		= "devN.games.agonia.PLAYERS_AI_MODES";
 
+	public final static String SAVE_FILE_EXT	= ".gsas";
+	
 	private boolean isNewSet;
 	private Button btnStart;
 	private String changeNameKey;
@@ -127,6 +145,33 @@ public class GameSetActivity extends Activity
 		}
 		
 		super.onDestroy();
+	}
+	
+	@Override
+	public void onBackPressed()
+	{// v2.2
+		if (isNewSet)
+		{			
+			finish();
+			overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+		}
+		else if (set.isSetFinished()) 
+		{
+			Animation scale = new ScaleAnimation(0.85f, 1.3f, 0.9f, 1.2f, 
+								Animation.RELATIVE_TO_SELF, 0.5f,
+								Animation.RELATIVE_TO_SELF, 0.5f);
+			scale.setDuration(500);
+			scale.setFillEnabled(true);
+			scale.setFillBefore(true);
+			scale.setFillAfter(false);
+			scale.setInterpolator(new BounceInterpolator());
+			
+			btnStart.startAnimation(scale);
+		}
+		else 
+		{
+			ibtLoad.performClick();
+		}
 	}
 
 	/* v2.0b added. */
@@ -223,9 +268,11 @@ public class GameSetActivity extends Activity
 		if (set.isSetFinished())
 		{
 			btnStart.setText(R.string.set_btn_continue_winner);
+			ibtLoad.setVisibility(View.INVISIBLE); // v2.2
 		}
 		
 		btnStart.setOnClickListener(continueSetClickListener);
+		ibtLoad.setOnClickListener(saveGameSetClickListener);
 	}
 
 	private void newSet()
@@ -315,6 +362,85 @@ public class GameSetActivity extends Activity
 		}
 		
 		btnStart.setOnClickListener(newSetClickListener);
+		ibtLoad.setOnClickListener(loadGameSetClickListener);
+		ibtLoad.setOnLongClickListener(loadGameSetLongClickListener);
+	}
+	
+	/**
+	 * v2.2
+	 * Its also finishes the Activity <br />
+	 * <br />
+	 * saved in form: <br />
+	 * [set] [pref.deckFinishOption] [pref.aceOnAce] [pref.aceFinish]
+	 */
+	private void saveGameSet(FileOutputStream out, String fileName) throws IOException
+	{
+		final int extLen = SAVE_FILE_EXT.length();
+		final String savedName = fileName.substring(0, fileName.length() - extLen);
+
+		ObjectOutputStream s = new ObjectOutputStream(out);
+		
+		SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
+		
+		int deckFinishOption = Integer.parseInt(pref.getString(getString(R.string.key_deck_finish), "0"));
+		boolean aceOnAce = pref.getBoolean(getString(R.string.key_ace_on_ace), false);
+		boolean aceFinish = pref.getBoolean(getString(R.string.key_ace_finish), false);
+		
+		s.writeObject(set);
+		s.writeInt(deckFinishOption);
+		s.writeBoolean(aceOnAce);
+		s.writeBoolean(aceFinish);
+
+		s.flush();
+		s.close();
+		
+		Toast.makeText(this, 
+				getString(R.string.set_toast_on_save_game, savedName), 
+				Toast.LENGTH_SHORT)
+		.show();
+
+		finish();
+		
+		overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+	}
+	
+	/**
+	 * v2.2
+	 * loads in form: <br />
+	 * [set] [pref.deckFinishOption] [pref.aceOnAce] [pref.aceFinish]
+	 * @throws ClassNotFoundException 
+	 */
+	private void loadGameSet(FileInputStream in, String fileName) throws IOException, ClassNotFoundException
+	{
+		ObjectInputStream s = new ObjectInputStream(in);
+		
+		SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
+		
+		set = (GameSet) s.readObject();
+		int deckFinishOption = s.readInt();
+		boolean aceOnAce = s.readBoolean();
+		boolean aceFinish = s.readBoolean();
+		
+		pref.edit()
+		.putString(getString(R.string.key_deck_finish), deckFinishOption + "")
+		.putBoolean(getString(R.string.key_ace_on_ace), aceOnAce)
+		.putBoolean(getString(R.string.key_ace_finish), aceFinish)
+		.commit();
+		
+		s.close();
+		
+		deleteFile(fileName);
+		
+		Intent intent = new Intent(GameSetActivity.this, GameSetActivity.class);
+		
+		intent.putExtra(ID_NEW_SET, false);
+		intent.putExtra(ID_GAMESET, (Parcelable) set);
+		
+		startActivity(intent);
+		
+		overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+		
+		finish();
 	}
 	
 	@Override
@@ -333,6 +459,18 @@ public class GameSetActivity extends Activity
 		case DIALOG_CHANGE_NAME_ID:
 			{
 			dialog = makeChangeNameDlg();
+			}
+			break;
+			
+		case DIALOG_LOAD_GAME_ID:
+			{
+			dialog = makeLoadGameDlg();	
+			}
+			break;
+			
+		case DIALOG_DELETE_GAMES_ID:
+			{
+			dialog = makeDeleteGamesDlg();	
 			}
 			break;
 			
@@ -355,13 +493,11 @@ public class GameSetActivity extends Activity
 		switch (id)
 		{
 		case DIALOG_CHANGE_NAME_ID:
-			{
 			String title = getString(R.string.dlg_change_name_title, txvCpuToChangeName.getText().toString());
  			dialog.setTitle(title);
- 			}
 			break;
 		}
-		
+
 		super.onPrepareDialog(id, dialog);
 	}
 
@@ -395,7 +531,7 @@ public class GameSetActivity extends Activity
 					@Override
 					public void noAdFound()
 					{
-						DBGLog.dbg("no mobfox vAd found.");
+						DBGLog.ads("no mobfox vAd found.");
 						
 						adClosed(null, false);
 					}
@@ -442,6 +578,7 @@ public class GameSetActivity extends Activity
 	{
 		final EditText edt = new EditText(this);
 		
+		// @formatter:off
 		DialogInterface.OnClickListener diocl = new DialogInterface.OnClickListener(){
 
 			@Override
@@ -514,6 +651,114 @@ public class GameSetActivity extends Activity
 		});
 		
 		return dialog;
+	}
+	
+	private Dialog makeLoadGameDlg()
+	{
+		final List<String> saveFiles = getSaveFileNames();
+		
+		if (saveFiles.isEmpty())
+		{
+			Toast.makeText(GameSetActivity.this, 
+					getString(R.string.set_toast_no_saved_games), 
+					Toast.LENGTH_SHORT)
+			.show();
+			
+			return null;
+		}
+		
+		// @formatter:off
+		AlertDialog.Builder builder = new AlertDialog.Builder(this)
+		.setTitle(R.string.dlg_set_load_title)
+		.setAdapter(new ArrayAdapter<String>(GameSetActivity.this, R.layout.txv_set_load_game, saveFiles), 
+			new DialogInterface.OnClickListener(){
+			
+			@Override
+			public void onClick(DialogInterface dialog, int which)
+			{
+				FileInputStream f = null;
+				String name = saveFiles.get(which) + SAVE_FILE_EXT;
+
+				try
+				{
+					f = openFileInput(name);
+					loadGameSet(f, name);
+				}
+				catch (FileNotFoundException ex)
+				{
+					Toast.makeText(GameSetActivity.this, 
+							"Can't open " + name + "\n" + ex, 
+							Toast.LENGTH_SHORT)
+					.show();
+				}
+				catch (Exception ex)
+				{
+					Toast.makeText(GameSetActivity.this, 
+							"Can't load from " + name + "\n" + ex, 
+							Toast.LENGTH_SHORT)
+					.show();
+					
+					if (f != null)
+					{
+						try
+						{
+							f.close();
+						}
+						catch (IOException ex1)
+						{ }
+					}
+				}
+			}
+		})
+		;
+		// @formatter:on
+		return builder.create();
+	}
+	
+	private Dialog makeDeleteGamesDlg()
+	{
+		final List<String> saveFiles = getSaveFileNames();
+		
+		if (saveFiles.isEmpty())
+		{
+			Toast.makeText(GameSetActivity.this, 
+					getString(R.string.set_toast_no_saved_games), 
+					Toast.LENGTH_SHORT)
+			.show();
+			
+			return null;
+		}
+
+		DeleteSaveFilesDlgListener dsfdl = new DeleteSaveFilesDlgListener(saveFiles);
+		
+		// @formatter:off
+		AlertDialog.Builder builder = new AlertDialog.Builder(this)
+		.setMultiChoiceItems(saveFiles.toArray(new String[saveFiles.size()]), 
+				null, dsfdl)
+		.setTitle(R.string.dlg_set_delete_games_title)
+		.setPositiveButton(R.string.dlg_btn_set_delete_games_delete, dsfdl)
+		.setNegativeButton(android.R.string.cancel, dsfdl)
+		;
+		// @formatter:on
+		
+		return builder.create();
+	}
+	
+	private List<String> getSaveFileNames()
+	{
+		final int extLen = SAVE_FILE_EXT.length();
+		
+		List<String> saveFiles = new ArrayList<String>();
+		
+		for (String fileName : fileList())
+		{
+			if (fileName.endsWith(SAVE_FILE_EXT))
+			{
+				saveFiles.add(fileName.substring(0, fileName.length() - extLen));
+			}
+		}
+		
+		return saveFiles;
 	}
 	
 	private void releasePlayer()
@@ -631,4 +876,145 @@ public class GameSetActivity extends Activity
 			releasePlayer();
 		}
 	};
+	
+	//
+	// v2.2 added
+	//
+	
+	private View.OnClickListener saveGameSetClickListener = new View.OnClickListener(){
+		
+		@Override
+		public void onClick(View v)
+		{
+			FileOutputStream f = null;
+			
+			Calendar cal = Calendar.getInstance();
+			String name = String.format("%s_%d.%d.%d_%d.%d.%d%s", 
+					set.getPlayerByTeam(1, 0).getName(),
+					cal.get(Calendar.DAY_OF_MONTH),
+					cal.get(Calendar.MONTH), cal.get(Calendar.YEAR),
+					cal.get(Calendar.HOUR_OF_DAY), cal.get(Calendar.MINUTE),
+					cal.get(Calendar.SECOND),
+					SAVE_FILE_EXT);
+			try
+			{
+				f = openFileOutput(name, MODE_PRIVATE);
+				
+				saveGameSet(f, name);
+			}
+			catch (FileNotFoundException ex)
+			{
+				Toast.makeText(GameSetActivity.this, 
+						"Can't save game!\n" + ex, Toast.LENGTH_SHORT)
+				.show();
+			}
+			catch (IOException ex)
+			{
+				Toast.makeText(GameSetActivity.this, 
+						"Error occured on save game!\n" + ex, Toast.LENGTH_SHORT)
+				.show();
+				
+				if (f != null)
+				{
+					try
+					{
+						f.close();
+						deleteFile(name);
+					}
+					catch (IOException ex1)
+					{ }
+				}
+			}
+		}
+	};
+	
+	private View.OnClickListener loadGameSetClickListener = new View.OnClickListener(){
+		
+		@SuppressWarnings("deprecation")
+		@Override
+		public void onClick(View v)
+		{
+			try
+			{
+				removeDialog(DIALOG_LOAD_GAME_ID);
+			}
+			catch (Exception ex)
+			{ }
+			
+			showDialog(DIALOG_LOAD_GAME_ID);
+		}
+	};
+	
+	private View.OnLongClickListener loadGameSetLongClickListener = new View.OnLongClickListener() {
+
+		@SuppressWarnings("deprecation")
+		@Override
+		public boolean onLongClick(View v)
+		{
+			try
+			{
+				removeDialog(DIALOG_DELETE_GAMES_ID);
+			}
+			catch (Exception ex)
+			{ }
+			
+			showDialog(DIALOG_DELETE_GAMES_ID);
+			return true;
+		}
+		
+	};
+	
+	private class DeleteSaveFilesDlgListener 
+			implements DialogInterface.OnMultiChoiceClickListener, DialogInterface.OnClickListener
+	{
+		private LinkedHashMap<String, Boolean> items;
+		
+		public DeleteSaveFilesDlgListener(List<String> saveFiles)
+		{
+			items = new LinkedHashMap<String, Boolean>();
+			
+			for (String string : saveFiles)
+			{
+				items.put(string, false);
+			}
+			
+		}
+		
+		@Override
+		public void onClick(DialogInterface dialog, int which)
+		{
+			switch (which)
+			{
+			case DialogInterface.BUTTON_NEGATIVE:
+				{ /* Cancel. Do noting */ }
+				break;
+			
+			case DialogInterface.BUTTON_POSITIVE:
+				int i = 0;
+				for (String name : items.keySet())
+				{
+					if (items.get(name))
+					{
+						i++;
+						deleteFile(name + SAVE_FILE_EXT);
+					}
+				}
+				
+				Toast.makeText(GameSetActivity.this, 
+						getString(R.string.set_toast_on_delete_games, i), 
+						Toast.LENGTH_SHORT)
+				.show();
+				break;
+
+			default:
+				break;
+			}	
+		}
+	
+		@Override
+		public void onClick(DialogInterface dialog, int which, boolean isChecked)
+		{
+			items.put((String) items.keySet().toArray()[which], isChecked);			
+		}
+	}
 }

@@ -8,4 +8,14 @@ public final class DBGLog
 	{
 		Log.d("dbg", msg);
 	}
+	
+	public static void ads(String msg)
+	{
+		Log.i("ads", msg);
+	}
+	
+	public static void srlz(String msg)
+	{
+		Log.v("srlz", msg);
+	}
 }

@@ -131,6 +131,15 @@
     <string name="key_game_sfx">key_sfx</string>
     <string name="pref_game_sfx_title">Game sound effects</string>
 	
-    <string name="dlg_whats_new_message">➤New HD deck\n➤New button\n➤Background music and sound effects\n➤Low quality animations\n\n<b>Coming soon!</b>\n➤save/load GameSet/Game\n➤hard mode\n➤more preferences for more special cards\n➤game history when game finished\n</string>
-    <string name="key_dlg_whats_new_once">key_dlg_whats_new_once_v2.1</string>
+    <string name="dlg_whats_new_message">➤Save/load GameSet\n\n<b>Coming soon!</b>\n➤hard mode\n➤more preferences for more special cards\n➤game history when game finished\n</string>
+    <string name="key_dlg_whats_new_once">key_dlg_whats_new_once_v2.2</string>
+    
+    <!-- v2.2 -->
+    
+    <string name="dlg_set_load_title">Load game</string>
+    <string name="dlg_set_delete_games_title">Select saved games to delete</string>
+    <string name="dlg_btn_set_delete_games_delete">Delete</string>
+    <string name="set_toast_on_delete_games">%d saved games deleted</string>
+    <string name="set_toast_on_save_game">Saved as %s</string>
+    <string name="set_toast_no_saved_games">No saved games found...</string>
 </resources>

@@ -268,6 +268,7 @@ public class AgoniaMenu extends Activity
 					public void onClick(DialogInterface dialog, int which)
 					{ }
 				})
+/*				
 				.setNeutralButton(R.string.menu_btn_pref, new DialogInterface.OnClickListener(){
 					
 					@Override
@@ -279,6 +280,7 @@ public class AgoniaMenu extends Activity
 						}
 					}
 				})
+*/				
 				.setCancelable(false)
 				;
 				dialog = builder.create();
