@@ -16,6 +16,10 @@ import java.util.List;
 import com.adsdk.sdk.Ad;
 import com.adsdk.sdk.AdListener;
 import com.adsdk.sdk.AdManager;
+import com.ironsource.mobilcore.ConfirmationResponse;
+import com.ironsource.mobilcore.ConfirmationResponse.TYPE;
+import com.ironsource.mobilcore.MobileCore;
+import com.ironsource.mobilcore.MobileCore.LOG_TYPE;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -110,6 +114,8 @@ public class GameSetActivity extends Activity
 	{
 		super.onCreate(savedInstanceState);
 		
+		MobileCore.init(this, "17SC2L1SS0W36F91XGHU8RUIV8MEK", LOG_TYPE.PRODUCTION);
+
 		useSFX = PreferenceManager.getDefaultSharedPreferences(this)
 					.getBoolean(getString(R.string.key_game_sfx), true);
 		
@@ -533,7 +539,14 @@ public class GameSetActivity extends Activity
 					{
 						DBGLog.ads("no mobfox vAd found.");
 						
-						adClosed(null, false);
+						MobileCore.showOfferWall(GameSetActivity.this, new ConfirmationResponse(){
+
+							@Override
+							public void onConfirmation(TYPE arg0)
+							{
+								adClosed(null, false);
+							}
+						});
 					}
 					
 					@Override
