@@ -13,7 +13,15 @@
         android:gravity="center_horizontal"
         android:layoutAnimation="@anim/menu_in"
         android:orientation="vertical" >
-        
+
+		<devN.etc.LeadBoltAdView
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:layout_gravity="center"
+		    android:contentDescription="Menu ad"
+		    android:background="#00000000" />
+
+<!--         
         <com.adsdk.sdk.banner.AdView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -23,7 +31,7 @@
             publisherId="819563d36a65ebca90245302554ddb33"
             request_url="http://my.mobfox.com/request.php"
             android:background="#00000000" />
-
+-->
         <ImageView
             android:id="@+id/imageView1"
             android:layout_width="fill_parent"
@@ -64,6 +72,12 @@
        		android:layout_marginTop="@dimen/menu_side_icon_top_marg"
         -->
 
+		<ImageButton 
+		    android:id="@+id/ibtStats"
+            style="@style/menu_side_icon"
+            android:contentDescription="@string/blank"
+            android:src="@drawable/ic_stats" />
+		
         <ImageButton
             android:id="@+id/ibtFacebook"
             style="@style/menu_side_icon"

@@ -94,14 +94,17 @@
     <string name="pref_game_music_title">Μουσική υπόκρουση</string>
     <string name="pref_game_sfx_title">Ηχητικά εφέ</string>
 
-    <string name="dlg_whats_new_message">Δυνατότητα αποθήκευσης/συνέχισης Παρτίδας\n\n<b>Στην επόμενη αναβάθμιση!</b>\n\nΣτατιστικά από νίκες/ήττες.\n\nΚαλή διασκέδαση κι ευχαριστώ πολύ για τη στήριξη σας!! :)\n</string>
+    <string name="dlg_whats_new_message">Στατιστικά παιχνιδιών.\nΑυτόματη αποθήκευση επιλογών για νέα παρτίδα.\nΕπιλογή ενός Επτά (αν υπάρχει) στο διάλογο για Επτά\n\n<b>Στην επόμενη αναβάθμιση!</b>\n\nΙστορικό παιχνιδιού.\n\nΚαλή διασκέδαση, Χριστός ανέστη. Ευχαριστώ πολύ για τη στήριξη σας!! :)\n</string>
 
     <!-- v2.2 -->
-    
 	<string name="dlg_set_load_title">Συνέχιση παιχνιδιού</string>
     <string name="dlg_set_delete_games_title">Επέλεξε τα παιχνίδια που θα διαγράψεις</string>
     <string name="dlg_btn_set_delete_games_delete">Διαγραφή</string>
     <string name="set_toast_on_delete_games">%d αποθηκευμένα παιχνίδια διαγράφηκαν</string>
     <string name="set_toast_on_save_game">Αποθηκεύτηκε ως %s</string>
-    <string name="set_toast_no_saved_games">Δε βρέθηκαν αποθηκευμένα παιχνίδια...</string>
+    <string name="set_toast_no_saved_games">Δε βρέθηκαν αποθηκευμένα παιχνίδια. . .</string>
+    
+    <!-- v2.3 -->
+    <string name="stats_games_infos_emptry">\n\n\n\n\nΔεν υπάρχουν στατιστικά ακόμη. . .</string>
+	<string name="stats_games_infos" formatted="false">Παιχνίδια: %d\n\t\t\t\t\t\tΝίκες / Ήττες\n\t1v1:%12d / %d\n\t1v1v1:%8d / %d\n\t2v2:%12d / %d\n\nΠαρτίδες: %d\n\t\t\t\t\t\tΝίκες / Ήττες\n\t1v1:%12d / %d\n\t1v1v1:%8d / %d\n\t2v2:%12d / %d\n\nΦύλλα που πέταξε: %d\nΆσσοι: %d\nΕφτάρια: %d\nΟκτάρια: %d\nΕννιάρια: %d\n\nΦύλλα που τράβηξε: %d (εξαιρούντε αυτά από Εφτά)\nΤράβηξε από εφτά: %d\n\nΠάσο %d φορές\n\nΣυνολικοί πόντοι: %d\nΜέγιστο σκορ: %d</string>
 </resources>

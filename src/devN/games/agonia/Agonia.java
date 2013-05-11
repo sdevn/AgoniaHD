@@ -315,6 +315,11 @@ public class Agonia extends CardGame
 				handleSpecial(p, c);
 			}
 		}
+		else 
+		{
+			informPasso(p);
+		}
+		
 		switchTurn();
 		//TODO: Other exception should throwed here (in the end of method)
 		if (p.getHand().isEmpty()
@@ -328,9 +333,9 @@ public class Agonia extends CardGame
 	
 	public void finishGame()
 	{
-		gameListeners = new ArrayList<GameListener>();
 		isGameFinished = true;
 		setPlayerScores();
+		informGameFinish();
 		throw new GameFinished();		
 	}
 
@@ -424,8 +429,47 @@ public class Agonia extends CardGame
 	{
 		for (GameListener listener : gameListeners)
 		{
-			((AgoniaGameListener)listener).onAceSuitSelected(selectedSuit);
+			if (listener instanceof AgoniaGameListener)
+			{// just to be safe!
+				((AgoniaGameListener)listener).onAceSuitSelected(selectedSuit);
+		
+			}
 		}
+	}
+	
+	/** v2.3 */
+	private void informPasso(Player who)
+	{
+		for (GameListener listener : gameListeners)
+		{
+			if (listener instanceof AgoniaGameListener)
+			{// just to be safe!
+				((AgoniaGameListener)listener).onPasso(who);
+		
+			}
+		}
+	}
+	
+	/** v2.3 */
+	@Override
+	public Player getWinner()
+	{
+		if (!isGameFinished)
+		{
+			return null;
+		}
+		
+		Player winner = players.get(0);
+		
+		for (Player p : players)
+		{
+			if (winner.getScore() <= p.getScore())
+			{
+				winner = p;
+			}
+		}
+		
+		return winner;
 	}
 	
 	public static void addGameListener(AgoniaGameListener listener)

@@ -9,15 +9,16 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.LinkedHashMap;
 import java.util.List;
-import com.adsdk.sdk.Ad;
-import com.adsdk.sdk.AdListener;
-import com.adsdk.sdk.AdManager;
+import java.util.Scanner;
+import com.appflood.AppFlood;
+import com.google.gson.Gson;
 import com.ironsource.mobilcore.ConfirmationResponse;
-import com.ironsource.mobilcore.ConfirmationResponse.TYPE;
 import com.ironsource.mobilcore.MobileCore;
 import com.ironsource.mobilcore.MobileCore.LOG_TYPE;
 import android.app.Activity;
@@ -57,10 +58,7 @@ import devN.etc.TypefaceUtils;
 import devN.games.GameSet;
 
 public class GameSetActivity extends Activity
-{
-	// TODO: Save / Load GameSet
-	// TODO: Statistics for GameSets wins/loses
-	
+{	
 	public static final int DIALOG_SET_FINISH_ID	= 0;
 	public static final int DIALOG_CHANGE_NAME_ID	= 1;
 	public static final int DIALOG_LOAD_GAME_ID		= 2;
@@ -79,6 +77,7 @@ public class GameSetActivity extends Activity
 	public final static String ID_AI_MODES		= "devN.games.agonia.PLAYERS_AI_MODES";
 
 	public final static String SAVE_FILE_EXT	= ".gsas";
+	public final static String STATE_FILE		= "gsstate";
 	
 	private boolean isNewSet;
 	private Button btnStart;
@@ -107,7 +106,9 @@ public class GameSetActivity extends Activity
 	private TextView[] atxvTeamSetInfos = new TextView[3];
 	private TextView txvSetInfo;
 	private GameSet set;
-	private AdManager adManager;	// v2.2 added
+	
+	private String appid = "2vIcTLl5OAAhgvFv";
+	private String secretkey = "y854qZjI9c0L517f9a59";
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
@@ -115,7 +116,15 @@ public class GameSetActivity extends Activity
 		super.onCreate(savedInstanceState);
 		
 		MobileCore.init(this, "17SC2L1SS0W36F91XGHU8RUIV8MEK", LOG_TYPE.PRODUCTION);
-
+		AppFlood.initialize(this, appid, 		// v2.3
+				secretkey, 
+				AppFlood.AD_ALL);
+		
+		if (F.settings == null)
+		{
+			new F(this);
+		}
+		
 		useSFX = PreferenceManager.getDefaultSharedPreferences(this)
 					.getBoolean(getString(R.string.key_game_sfx), true);
 		
@@ -127,6 +136,7 @@ public class GameSetActivity extends Activity
 		{
 			setContentView(R.layout.new_set);
 			newSet();
+			loadStateFromFile();		// v2.3
 		}
 		else 
 		{
@@ -135,24 +145,33 @@ public class GameSetActivity extends Activity
 			continueSet();
 		}
 		
+		Button ad = new Button(this);
+		ad.setText("AAAaad!");
+		ad.setOnClickListener(new View.OnClickListener(){
+			
+			@Override
+			public void onClick(View v)
+			{
+				AppFlood.showPanel(GameSetActivity.this, AppFlood.PANEL_BOTTOM);
+				AppFlood.showFullScreen(GameSetActivity.this);
+				AppFlood.showList(GameSetActivity.this, AppFlood.LIST_ALL);
+			}
+		});
 		ViewGroup root = (ViewGroup) findViewById(R.id.gameset_root);
-		
+//		root.addView(ad);
 		TypefaceUtils.setAllTypefaces(root, this, getString(R.string.custom_font));
+		
+		AgoniaGamesStatsManager.getManager().saveStats(GameSetActivity.this, false);	// v2.3
+		
 	}
 	
 	@Override
 	protected void onDestroy()
 	{
-		releasePlayer();
-		
-		if (adManager != null)
-		{
-			adManager.release();
-		}
-		
+		AppFlood.destroy();
 		super.onDestroy();
 	}
-	
+
 	@Override
 	public void onBackPressed()
 	{// v2.2
@@ -180,6 +199,7 @@ public class GameSetActivity extends Activity
 		}
 	}
 
+	private boolean adOnce = false;
 	/* v2.0b added. */
 	/** Hopefully it will resolve any NullPointerException on F.get... */
 	@Override
@@ -189,7 +209,13 @@ public class GameSetActivity extends Activity
 		{
 			new F(this);
 		}
-
+		
+		if (hasFocus && !isNewSet && !set.isSetFinished() && !adOnce)
+		{
+			AppFlood.showPanel(this, AppFlood.PANEL_BOTTOM);
+			adOnce = true;
+		}
+		
 		super.onWindowFocusChanged(hasFocus);
 	}
 
@@ -515,6 +541,9 @@ public class GameSetActivity extends Activity
 		ArrayList<Integer> winners = set.getWinningTeams();
 		int soundId = R.raw.win_set;
 		
+		AgoniaGamesStatsManager			// v2.3
+		.getManager().onSetFinished(set.getPlayers(), winners);
+		
 		if (!winners.contains(1))
 		{	// looser!
 			dlgIcon.setImageResource(R.drawable.ic_thumb_down);
@@ -528,54 +557,16 @@ public class GameSetActivity extends Activity
 			@Override
 			public void onClick(DialogInterface dialog, int which)
 			{
-				adManager = new AdManager(GameSetActivity.this, 
-								"http://my.mobfox.com/vrequest.php",
-								"819563d36a65ebca90245302554ddb33", false);
-				
-				adManager.setListener(new AdListener(){
-					
-					@Override
-					public void noAdFound()
-					{
-						DBGLog.ads("no mobfox vAd found.");
 						
-						MobileCore.showOfferWall(GameSetActivity.this, new ConfirmationResponse(){
+				MobileCore.showOfferWall(GameSetActivity.this, new ConfirmationResponse(){
 
-							@Override
-							public void onConfirmation(TYPE arg0)
-							{
-								adClosed(null, false);
-							}
-						});
-					}
-					
 					@Override
-					public void adShown(Ad arg0, boolean arg1)
-					{ }
-					
-					@Override
-					public void adLoadSucceeded(Ad arg0)
+					public void onConfirmation(TYPE arg0)
 					{
-						if (adManager != null && adManager.isAdLoaded())
-						{
-							adManager.showAd();
-						}
-					}
-					
-					@Override
-					public void adClosed(Ad arg0, boolean arg1)
-					{
-						finish();
-						
+						finish();			
 						overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
 					}
-					
-					@Override
-					public void adClicked()
-					{ }
 				});
-				
-				adManager.requestAd();
 			}
 		})
 		.setCancelable(false);
@@ -812,6 +803,10 @@ public class GameSetActivity extends Activity
 			intent.putExtra(ID_NEW_SET, true);
 			intent.putExtra(ID_GAMESET, (Parcelable) set);
 			
+			// v2.3
+			State state = new State();
+			state.saveState();
+			
 			startActivity(intent);
 			
 			overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out); /* v2.1 */
@@ -1028,6 +1023,117 @@ public class GameSetActivity extends Activity
 		public void onClick(DialogInterface dialog, int which, boolean isChecked)
 		{
 			items.put((String) items.keySet().toArray()[which], isChecked);			
+		}
+	}
+	
+	//
+	//	v2.3
+	//
+	
+	public void loadStateFromFile()
+	{
+		Gson gson = new Gson();
+		FileInputStream f = null;
+		
+		try
+		{
+			f = openFileInput(STATE_FILE);
+			Scanner sc = new Scanner(f);
+			
+			String json = sc.nextLine();
+			State state = gson.fromJson(json, State.class);
+			
+			spnSetType.setSelection(state.getType());
+			
+			if (state.getType() > 0)
+			{
+				vfpSetTypeSelection.showNext();
+			}
+			
+			RadioButton rbt = (RadioButton) argpSetGoal[state.getType()].findViewById(state.getGoal());
+			rbt.performClick();
+			
+			int[] modes = state.getModes();
+			spnPlayersNum.setSelection(modes.length - 1);
+			for (int i = 0; i < modes.length; i++)
+			{
+				aspnAIModes[i].setSelection(modes[i]);
+			}
+			
+			sc.close();
+		}
+		catch (FileNotFoundException ex)
+		{
+			DBGLog.dbg("Can't load gameSet state. " + ex.getMessage());
+		}
+		
+	}
+	
+	public class State
+	{
+		private int type;
+		private int goal;
+		private int[] modes;
+		
+		public State()
+		{
+			int cModes = spnPlayersNum.getSelectedItemPosition() + 1;
+			
+			type = spnSetType.getSelectedItemPosition();
+			
+			goal = argpSetGoal[type].getCheckedRadioButtonId();
+
+			modes = new int[cModes];
+			for (int i = 0; i < cModes; i++)
+			{
+				modes[i] = aspnAIModes[i].getSelectedItemPosition();
+			}
+		}
+			
+		public void saveState()
+		{
+			FileOutputStream f = null;
+			PrintWriter pw;
+			try
+			{
+				f = openFileOutput(STATE_FILE, MODE_PRIVATE);
+				pw = new PrintWriter(f);
+				
+				Gson gson = new Gson();
+				
+				pw.write(gson.toJson(this));
+				
+				pw.flush();
+				pw.close();
+			}
+			catch (Exception ex)
+			{
+				DBGLog.dbg("Can't save gameSet state. " + ex.getMessage());
+			}
+		}
+
+		public int getType()
+		{
+			return type;
+		}
+
+		public int getGoal()
+		{
+			return goal;
+		}
+
+		public int[] getModes()
+		{
+			return modes;
+		}
+
+		@Override
+		public String toString()
+		{
+			StringBuilder builder = new StringBuilder();
+			builder.append("State [type=").append(type).append(", goal=").append(goal)
+					.append(", modes=").append(Arrays.toString(modes)).append("]");
+			return builder.toString();
 		}
 	}
 }

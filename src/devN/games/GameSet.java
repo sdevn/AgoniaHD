@@ -6,8 +6,8 @@ import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Map;
-import devN.etc.DBGLog;
 import devN.games.agonia.AgoniaAI.AgoniaAIBuilder;
 import devN.games.agonia.F;
 import devN.games.agonia.R;
@@ -72,6 +72,18 @@ public class GameSet implements Serializable, Parcelable
 	public void clearPlayers()
 	{
 		teams.clear();
+	}
+	
+	public List<Player> getPlayers()
+	{
+		List<Player> res = new ArrayList<Player>();
+		
+		for (Integer team : teams.keySet())
+		{
+			res.addAll(teams.get(team));
+		}
+		
+		return res;
 	}
 	
 	/**
@@ -315,7 +327,7 @@ public class GameSet implements Serializable, Parcelable
 
 	private void writeObject(ObjectOutputStream s) throws IOException 
 	{
-		DBGLog.dbg(toString() + " serialzd");
+		// DBGLog.dbg(toString() + " serialzd");
 		s.defaultWriteObject();
 		
 		s.writeInt(getPlayersCount());
@@ -343,7 +355,7 @@ public class GameSet implements Serializable, Parcelable
 			
 			addPlayer(player);
 		}
-		DBGLog.dbg(toString() + " Deserialzd");
+		// DBGLog.dbg(toString() + " Deserialzd");
 	}
 	
 	//

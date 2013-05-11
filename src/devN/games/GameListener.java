@@ -10,6 +10,8 @@ public interface GameListener
 	 */
 	public void initGameParams(int cPlayers, List<Card> stackTopCards);
 	
+	public void onGameFinished(List<Player> players);
+
 	/**
 	 * @param n
 	 * 		how many cards are drawed

@@ -164,16 +164,12 @@
 	
 	</RelativeLayout>
 
-    <com.adsdk.sdk.banner.AdView
+    <devN.etc.LeadBoltAdView
         android:id="@+id/adView"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
+		android:contentDescription="Cont set ad"
 		android:layout_gravity="center"
-		android:layout_marginTop="3dp"
-		animation="true"
-		location="false"
-		publisherId="819563d36a65ebca90245302554ddb33"
-		request_url="http://my.mobfox.com/request.php"
 		android:background="#00000000" />
 
 </LinearLayout>

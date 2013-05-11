@@ -131,15 +131,18 @@
     <string name="key_game_sfx">key_sfx</string>
     <string name="pref_game_sfx_title">Game sound effects</string>
 	
-    <string name="dlg_whats_new_message">➤Save/load GameSet\n\n<b>Coming soon!</b>\n➤hard mode\n➤more preferences for more special cards\n➤game history when game finished\n</string>
-    <string name="key_dlg_whats_new_once">key_dlg_whats_new_once_v2.2</string>
+    <string name="dlg_whats_new_message">➤Game stats\n\n<b>Coming soon!</b>\n➤hard mode\n➤more preferences for more special cards\n➤game history when game finished\n</string>
+    <string name="key_dlg_whats_new_once">key_dlg_whats_new_once_v2.3</string>
     
     <!-- v2.2 -->
-    
     <string name="dlg_set_load_title">Load game</string>
     <string name="dlg_set_delete_games_title">Select saved games to delete</string>
     <string name="dlg_btn_set_delete_games_delete">Delete</string>
     <string name="set_toast_on_delete_games">%d saved games deleted</string>
     <string name="set_toast_on_save_game">Saved as %s</string>
-    <string name="set_toast_no_saved_games">No saved games found...</string>
+    <string name="set_toast_no_saved_games">No saved games found. . .</string>
+
+	<!-- v2.3 -->
+	<string name="stats_games_infos_emptry">\n\n\n\n\nNo stats recorded yet. . .</string>
+	<string name="stats_games_infos" formatted="false">Games: %d\n\t\t\t\t\t\tWon / Lost\n\t1v1:%12d / %d\n\t1v1v1:%8d / %d\n\t2v2:%12d / %d\n\nSets: %d\n\t\t\t\t\t\tWon / Lost\n\t1v1:%12d / %d\n\t1v1v1:%8d / %d\n\t2v2:%12d / %d\n\nCards Played: %d\nAces: %d\nSevens: %d\nEights: %d\nNines: %d\n\nCards drawn: %d (drawn from sevens are excluded)\nDrawn from sevens: %d\n\nPasso %d times\n\nTotal points: %d\nMax points gained: %d</string>
 </resources>

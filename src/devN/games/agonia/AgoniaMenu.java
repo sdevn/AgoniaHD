@@ -11,6 +11,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
+import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.webkit.WebView;
@@ -30,6 +31,7 @@ public class AgoniaMenu extends Activity
 	
 	private ImageButton ibtRate;
 	private ImageButton ibtFacebook;
+	private ImageButton ibtStats;
 	private Button btnPref;
 	private Button btnGame;
 	private Button btnHow;
@@ -54,6 +56,7 @@ public class AgoniaMenu extends Activity
 		
 		ibtRate = (ImageButton) findViewById(R.id.ibtRate);
 		ibtFacebook = (ImageButton) findViewById(R.id.ibtFacebook);
+		ibtStats = (ImageButton) findViewById(R.id.ibtStats);
 		
 		btnPref.setOnClickListener(new OnClickListener(){
 
@@ -106,8 +109,28 @@ public class AgoniaMenu extends Activity
 		});
 		
 		ibtRate.setOnClickListener(oclRate);
+
+		ibtFacebook.setVisibility(View.GONE);
+
+		// v2.3
+		ibtStats.setOnClickListener(new OnClickListener(){
+
+			@Override
+			public void onClick(View v)
+			{
+				startActivity(new Intent(AgoniaMenu.this, GameStatsActivity.class));
+				overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+			}
+		});
 		
-		ibtFacebook.setVisibility(View.INVISIBLE);
+		DisplayMetrics dm = getResources().getDisplayMetrics();
+		int screenSize = (int) (dm.heightPixels / dm.density);
+
+		if (screenSize <= 460)
+		{	// too small screen height
+			exit.setVisibility(View.GONE);
+		}
+		AgoniaGamesStatsManager.create(this);
 	}
 	
 	@SuppressWarnings("deprecation")
@@ -128,6 +151,8 @@ public class AgoniaMenu extends Activity
 				.putBoolean(getString(R.string.key_dlg_whats_new_once), true)
 				.commit();
 			}
+			
+			AgoniaGamesStatsManager.getManager().saveStats(AgoniaMenu.this, false);	//2.3
 		}
 		super.onWindowFocusChanged(hasFocus);
 	}
@@ -310,6 +335,8 @@ public class AgoniaMenu extends Activity
 	private void atExit()
 	{
 		Random random = new Random();
+		
+		AgoniaGamesStatsManager.getManager().saveStats(this, true);	// v2.3
 		
 		if (random.nextDouble() < CHANCE_COMMING_DIALOG)
 		{

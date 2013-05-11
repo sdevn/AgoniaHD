@@ -53,6 +53,7 @@ import devN.etc.TypefaceUtils;
 import devN.etc.dragdrop.DragController;
 import devN.etc.dragdrop.DragSource;
 import devN.games.Card;
+import devN.games.CardGame;
 import devN.games.GameSet;
 import devN.games.Player;
 import devN.games.UICard;
@@ -66,8 +67,6 @@ public class AgoniaGame extends Activity implements DragSource, OnTouchListener,
 	private final static boolean DEBUG = false;
 	
 	// TODO: GameHistory dialog
-	// TODO: Save / Load game
-	// TODO: Statistics for game wins/loses/total games
 	// TODO: Menu button function. {Enable/Disable music/sfx, how to play, see preferences}
 	
 	public static final int DIALOG_ACE_ID			= 0;
@@ -434,7 +433,7 @@ public class AgoniaGame extends Activity implements DragSource, OnTouchListener,
 	public static void onPlaySoundFail(Context context, boolean wasSFX)
 	{
 		int prefKey = wasSFX ? R.string.key_game_sfx : R.string.key_game_music;
-		String problemPref = wasSFX ? " sound effects " : " background music ";
+		String problemPref = wasSFX ? "sound effects" : "background music";
 		
 		PreferenceManager.getDefaultSharedPreferences(context)
 		.edit()
@@ -453,7 +452,7 @@ public class AgoniaGame extends Activity implements DragSource, OnTouchListener,
 		// TODO: localize it!
 		Toast
 		.makeText(context, 
-					"A problem with" + problemPref + "occurred.\n" + problemPref + "turned off", 
+					"A problem with " + problemPref + " occurred.\n" + problemPref + " turned off", 
 					Toast.LENGTH_SHORT)
 		.show();
 	}
@@ -520,45 +519,6 @@ public class AgoniaGame extends Activity implements DragSource, OnTouchListener,
 	@SuppressWarnings("deprecation")
 	protected void gameFinished() 
 	{
-//		int p1HandScore = game.scoreOf(up.getHand());
-//		int p2HandScore = game.scoreOf(ucp.getHand());
-//		
-//		up.addScore(p2HandScore);
-//		ucp.addScore(p1HandScore);
-//		if (p1HandScore > p2HandScore)
-//		{
-//			ucp.win();
-//		}
-//		else if (p2HandScore > p1HandScore) 
-//		{
-//			up.win();
-//		}
-//		else 
-//		{
-//			/* No winner! */
-//		}
-//		saveScores();
-//
-//		// otan vgainei o player na min uparhei polu anamoni eos otou vgei to finishDialog
-//		Long dlgDelay = (long) (game.whoPlayNext().equals(up.getPlayer()) ? (cpuDelay / 2) : (cpuDelay * 1.3));
-//		new Handler().postDelayed(new Runnable(){
-//			public void run()
-//			{
-//				try
-//				{
-//					showDialog(DIALOG_FINISH_ID);
-//				}
-//				catch (BadTokenException ex)
-//				{
-//					/*
-//					 * ean patisei back button prin vgei o dialogos
-//					 * petiete exeption epeidi i parent activity tou dialogou
-//					 * den trehei
-//					 */
-//				}
-//			}
-//		}, dlgDelay);
-
 //		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 //		builder.setMessage(GAME_EVENTS);
 //		builder.setNeutralButton(android.R.string.ok, new DialogInterface.OnClickListener(){
@@ -569,6 +529,8 @@ public class AgoniaGame extends Activity implements DragSource, OnTouchListener,
 //				
 //			}
 //		}).show();		
+		
+		CardGame.unregisterGameListener(this);
 		
 		set.gameFinished();
 		
@@ -1051,6 +1013,8 @@ public class AgoniaGame extends Activity implements DragSource, OnTouchListener,
 
 		sevenContainer.setOnHierarchyChangeListener(new OnHierarchyChangeListener(){
 			/* v2.1 fixed + modified */
+			/* v2.3 by default selects the last added seven */
+			
 			private final static int UNSELECTED_ALPHA = 0x55;
 			private final static int SELECTED_ALPHA = 0xFF;
 			
@@ -1095,6 +1059,8 @@ public class AgoniaGame extends Activity implements DragSource, OnTouchListener,
 			{
 				((ImageView) child).setAlpha(UNSELECTED_ALPHA);	
 				child.setOnClickListener(sevenClickListener);
+				
+				child.performClick(); // v2.3
 			}
 		});
 		
@@ -1503,4 +1469,12 @@ public class AgoniaGame extends Activity implements DragSource, OnTouchListener,
 			}
 		}, delay);
 	}
+
+	@Override
+	public void onGameFinished(List<Player> players)
+	{ }
+
+	@Override
+	public void onPasso(Player who)
+	{ }
 }

@@ -123,6 +123,14 @@ public abstract class CardGame
 		}
 	}
 	
+	protected void informGameFinish()
+	{
+		for (GameListener listener : gameListeners)
+		{
+			listener.onGameFinished(players);
+		}
+	}
+	
 	public abstract void handleSpecial(Player p, Card c);
 	
 	public abstract boolean canPlay(Card c);
@@ -143,6 +151,9 @@ public abstract class CardGame
 	public abstract void draw(Player p, int n, boolean specialOp);
 	
 	public abstract void setSpecialCards();
+	
+	/** v2.3 */
+	public abstract Player getWinner();
 	
 	public boolean isSpecial(Card c)
 	{
@@ -229,6 +240,11 @@ public abstract class CardGame
 	public static void addGameListener(GameListener listener)
 	{
 		gameListeners.add(listener);
+	}
+	
+	public static void unregisterGameListener(GameListener listener)
+	{
+		gameListeners.remove(listener);
 	}
 
 //	/**

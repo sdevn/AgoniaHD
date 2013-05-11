@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/root_stats"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/tsoha"
+    android:orientation="vertical" >
+
+    <devN.etc.LeadBoltAdView
+        android:id="@+id/adView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_gravity="center"
+        android:background="#00000000"
+        android:contentDescription="Stats ad" />
+    
+    <Spinner
+        android:id="@+id/spn_stats_profile"
+        android:layout_width="185dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_below="@id/adView" />
+
+    <ImageButton
+        android:id="@+id/ibt_stats_delete"
+        style="@style/menu_side_icon"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:contentDescription="@string/blank"
+        android:src="@drawable/ic_delete" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/spn_stats_profile"
+        android:layout_above="@id/ibt_stats_delete" >
+
+        <TextView
+            android:id="@+id/txv_stats_content"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/stats_games_infos_emptry"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
+
+    </ScrollView>
+
+</RelativeLayout>
