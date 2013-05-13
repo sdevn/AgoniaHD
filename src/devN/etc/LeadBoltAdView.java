@@ -141,7 +141,7 @@ public class LeadBoltAdView extends WebView
 	
 	private void refreshAd(String data)
 	{
-		if (data.isEmpty())
+		if ("".equals(data))
 		{
 			data = format(DATA, myAdId);
 		}
@@ -217,7 +217,12 @@ public class LeadBoltAdView extends WebView
 		{
 			String data = "";
 			
-			if (result.isEmpty() || result.contains("<request type=\"noAd\">"))
+			if (result == null)
+			{	// v2.3.1b
+				return;
+			}
+			
+			if ("".equals(result) || result.contains("<request type=\"noAd\">"))
 			{
 				DBGLog.ads("Empty or noAd. Len " + result.length() + " " + getContentDescription());
 			}

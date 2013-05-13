@@ -32,9 +32,7 @@ public class RequestTask extends AsyncTask<String, String, String>{
                 throw new IOException(statusLine.getReasonPhrase());
             }
         } catch (ClientProtocolException e) {
-            //TODO Handle problems..
         } catch (IOException e) {
-            //TODO Handle problems..
         }
         return responseString;
     }

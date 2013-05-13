@@ -145,20 +145,7 @@ public class GameSetActivity extends Activity
 			continueSet();
 		}
 		
-		Button ad = new Button(this);
-		ad.setText("AAAaad!");
-		ad.setOnClickListener(new View.OnClickListener(){
-			
-			@Override
-			public void onClick(View v)
-			{
-				AppFlood.showPanel(GameSetActivity.this, AppFlood.PANEL_BOTTOM);
-				AppFlood.showFullScreen(GameSetActivity.this);
-				AppFlood.showList(GameSetActivity.this, AppFlood.LIST_ALL);
-			}
-		});
 		ViewGroup root = (ViewGroup) findViewById(R.id.gameset_root);
-//		root.addView(ad);
 		TypefaceUtils.setAllTypefaces(root, this, getString(R.string.custom_font));
 		
 		AgoniaGamesStatsManager.getManager().saveStats(GameSetActivity.this, false);	// v2.3
@@ -200,6 +187,7 @@ public class GameSetActivity extends Activity
 	}
 
 	private boolean adOnce = false;
+	private final static double INTERSIAL_AD_CHANCE = 1D / 4D; // v2.3.1b
 	/* v2.0b added. */
 	/** Hopefully it will resolve any NullPointerException on F.get... */
 	@Override
@@ -210,7 +198,12 @@ public class GameSetActivity extends Activity
 			new F(this);
 		}
 		
-		if (hasFocus && !isNewSet && !set.isSetFinished() && !adOnce)
+		if (hasFocus 
+		&& !isNewSet 
+		&& !set.isSetFinished() 
+		&& !adOnce
+		&& INTERSIAL_AD_CHANCE > Math.random()	// v2.3.1b
+		&& AppFlood.isConnected())	// v2.3.1b
 		{
 			AppFlood.showPanel(this, AppFlood.PANEL_BOTTOM);
 			adOnce = true;
@@ -558,15 +551,26 @@ public class GameSetActivity extends Activity
 			public void onClick(DialogInterface dialog, int which)
 			{
 						
-				MobileCore.showOfferWall(GameSetActivity.this, new ConfirmationResponse(){
+				if (Math.random() > INTERSIAL_AD_CHANCE)
+				{
+					MobileCore.showOfferWall(GameSetActivity.this,
+							new ConfirmationResponse(){
 
-					@Override
-					public void onConfirmation(TYPE arg0)
-					{
-						finish();			
-						overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
-					}
-				});
+								@Override
+								public void onConfirmation(TYPE arg0)
+								{
+									finish();
+									overridePendingTransition(android.R.anim.fade_in,
+																android.R.anim.fade_out);
+								}
+							});
+				}
+				else 
+				{
+					finish();
+					overridePendingTransition(android.R.anim.fade_in,
+												android.R.anim.fade_out);
+				}
 			}
 		})
 		.setCancelable(false);
