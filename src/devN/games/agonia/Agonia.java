@@ -263,6 +263,8 @@ public class Agonia extends CardGame
 	{
 		if (deck.isEmpty())
 		{
+			informDeckFinish();		// v2.4
+			
 			switch (deckFinishOption)
 			{
 			case DECK_FINISH_RECYCLE:
@@ -487,6 +489,18 @@ public class Agonia extends CardGame
 				{
 					player.addScore(scoreOf(rivlal.getHand()));
 				}
+			}
+		}
+	}
+	
+	private void informDeckFinish()
+	{
+		for (GameListener listener : gameListeners)
+		{
+			if (listener instanceof AgoniaGameListener)
+			{// just to be safe!
+				((AgoniaGameListener)listener).onDeckFinished(deckFinishOption);
+		
 			}
 		}
 	}

@@ -61,7 +61,7 @@
 	<string name="cpu3">Υπολ3</string>
 	<string name="friend">Φίλος</string>
 	<string name="set_type_goal">Παρτίδα με:</string>
-	<string name="players">Παίχτες:</string>
+	<string name="players">Παίκτες:</string>
 	<string name="set_btn_start">Νέα παρτίδα</string>
 	<string name="set_btn_continue_next">Επόμενο παιχνίδι</string>
 	<string name="set_btn_continue_winner">Δείξε το νικητή</string>
@@ -106,5 +106,10 @@
     
     <!-- v2.3 -->
     <string name="stats_games_infos_emptry">\n\n\n\n\nΔεν υπάρχουν στατιστικά ακόμη. . .</string>
-	<string name="stats_games_infos" formatted="false">Παιχνίδια: %d\n\t\t\t\t\t\tΝίκες / Ήττες\n\t1v1:%12d / %d\n\t1v1v1:%8d / %d\n\t2v2:%12d / %d\n\nΠαρτίδες: %d\n\t\t\t\t\t\tΝίκες / Ήττες\n\t1v1:%12d / %d\n\t1v1v1:%8d / %d\n\t2v2:%12d / %d\n\nΦύλλα που πέταξε: %d\nΆσσοι: %d\nΕφτάρια: %d\nΟκτάρια: %d\nΕννιάρια: %d\n\nΦύλλα που τράβηξε: %d (εξαιρούντε αυτά από Εφτά)\nΤράβηξε από εφτά: %d\n\nΠάσο %d φορές\n\nΣυνολικοί πόντοι: %d\nΜέγιστο σκορ: %d</string>
+	<string name="stats_games_infos" formatted="false">Παιχνίδια: %d\n\t\t\t\t\t\tΝίκες / Ήττες\n\t1v1:%12d / %d\n\t1v1v1:%8d / %d\n\t2v2:%12d / %d\n\nΠαρτίδες: %d\n\t\t\t\t\t\tΝίκες / Ήττες\n\t1v1:%12d / %d\n\t1v1v1:%8d / %d\n\t2v2:%12d / %d\n\nΦύλλα που πέταξε: %d\nΆσσοι: %d\nΕφτάρια: %d\nΟκτάρια: %d\nΕννιάρια: %d\n\nΦύλλα που τράβηξε: %d (εξαιρούνται αυτά από Εφτά)\nΤράβηξε από εφτά: %d\n\nΠάσο %d φορές\n\nΣυνολικοί πόντοι: %d\nΜέγιστο σκορ: %d</string>
+
+	<!-- v2.4 -->
+	<string name="dlg_finish_btn_history">Ιστορ. παιχνιδιού. . .</string>
+	<string name="dlg_history_title">Ιστορικό παιχνιδιού</string>
+	<string name="drew_cards">τράβηξε %d</string>
 </resources>

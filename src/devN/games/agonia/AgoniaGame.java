@@ -66,13 +66,13 @@ public class AgoniaGame extends Activity implements DragSource, OnTouchListener,
 {
 	private final static boolean DEBUG = false;
 	
-	// TODO: GameHistory dialog
 	// TODO: Menu button function. {Enable/Disable music/sfx, how to play, see preferences}
 	
 	public static final int DIALOG_ACE_ID			= 0;
 	public static final int DIALOG_SEVEN_ID			= 1;
 	public static final int DIALOG_FINISH_ID		= 2; 	// game finished
 	public static final int DIALOG_EXIT_ID			= 3;
+	public static final int DIALOG_HISTORY_ID		= 4;
 
 	/** v2.1 added
 	 * epeidi ta deltaX, deltaY tou playAnimation den einai akrives
@@ -134,9 +134,6 @@ public class AgoniaGame extends Activity implements DragSource, OnTouchListener,
 	private static int sound_fail_game;
 	private static int sound_win_game;
 
-	/**
-	 * Bundle should contains params for GameSet.
-	 */
 	@Override
 	public void onCreate(Bundle savedInstanceState)
 	{
@@ -276,7 +273,7 @@ public class AgoniaGame extends Activity implements DragSource, OnTouchListener,
 				}
 
 				deck.setImage();
-				game.switchTurn();
+				game.play(up.getPlayer(), NULL_CARD);	// 2.3.2 to hold stats of player passo
 				cpuAutoPlay();  // -> heirizete moni tis ta exceptions tou CPU
 			}
 		});
@@ -901,6 +898,12 @@ public class AgoniaGame extends Activity implements DragSource, OnTouchListener,
 			}
 			break;
 			
+		case DIALOG_HISTORY_ID:
+			{
+			dialog = makeHistoryDlg();
+			}
+			break;
+			
 		default:
 			{
 			dialog = null;
@@ -1234,7 +1237,7 @@ public class AgoniaGame extends Activity implements DragSource, OnTouchListener,
 		AlertDialog.Builder builder = new AlertDialog.Builder(this)
 		.setTitle(R.string.dlg_finish_title)
 		.setView(dlgContent)
-		.setNeutralButton(android.R.string.ok, new DialogInterface.OnClickListener(){
+		.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener(){
 			
 			@Override
 			public void onClick(DialogInterface dialog, int which)
@@ -1251,9 +1254,50 @@ public class AgoniaGame extends Activity implements DragSource, OnTouchListener,
 				finish();
 			}
 		})
+		.setNeutralButton(R.string.dlg_finish_btn_history, new DialogInterface.OnClickListener(){
+			
+			@Override
+			public void onClick(DialogInterface dialog, int which)
+			{
+				new Handler().postDelayed(new Runnable(){
+					@SuppressWarnings("deprecation")
+					public void run()
+					{
+						showDialog(DIALOG_HISTORY_ID);
+					}
+				}, 250);
+			}
+		})
 		.setCancelable(false);
 		
 		// @formatter:on
+		return builder.create();
+	}
+	
+	private Dialog makeHistoryDlg()
+	{
+		// @formatter:off 
+		AlertDialog.Builder builder = new AlertDialog.Builder(this)
+		.setTitle(getString(R.string.dlg_history_title))
+		.setMessage(GAME_EVENTS)
+		.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener(){
+			
+			@Override
+			public void onClick(DialogInterface dialog, int which)
+			{
+				new Handler().postDelayed(new Runnable(){
+					@SuppressWarnings("deprecation")
+					public void run()
+					{
+						showDialog(DIALOG_FINISH_ID);
+					}
+				}, 250);
+			}
+		})
+		;
+		
+		// @formatter:on
+		
 		return builder.create();
 	}
 	
@@ -1373,7 +1417,7 @@ public class AgoniaGame extends Activity implements DragSource, OnTouchListener,
 	@Override
 	public void initGameParams(int cPlayers, List<Card> stackTopCards)
 	{
-		GAME_EVENTS = "Players " + cPlayers + " | Top " + stackTopCards.get(0) + "\n";
+		GAME_EVENTS = getString(R.string.players) + " " + cPlayers + " | " + stackTopCards.get(0) + "\n\n";
 		
 		playSound(sound_deal_cards);	
 	}
@@ -1381,7 +1425,7 @@ public class AgoniaGame extends Activity implements DragSource, OnTouchListener,
 	@Override
 	public void onDrawFromDeck(Player who, int n)
 	{
-		GAME_EVENTS = GAME_EVENTS + who.getName() + " draw " + n + "\n";
+		GAME_EVENTS = GAME_EVENTS + who.getName() + " " + getString(R.string.drew_cards, n) + "\n";
 		
 		if (n != 7)
 		{
@@ -1419,7 +1463,7 @@ public class AgoniaGame extends Activity implements DragSource, OnTouchListener,
 	@Override
 	public void onAceSuitSelected(int selectedSuit)
 	{
-		GAME_EVENTS = GAME_EVENTS + "\t Ace -> " + Card.pszSUITS[selectedSuit] + "\n" ;
+		GAME_EVENTS = GAME_EVENTS + "\t" + getString(R.string.how_special_card_ace_title) + " -> " + Card.pszSUITS[selectedSuit] + "\n" ;
 	}
 
 	@Override
@@ -1476,5 +1520,17 @@ public class AgoniaGame extends Activity implements DragSource, OnTouchListener,
 
 	@Override
 	public void onPasso(Player who)
-	{ }
+	{
+		if (sevenDraw == 0)
+		{
+			GAME_EVENTS = GAME_EVENTS + who.getName() + " passo\n";
+		}
+	}
+	
+	@Override
+	public void onDeckFinished(int deckFinishOption)
+	{ 
+		GAME_EVENTS = GAME_EVENTS + "\n" + getString(R.string.how_deck) + " "
+					+ getResources().getStringArray(R.array.deck_finish_options)[deckFinishOption] + "\n\n";
+	}
 }

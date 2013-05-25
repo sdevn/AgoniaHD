@@ -238,6 +238,10 @@ public class AgoniaGamesStatsManager implements AgoniaGameListener
 	{ }
 
 	@Override
+	public void onDeckFinished(int deckFinishOption)
+	{ }
+	
+	@Override
 	public String toString()
 	{
 		StringBuilder builder = new StringBuilder();

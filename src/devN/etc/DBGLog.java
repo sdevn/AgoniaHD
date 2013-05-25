@@ -14,6 +14,11 @@ public final class DBGLog
 		Log.i("ads", msg);
 	}
 	
+	public static void iads(String msg)
+	{
+		Log.i("iads", msg);
+	}
+	
 	public static void srlz(String msg)
 	{
 		Log.v("srlz", msg);

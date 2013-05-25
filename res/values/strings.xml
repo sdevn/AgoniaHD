@@ -145,4 +145,9 @@
 	<!-- v2.3 -->
 	<string name="stats_games_infos_emptry">\n\n\n\n\nNo stats recorded yet. . .</string>
 	<string name="stats_games_infos" formatted="false">Games: %d\n\t\t\t\t\t\tWon / Lost\n\t1v1:%12d / %d\n\t1v1v1:%8d / %d\n\t2v2:%12d / %d\n\nSets: %d\n\t\t\t\t\t\tWon / Lost\n\t1v1:%12d / %d\n\t1v1v1:%8d / %d\n\t2v2:%12d / %d\n\nCards Played: %d\nAces: %d\nSevens: %d\nEights: %d\nNines: %d\n\nCards drawn: %d (drawn from sevens are excluded)\nDrawn from sevens: %d\n\nPasso %d times\n\nTotal points: %d\nMax points gained: %d</string>
+
+	<!-- v2.4 -->
+	<string name="dlg_finish_btn_history">Game history. . .</string>
+	<string name="dlg_history_title">Game history</string>
+	<string name="drew_cards">drew %d</string>
 </resources>

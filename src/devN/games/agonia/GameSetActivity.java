@@ -18,9 +18,6 @@ import java.util.List;
 import java.util.Scanner;
 import com.appflood.AppFlood;
 import com.google.gson.Gson;
-import com.ironsource.mobilcore.ConfirmationResponse;
-import com.ironsource.mobilcore.MobileCore;
-import com.ironsource.mobilcore.MobileCore.LOG_TYPE;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -52,6 +49,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ViewFlipper;
+import devN.etc.AdManagerActivity;
 import devN.etc.DBGLog;
 import devN.etc.DevnDialogUtils;
 import devN.etc.TypefaceUtils;
@@ -114,8 +112,7 @@ public class GameSetActivity extends Activity
 	protected void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
-		
-		MobileCore.init(this, "17SC2L1SS0W36F91XGHU8RUIV8MEK", LOG_TYPE.PRODUCTION);
+
 		AppFlood.initialize(this, appid, 		// v2.3
 				secretkey, 
 				AppFlood.AD_ALL);
@@ -149,7 +146,6 @@ public class GameSetActivity extends Activity
 		TypefaceUtils.setAllTypefaces(root, this, getString(R.string.custom_font));
 		
 		AgoniaGamesStatsManager.getManager().saveStats(GameSetActivity.this, false);	// v2.3
-		
 	}
 	
 	@Override
@@ -550,27 +546,9 @@ public class GameSetActivity extends Activity
 			@Override
 			public void onClick(DialogInterface dialog, int which)
 			{
-						
-				if (Math.random() > INTERSIAL_AD_CHANCE)
-				{
-					MobileCore.showOfferWall(GameSetActivity.this,
-							new ConfirmationResponse(){
-
-								@Override
-								public void onConfirmation(TYPE arg0)
-								{
-									finish();
-									overridePendingTransition(android.R.anim.fade_in,
-																android.R.anim.fade_out);
-								}
-							});
-				}
-				else 
-				{
-					finish();
-					overridePendingTransition(android.R.anim.fade_in,
+				finish();
+				overridePendingTransition(android.R.anim.fade_in,
 												android.R.anim.fade_out);
-				}
 			}
 		})
 		.setCancelable(false);
@@ -827,6 +805,9 @@ public class GameSetActivity extends Activity
 		{
 			if (set.isSetFinished())
 			{
+				Intent adIntent = new Intent(GameSetActivity.this, AdManagerActivity.class);
+				startActivity(adIntent); // v2.4 added
+				
 				findViewById(R.id.adView).setVisibility(View.GONE); // v2.2 added
 				showDialog(DIALOG_SET_FINISH_ID);
 			}
