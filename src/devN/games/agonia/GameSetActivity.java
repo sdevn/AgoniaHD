@@ -104,18 +104,11 @@ public class GameSetActivity extends Activity
 	private TextView[] atxvTeamSetInfos = new TextView[3];
 	private TextView txvSetInfo;
 	private GameSet set;
-	
-	private String appid = "2vIcTLl5OAAhgvFv";
-	private String secretkey = "y854qZjI9c0L517f9a59";
-	
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
-
-		AppFlood.initialize(this, appid, 		// v2.3
-				secretkey, 
-				AppFlood.AD_ALL);
 		
 		if (F.settings == null)
 		{
@@ -145,7 +138,7 @@ public class GameSetActivity extends Activity
 		ViewGroup root = (ViewGroup) findViewById(R.id.gameset_root);
 		TypefaceUtils.setAllTypefaces(root, this, getString(R.string.custom_font));
 		
-		AgoniaGamesStatsManager.getManager().saveStats(GameSetActivity.this, false);	// v2.3
+		((AgoniaApp)getApplication()).getManager().saveStats(GameSetActivity.this, false);	// v2.3
 	}
 	
 	@Override
@@ -182,8 +175,6 @@ public class GameSetActivity extends Activity
 		}
 	}
 
-	private boolean adOnce = false;
-	private final static double INTERSIAL_AD_CHANCE = 1D / 4D; // v2.3.1b
 	/* v2.0b added. */
 	/** Hopefully it will resolve any NullPointerException on F.get... */
 	@Override
@@ -192,17 +183,6 @@ public class GameSetActivity extends Activity
 		if (hasFocus && F.settings == null)
 		{
 			new F(this);
-		}
-		
-		if (hasFocus 
-		&& !isNewSet 
-		&& !set.isSetFinished() 
-		&& !adOnce
-		&& INTERSIAL_AD_CHANCE > Math.random()	// v2.3.1b
-		&& AppFlood.isConnected())	// v2.3.1b
-		{
-			AppFlood.showPanel(this, AppFlood.PANEL_BOTTOM);
-			adOnce = true;
 		}
 		
 		super.onWindowFocusChanged(hasFocus);
@@ -530,7 +510,7 @@ public class GameSetActivity extends Activity
 		ArrayList<Integer> winners = set.getWinningTeams();
 		int soundId = R.raw.win_set;
 		
-		AgoniaGamesStatsManager			// v2.3
+		((AgoniaApp)getApplication())			// v2.3
 		.getManager().onSetFinished(set.getPlayers(), winners);
 		
 		if (!winners.contains(1))

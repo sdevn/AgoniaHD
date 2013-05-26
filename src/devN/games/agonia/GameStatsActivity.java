@@ -1,6 +1,5 @@
 package devN.games.agonia;
 
-import static devN.games.agonia.AgoniaGamesStatsManager.getManager;
 import devN.etc.TypefaceUtils;
 import android.app.Activity;
 import android.os.Bundle;
@@ -46,7 +45,7 @@ public class GameStatsActivity extends Activity
 		ArrayAdapter<CharSequence> adapter = 
 				new ArrayAdapter<CharSequence>(this, 
 						android.R.layout.simple_spinner_item, 
-						getManager().getProfileNames());
+						((AgoniaApp)getApplication()).getManager().getProfileNames());
 		
 		adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
@@ -69,7 +68,7 @@ public class GameStatsActivity extends Activity
 		public void onItemSelected(AdapterView<?> parent, View view, int position, long id)
 		{
 			String profile = spnProfile.getSelectedItem().toString();
-			Object[] infos = getManager().getStatsOf(profile).getInfos();
+			Object[] infos = ((AgoniaApp)getApplication()).getManager().getStatsOf(profile).getInfos();
 			txvContent.setText(getString(R.string.stats_games_infos, infos));
 		}
 
@@ -99,7 +98,7 @@ public class GameStatsActivity extends Activity
 		{
 			String profile = spnProfile.getSelectedItem().toString();
 			
-			getManager().deleteStatsOf(GameStatsActivity.this, profile);
+			((AgoniaApp)getApplication()).getManager().deleteStatsOf(GameStatsActivity.this, profile);
 			
 			updateProfiles();
 			

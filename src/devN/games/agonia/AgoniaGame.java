@@ -1427,7 +1427,8 @@ public class AgoniaGame extends Activity implements DragSource, OnTouchListener,
 	{
 		GAME_EVENTS = GAME_EVENTS + who.getName() + " " + getString(R.string.drew_cards, n) + "\n";
 		
-		if (n != 7)
+		if (n != 7 
+		&& n != 0)	// v2.4 to avoid division by zero
 		{
 			long delay = cpuDelay / n;
 			

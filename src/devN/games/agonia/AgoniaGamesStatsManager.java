@@ -17,10 +17,10 @@ import devN.games.Player;
 public class AgoniaGamesStatsManager implements AgoniaGameListener
 {
 	private static final String KEYS_PREFIX = "key_prof_";
-	private static final String[] pszAI_KEYS = 
-			{
-			 	KEYS_PREFIX + "Monkey_CPU", KEYS_PREFIX + "Easy_CPU", KEYS_PREFIX + "Moderate_CPU"
-			};
+	private static final String[] pszAI_KEYS =	{	KEYS_PREFIX + "Monkey_CPU",
+												 	KEYS_PREFIX + "Easy_CPU",
+												 	KEYS_PREFIX + "Moderate_CPU"
+												};
 	private static final Pattern PATTERN_OF_KEYS = Pattern.compile(KEYS_PREFIX);
 	
 	/** only one instance of this class should exist */
@@ -36,12 +36,6 @@ public class AgoniaGamesStatsManager implements AgoniaGameListener
 			Agonia.addGameListener(manager);
 		}
 		
-		return manager;
-	}
-	
-	/** @return maybe null if you are haven't call {@link AgoniaGamesStatsManager#create(Context)} */
-	public static AgoniaGamesStatsManager getManager()
-	{
 		return manager;
 	}
 	
