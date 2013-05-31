@@ -61,6 +61,4 @@
         android:text="@string/blank"
         android:textAppearance="?android:attr/textAppearanceMedium" />
 
-    <include layout="@layout/ad_in_dialog" />
-
 </LinearLayout>

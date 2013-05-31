@@ -4,7 +4,6 @@ import android.content.Context;
 import android.util.AttributeSet;
 import devN.etc.dragdrop.DragSource;
 import devN.etc.dragdrop.DropTarget;
-import devN.games.agonia.F;
 import devN.games.agonia.R;
 
 public class UIStackTop extends UICard implements DropTarget
@@ -29,7 +28,7 @@ public class UIStackTop extends UICard implements DropTarget
 	{
 		if (!isInEditMode())
 		{
-			colorHints = F.getBoolean(F.KEY_COLOR_HINTS, true);
+//			colorHints = F.getBoolean(F.KEY_COLOR_HINTS, true);
 		}
 	}
 //	public UIStackTop(Context context, Card c, boolean visible)
@@ -41,6 +40,12 @@ public class UIStackTop extends UICard implements DropTarget
 //	{
 //		super(c);
 //	}
+
+	/** v2.4b to replace F.java */
+	public static void setColorHints(boolean colorHints)
+	{
+		UIStackTop.colorHints = colorHints;
+	}
 
 	public CardGame getGame()
 	{

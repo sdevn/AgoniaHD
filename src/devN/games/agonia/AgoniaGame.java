@@ -147,9 +147,19 @@ public class AgoniaGame extends Activity implements DragSource, OnTouchListener,
        	
        	boolean oldDeck = prefs.getBoolean(getString(R.string.key_old_deck), false);
        	boolean oldAnim = prefs.getBoolean(getString(R.string.key_old_anim), false);
-       	       	
+       	boolean colorHints = prefs.getBoolean(getString(R.string.key_color_hints), true);
+       	boolean isNineSpecial = prefs.getBoolean(getString(R.string.key_is_nine_special), true);
+       	boolean aceOnAce = prefs.getBoolean(getString(R.string.key_ace_on_ace), true);
+       	boolean aceFinish = prefs.getBoolean(getString(R.string.key_ace_finish), true);
+       	int deckFinishOption = Integer.parseInt(prefs.getString(getString(R.string.key_deck_finish), "0"));
+       	
        	UICard.setUseOldDeck(oldDeck);
        	UIPlayer.setUseOldAnim(oldAnim);
+       	UIStackTop.setColorHints(colorHints);
+       	Agonia.setNineSpecial(isNineSpecial);
+       	Agonia.setAceOnAce(aceOnAce);
+       	Agonia.setAceFinish(aceFinish);
+       	Agonia.setDeckFinishOption(deckFinishOption);
        	
        	AgoniaAI cpuAI;
 		String p1Name;
@@ -169,11 +179,6 @@ public class AgoniaGame extends Activity implements DragSource, OnTouchListener,
 		tcaGroup = new TextColorAnimationGroup();
 		inflater = getLayoutInflater();
 
-		if (F.settings == null)
-		{
-			new F(this);
-		}
-
 		DisplayMetrics displayMetrics = new DisplayMetrics();
 		getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
 		
@@ -181,7 +186,7 @@ public class AgoniaGame extends Activity implements DragSource, OnTouchListener,
 
 		setContentView(R.layout.game);
 		
-		p1Name = F.getString(F.KEY_P1_NAME, getString(R.string.default_p1_name));
+		p1Name = prefs.getString(getString(R.string.key_p1_name), getString(R.string.default_p1_name));
 		up = (UIPlayer) findViewById(R.id.player);
 		up.setInfo();
 		up.setName(p1Name);
@@ -190,9 +195,9 @@ public class AgoniaGame extends Activity implements DragSource, OnTouchListener,
 		up.setOnTouchListener(this);
 		up.setOnPlayAnimListener(invalidateListener);
 
-		aCpuNames[0] = F.getString(F.KEY_P2_NAME, getString(R.string.cpu1));
-		aCpuNames[1] = F.getString(F.KEY_P3_NAME, getString(R.string.cpu2));
-		aCpuNames[2] = F.getString(F.KEY_P4_NAME, getString(R.string.friend));
+		aCpuNames[0] = prefs.getString(getString(R.string.key_p2_name), getString(R.string.cpu1));
+		aCpuNames[1] = prefs.getString(getString(R.string.key_p3_name), getString(R.string.cpu2));
+		aCpuNames[2] = prefs.getString(getString(R.string.key_p4_name), getString(R.string.friend));
 		
 		aupCpu[0] = (UIPlayer) findViewById(R.id.cpu1);
 		aupCpu[1] = (UIPlayer) findViewById(R.id.cpu2);
@@ -516,17 +521,6 @@ public class AgoniaGame extends Activity implements DragSource, OnTouchListener,
 	@SuppressWarnings("deprecation")
 	protected void gameFinished() 
 	{
-//		AlertDialog.Builder builder = new AlertDialog.Builder(this);
-//		builder.setMessage(GAME_EVENTS);
-//		builder.setNeutralButton(android.R.string.ok, new DialogInterface.OnClickListener(){
-//
-//			@Override
-//			public void onClick(DialogInterface dialog, int which)
-//			{
-//				
-//			}
-//		}).show();		
-		
 		CardGame.unregisterGameListener(this);
 		
 		set.gameFinished();
@@ -566,46 +560,11 @@ public class AgoniaGame extends Activity implements DragSource, OnTouchListener,
 		}, delay);
 	}
 
-	@SuppressWarnings("unused")
-	private void saveScoresToSet()
-	{
-		// @formatter:off
-	
-//		F.edit()
-//		.putInt(F.KEY_P1_SCORE, up.getScore())
-//		.putInt(F.KEY_P2_SCORE, ucp.getScore())
-//		.putInt(F.KEY_P1_WINS, up.getWins())
-//		.putInt(F.KEY_P2_WINS, ucp.getWins())
-//		.commit();
-		
-		// @formatter:on
-		
-//		for (int team = 1; team <= set.getTeamsCount(); team++)
-//		{
-//			Player setPlayer = set.getPlayerByTeam(team, 0);
-//			Player gamePlayer = game.getPlayerById(setPlayer.getId());
-//			setPlayer.addScore(gamePlayer.getScore());
-//		}
-		
-	}
-
 	@SuppressWarnings("deprecation")
 	@Override
 	public void onBackPressed()
 	{
 		showDialog(DIALOG_EXIT_ID);
-	}
-
-	/* v2.0b added. */
-	/** Hopefully it will resolve any NullPointerException on F.get... */
-	@Override
-	public void onWindowFocusChanged(boolean hasFocus)
-	{
-		if (hasFocus && F.settings == null)
-		{
-			new F(this);
-		}
-		super.onWindowFocusChanged(hasFocus);
 	}
 
 	@SuppressWarnings("deprecation")
@@ -943,6 +902,8 @@ public class AgoniaGame extends Activity implements DragSource, OnTouchListener,
 		}
 		
 		DevnDialogUtils.customize(dialog);
+		
+		DevnDialogUtils.embedAd(dialog, this);
 		
 		super.onPrepareDialog(id, dialog);
 	}
@@ -1294,6 +1255,7 @@ public class AgoniaGame extends Activity implements DragSource, OnTouchListener,
 				}, 250);
 			}
 		})
+		.setCancelable(false)
 		;
 		
 		// @formatter:on

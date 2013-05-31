@@ -16,7 +16,7 @@ public class ModerateAI implements AgoniaAI
 	private final static int SEVEN_PRIORITY = NINE_PRIORITY + 1;
 	private final static int EIGHT_PRIORITY = SEVEN_PRIORITY + 1;
 	
-	private boolean isNineSpecial = F.getBoolean(F.KEY_IS_NINE_SPECIAl, true);
+	private boolean isNineSpecial;
 	private Random rand = new Random();
 	private Comparator<Card> willPlayDescComparator;
 	private Player me;
@@ -24,6 +24,7 @@ public class ModerateAI implements AgoniaAI
 	public ModerateAI(Player p)
 	{
 		me = p;
+		isNineSpecial = Agonia.isNineSpecial();
 		willPlayDescComparator = new Comparator<Card>(){
 
 			@Override

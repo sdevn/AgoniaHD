@@ -110,11 +110,6 @@ public class GameSetActivity extends Activity
 	{
 		super.onCreate(savedInstanceState);
 		
-		if (F.settings == null)
-		{
-			new F(this);
-		}
-		
 		useSFX = PreferenceManager.getDefaultSharedPreferences(this)
 					.getBoolean(getString(R.string.key_game_sfx), true);
 		
@@ -173,19 +168,6 @@ public class GameSetActivity extends Activity
 		{
 			ibtLoad.performClick();
 		}
-	}
-
-	/* v2.0b added. */
-	/** Hopefully it will resolve any NullPointerException on F.get... */
-	@Override
-	public void onWindowFocusChanged(boolean hasFocus)
-	{
-		if (hasFocus && F.settings == null)
-		{
-			new F(this);
-		}
-		
-		super.onWindowFocusChanged(hasFocus);
 	}
 
 	private void playSound(int resId)
@@ -343,14 +325,11 @@ public class GameSetActivity extends Activity
 			
 		});
 		
-		if (F.settings == null)
-		{
-			new F(GameSetActivity.this); 
-		}
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
 		
-		atxvCpuNames[0].setText(F.getString(F.KEY_P2_NAME, getString(R.string.cpu1)));
-		atxvCpuNames[1].setText(F.getString(F.KEY_P3_NAME, getString(R.string.cpu2)));
-		atxvCpuNames[2].setText(F.getString(F.KEY_P4_NAME, getString(R.string.friend)));
+		atxvCpuNames[0].setText(prefs.getString(getString(R.string.key_p2_name), getString(R.string.cpu1)));
+		atxvCpuNames[1].setText(prefs.getString(getString(R.string.key_p3_name), getString(R.string.cpu2)));
+		atxvCpuNames[2].setText(prefs.getString(getString(R.string.key_p4_name), getString(R.string.friend)));
 		
 		for (Spinner spn : aspnAIModes)
 		{
@@ -787,8 +766,7 @@ public class GameSetActivity extends Activity
 			{
 				Intent adIntent = new Intent(GameSetActivity.this, AdManagerActivity.class);
 				startActivity(adIntent); // v2.4 added
-				
-				findViewById(R.id.adView).setVisibility(View.GONE); // v2.2 added
+
 				showDialog(DIALOG_SET_FINISH_ID);
 			}
 			else

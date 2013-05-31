@@ -16,8 +16,6 @@
         
     </HorizontalScrollView>
 
-    <include layout="@layout/ad_in_dialog" />
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

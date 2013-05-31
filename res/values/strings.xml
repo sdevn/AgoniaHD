@@ -131,8 +131,8 @@
     <string name="key_game_sfx">key_sfx</string>
     <string name="pref_game_sfx_title">Game sound effects</string>
 	
-    <string name="dlg_whats_new_message">➤Game stats\n\n<b>Coming soon!</b>\n➤hard mode\n➤more preferences for more special cards\n➤game history when game finished\n</string>
-    <string name="key_dlg_whats_new_once">key_dlg_whats_new_once_v2.3</string>
+    <string name="dlg_whats_new_message">➤game history when game finished\n\n<b>Coming soon!</b>\n➤online games\n</string>
+    <string name="key_dlg_whats_new_once">key_dlg_whats_new_once_v2.4</string>
     
     <!-- v2.2 -->
     <string name="dlg_set_load_title">Load game</string>

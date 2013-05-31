@@ -11,12 +11,12 @@ public final class DBGLog
 	
 	public static void ads(String msg)
 	{
-		Log.i("ads", msg);
+		Log.i("devads", msg);
 	}
 	
 	public static void iads(String msg)
 	{
-		Log.i("iads", msg);
+		Log.i("deviads", msg);
 	}
 	
 	public static void srlz(String msg)

@@ -21,6 +21,8 @@ public interface AgoniaAI extends AIPlayer
 	public static class AgoniaAIBuilder
 	{
 		private static final int MODE_TO_STRING_LEN = 3;
+		
+		public static final String[] PSZAI_STRINGS = new String[4];
 
 		/**
 		 * @param mode if its {@link AgoniaAI#MODE_NO_AI} null is returned
@@ -66,9 +68,7 @@ public interface AgoniaAI extends AIPlayer
 				return "";
 			}
 			
-			String[] modes = F.getResources().getStringArray(R.array.difficult_modes);
-			
-			return modes[id].substring(0, MODE_TO_STRING_LEN);
+			return PSZAI_STRINGS[id].substring(0, MODE_TO_STRING_LEN);
 		}
 	}
 }

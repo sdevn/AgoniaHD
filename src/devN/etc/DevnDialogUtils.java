@@ -1,10 +1,21 @@
 package devN.etc;
 
+import static android.view.ViewGroup.LayoutParams.FILL_PARENT;
+import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
+import com.google.ads.AdRequest;
+import com.google.ads.AdView;
 import devN.games.agonia.R;
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
+import android.util.DisplayMetrics;
+import android.view.Gravity;
+import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.FrameLayout;
 
 public final class DevnDialogUtils
 {
@@ -29,5 +40,46 @@ public final class DevnDialogUtils
 		{
 			DBGLog.dbg(ex.toString());
 		}
+	}
+	
+	@SuppressWarnings("deprecation")
+	public static void embedAd(Dialog dialog, Activity activity)
+	{
+		AdView ad = (AdView) dialog.findViewById(R.id.adViewInDialog);
+		
+		if (ad == null)
+		{	
+			Window dw = dialog.getWindow();
+			WindowManager.LayoutParams wlp = dw.getAttributes();
+
+			FrameLayout rootView = (FrameLayout) dw.findViewById(Window.ID_ANDROID_CONTENT);
+			rootView.measure(WRAP_CONTENT, WRAP_CONTENT);
+
+			DisplayMetrics dm = activity.getResources().getDisplayMetrics();
+			int maxHeight = dm.heightPixels;
+			int newHeight = rootView.getMeasuredHeight() + (int) (55 * dm.density);						
+	
+			if (newHeight <= maxHeight)
+			{
+				View adContainer = activity.getLayoutInflater().inflate(R.layout.ad_in_dialog2, null);
+				ad = (AdView) adContainer.findViewById(R.id.adViewInDialog);
+				
+				FrameLayout.LayoutParams lParams =  new FrameLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT, 
+																				Gravity.BOTTOM);
+				dialog.addContentView(adContainer, lParams);
+
+				wlp.height = newHeight;
+				wlp.width = FILL_PARENT; // align dialog in center of screen
+				dw.setAttributes(wlp);
+			}
+			else 
+			{// can't embed ad, its not fit on screen... :(
+				return;
+			}
+		}
+		
+		ad.loadAd(new AdRequest()
+					.addTestDevice(AdRequest.TEST_EMULATOR)
+					.addTestDevice("3D600443E10074BF066B583607BB1B80"));
 	}
 }

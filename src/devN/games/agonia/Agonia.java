@@ -18,15 +18,16 @@ public class Agonia extends CardGame
 	private final static int DECK_FINISH_RECYCLE = 0;
 	private final static int DECK_FINISH_PICK_NEW = 1; 
 	private final static int DECK_FINISH_FINISH_GAME = 2;
+	
+	private static boolean isNineSpecial;
+	private static boolean aceOnAce;
+	private static boolean aceFinish;
+	private static int deckFinishOption;
 
 	protected Player lastDraw; // Last player who draw card (non-Special draw)
 	protected Player turn;
-	protected boolean isNineSpecial;
 	protected boolean isGameFinished = false;
-	private boolean aceOnAce;
-	private boolean aceFinish;
-	private int deckFinishOption;
-
+	
 	/**
 	 * 
 	 * @param firstPlayerId the id of player that was playing first in previous game
@@ -62,9 +63,6 @@ public class Agonia extends CardGame
 		
 		turn = players.get(0);
 		lastDraw = null;
-		deckFinishOption = Integer.parseInt(F.getString(F.KEY_DECK_FINISH, "0"));
-		aceOnAce = F.getBoolean(F.KEY_ACE_ON_ACE, false);
-		aceFinish = F.getBoolean(F.KEY_ACE_FINISH, false);
 	}
 	
 	private void initPlayers(int firstPlayerId)
@@ -198,8 +196,6 @@ public class Agonia extends CardGame
 		// prepei na arhikopoieitai edo ki ohi stin init(), logo tou oti
 		// h setSpecialCards() kaleite ap ton super constructor, diladi prin
 		// tin init()
-		isNineSpecial = F.getBoolean(F.KEY_IS_NINE_SPECIAl, true);
-
 		List<Card> specialCards = new ArrayList<Card>();
 		
 		specialCards.addAll(Arrays.asList(
@@ -503,6 +499,46 @@ public class Agonia extends CardGame
 		
 			}
 		}
+	}
+
+	public static boolean isNineSpecial()
+	{
+		return isNineSpecial;
+	}
+
+	public static boolean isAceOnAce()
+	{
+		return aceOnAce;
+	}
+
+	public static boolean isAceFinish()
+	{
+		return aceFinish;
+	}
+
+	public static int getDeckFinishOption()
+	{
+		return deckFinishOption;
+	}
+
+	public static void setNineSpecial(boolean isNineSpecial)
+	{
+		Agonia.isNineSpecial = isNineSpecial;
+	}
+
+	public static void setAceOnAce(boolean aceOnAce)
+	{
+		Agonia.aceOnAce = aceOnAce;
+	}
+
+	public static void setAceFinish(boolean aceFinish)
+	{
+		Agonia.aceFinish = aceFinish;
+	}
+
+	public static void setDeckFinishOption(int deckFinishOption)
+	{
+		Agonia.deckFinishOption = deckFinishOption;
 	}
 
 //	/**

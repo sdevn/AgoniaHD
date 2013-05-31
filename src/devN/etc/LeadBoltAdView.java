@@ -21,6 +21,7 @@ import android.util.DisplayMetrics;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
+@SuppressWarnings("unused")
 public class LeadBoltAdView extends WebView
 {
 	private final static long AD_REFRESH_INTERVAL = 30000;
@@ -143,7 +144,8 @@ public class LeadBoltAdView extends WebView
 	{
 		if ("".equals(data))
 		{
-			data = format(DATA, myAdId);
+			return;
+//			data = format(DATA, myAdId);
 		}
 		
 		loadData(data, "text/html", "UTF-8");		

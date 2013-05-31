@@ -15,6 +15,4 @@
         android:scaleType="fitCenter"
         android:src="@drawable/ic_cup" />
 
-    <include layout="@layout/ad_in_dialog" />
-
 </LinearLayout>

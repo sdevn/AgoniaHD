@@ -1,9 +1,11 @@
 package devN.games.agonia;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
+import android.preference.PreferenceManager;
 import android.widget.Toast;
 
 public class AgoniaPref extends PreferenceActivity 
@@ -63,8 +65,10 @@ public class AgoniaPref extends PreferenceActivity
 			}
 		};
 		
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
 		Preference p = findPreference(getString(R.string.key_p1_name));
-		p.setSummary(F.getString(getString(R.string.key_p1_name), ""));
+		p.setSummary(prefs.
+				getString(getString(R.string.key_p1_name), ""));
 		p.setOnPreferenceChangeListener(namesOnSumm);
 /*	
 		p = findPreference(getString(R.string.key_p2_name));

@@ -36,19 +36,11 @@ public class AgoniaMenu extends Activity
 	private Button btnGame;
 	private Button btnHow;
 	
-	/** v2.4 to don't let {@link AgoniaGamesStatsManager#getManager()} return null */
-	private AgoniaGamesStatsManager manager;
-	
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.menu);
-
-		if (F.settings == null)
-		{
-			new F(this);
-		}
 	
 		btnPref = (Button) findViewById(R.id.btPref);
 		btnGame = (Button) findViewById(R.id.btGame);
@@ -133,8 +125,6 @@ public class AgoniaMenu extends Activity
 		{	// too small screen height
 			exit.setVisibility(View.GONE);
 		}
-	
-		manager = AgoniaGamesStatsManager.create(this); // v2.4
 	}
 	
 	@SuppressWarnings("deprecation")
@@ -156,7 +146,8 @@ public class AgoniaMenu extends Activity
 				.commit();
 			}
 			
-			manager.saveStats(AgoniaMenu.this, false);	//2.4
+			((AgoniaApp)getApplication())
+			.getManager().saveStats(AgoniaMenu.this, false);	//2.4
 		}
 		super.onWindowFocusChanged(hasFocus);
 	}
@@ -340,7 +331,8 @@ public class AgoniaMenu extends Activity
 	{
 		Random random = new Random();
 		
-		manager.saveStats(this, true);	// v2.4
+		((AgoniaApp)getApplication())
+		.getManager().saveStats(this, true);	// v2.4
 		
 		if (random.nextDouble() < CHANCE_COMMING_DIALOG)
 		{

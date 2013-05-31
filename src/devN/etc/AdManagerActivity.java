@@ -33,7 +33,7 @@ public class AdManagerActivity extends Activity
 	public static final long AUTO_FINISH_TIMEOUT = 3500;
 	
 	/** show ads every {@link #SHOW_AD_PERIOD} days */
-	public static final int SHOW_AD_PERIOD = 3;
+	public static final int SHOW_AD_PERIOD = 1;
 	
 	private static final String KEY_ADS = "key_AdManagerActivity_adStats";
 	private static final String KEY_LAST_AD = "key_AdManagerActivity_lastAd";

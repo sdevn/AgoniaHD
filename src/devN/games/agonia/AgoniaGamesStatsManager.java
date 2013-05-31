@@ -25,16 +25,24 @@ public class AgoniaGamesStatsManager implements AgoniaGameListener
 	
 	/** only one instance of this class should exist */
 	private static AgoniaGamesStatsManager manager;
+
+	/** to easily implement {@link Object#equals(Object)} */
+	private static int ids = 0;
 	
 	private Map<String, AgoniaGamesStats> profiles;
+	private final int id;
 	
 	public static AgoniaGamesStatsManager create(Context context)
 	{
-		if (manager == null)
-		{
-			manager = new AgoniaGamesStatsManager(context);
-			Agonia.addGameListener(manager);
+		if (manager != null)
+		{ // preventing duplicate
+			CardGame.unregisterGameListener(manager);
+			manager.saveStats(context, true);
 		}
+		
+		manager = new AgoniaGamesStatsManager(context);			
+
+		Agonia.addGameListener(manager);
 		
 		return manager;
 	}
@@ -43,7 +51,10 @@ public class AgoniaGamesStatsManager implements AgoniaGameListener
 	{
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
 		Map<String, ?> allPrefs = prefs.getAll();
+		
 		profiles = new HashMap<String, AgoniaGamesStats>();
+		id = ++ids;
+		
 		Gson gson = new Gson();
 		
 		for (String key : allPrefs.keySet())
@@ -250,5 +261,34 @@ public class AgoniaGamesStatsManager implements AgoniaGameListener
 		}
 
 		return builder.toString();
+	}
+
+	@Override
+	public int hashCode()
+	{
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + id;
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj)
+	{
+		if (this == obj)
+		{
+			return true;
+		}
+		if (obj == null)
+		{
+			return false;
+		}
+		if (!(obj instanceof AgoniaGamesStatsManager))
+		{
+			return false;
+		}
+		AgoniaGamesStatsManager other = (AgoniaGamesStatsManager) obj;
+
+		return id == other.id;
 	}
 }

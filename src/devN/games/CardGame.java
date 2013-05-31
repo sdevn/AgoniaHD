@@ -1,7 +1,9 @@
 package devN.games;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public abstract class CardGame
 {
@@ -14,7 +16,9 @@ public abstract class CardGame
 	protected Deck deck;
 	protected List<Player> players = new ArrayList<Player>();;
 	protected List<Card> stackTop;
-	protected static List<GameListener> gameListeners = new ArrayList<GameListener>();
+	
+	/** v2.4b changed to Set<> to prevent duplicates */
+	protected static Set<GameListener> gameListeners = new HashSet<GameListener>();
 	
 	public CardGame(Deck d, List<Player> players, int startDeal, int stackTopSize)
 	{

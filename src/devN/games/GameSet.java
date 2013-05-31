@@ -9,8 +9,6 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 import devN.games.agonia.AgoniaAI.AgoniaAIBuilder;
-import devN.games.agonia.F;
-import devN.games.agonia.R;
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -20,7 +18,10 @@ import android.os.Parcelable;
  */
 public class GameSet implements Serializable, Parcelable
 {	
-		
+	public final static String[] infoSetType = new String[2];
+	public static String winnerTeam;
+	
+	
 	/**
 	 * v2.2
 	 */
@@ -216,7 +217,7 @@ public class GameSet implements Serializable, Parcelable
 			sb.append(team + " ");
 		}
 
-		return F.getResources().getString(R.string.winner_team, sb.toString());
+		return String.format(winnerTeam, sb.toString());
 	}
 	
 	public Object[] playerInfos(int playerId)
@@ -245,9 +246,8 @@ public class GameSet implements Serializable, Parcelable
 	public Object[] getInfos()
 	{
 		Object[] infos = new Object[3];
-		int id = type == TYPE_POINTS ? R.string.points : R.string.wins;
 		
-		infos[0] = F.getResources().getString(id);
+		infos[0] = infoSetType[type];
 		infos[1] = goalScore;
 		infos[2] = cGame;
 		
