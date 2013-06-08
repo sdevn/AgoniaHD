@@ -94,7 +94,7 @@
     <string name="pref_game_music_title">Μουσική υπόκρουση</string>
     <string name="pref_game_sfx_title">Ηχητικά εφέ</string>
 
-    <string name="dlg_whats_new_message">Ιστορικό παιχνιδιού.\n\n<b>Στην επόμενη αναβάθμιση!</b>\nΠαιχνιδια με αντιπαλους online\n\nΗ εποενη αναβαθιση θα βγει στο τελος Αυγουστου, αν ενδιαφερεσαι να γινεις beta tester στειλε μου email.\nΚαλή διασκέδαση!! :)</string>
+    <string name="dlg_whats_new_message">Νέες επιλογές στις προτιμήσεις για να βγαίνεις με Επτά, Οχτώ κι Εννιά\n\n<b>Στην επόμενη αναβάθμιση!</b>\nΠαιχνιδια με αντιπαλους online\n\nΗ εποενη αναβαθιση θα βγει στο τελος Αυγουστου, αν ενδιαφερεσαι να γινεις beta tester στειλε μου email.\nΚαλή διασκέδαση!! :)</string>
 
     <!-- v2.2 -->
 	<string name="dlg_set_load_title">Συνέχιση παιχνιδιού</string>
@@ -112,4 +112,11 @@
 	<string name="dlg_finish_btn_history">Ιστορ. παιχνιδιού. . .</string>
 	<string name="dlg_history_title">Ιστορικό παιχνιδιού</string>
 	<string name="drew_cards">τράβηξε %d</string>
+	
+	<!-- 2.5 -->
+    <string name="pref_nine_finish_summ">Οι παίκτες μπορούν να βγουν με Εννιά</string>
+    
+    <string name="pref_seven_finish_summ">Αν ο παίκτης πετα΄ξει τελευταίο φυλλο Εφτα΄, βγαίνει κι ο επόμενος δεν τραβα ΄φύλλα</string>
+    
+    <string name="pref_eight_finish_summ">Οι παίκτες μπορούν να βγουν με Οχτώ</string>
 </resources>

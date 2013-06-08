@@ -23,7 +23,12 @@ public class Agonia extends CardGame
 	private static boolean aceOnAce;
 	private static boolean aceFinish;
 	private static int deckFinishOption;
-
+	
+	// v2.5
+	private static boolean nineFinish;
+	private static boolean sevenFinish;
+	private static boolean eightFinish;
+	
 	protected Player lastDraw; // Last player who draw card (non-Special draw)
 	protected Player turn;
 	protected boolean isGameFinished = false;
@@ -127,23 +132,33 @@ public class Agonia extends CardGame
 		throw new AcePlayed();
 	}
 
-	private void handleEight()
+	/** v2.5 modified to handle eightFinish */
+	private void handleEight(Player p)
 	{
-		switchTurn(false);
+		if (p.hasCards() || !eightFinish)
+		{
+			switchTurn(false);
+		}
 	}
 
-	private void handleNine()
+	/** v2.5 modified to handle nineFinish */
+	private void handleNine(Player p)
 	{
-		if (isNineSpecial)
+		if (isNineSpecial
+		&& (p.hasCards() || !nineFinish))
 		{
 			turn = whoPlayNext();
 			lastDraw = null;
 		}
 	}
 
-	private void handleSeven(Card c)
+	/** v2.5 modified to handle sevenFinish */
+	private void handleSeven(Player p, Card c)
 	{
-		throw new SevenPlayed(c.getSuit());
+		if (p.hasCards() || !sevenFinish)
+		{
+			throw new SevenPlayed(c.getSuit());
+		}
 	}
 
 	public void handleSpecial(Player p, Card c)
@@ -157,17 +172,17 @@ public class Agonia extends CardGame
 			}
 			case 7:
 			{
-				handleSeven(c);
+				handleSeven(p, c);
 				break;
 			}
 			case 8:
 			{
-				handleEight();
+				handleEight(p);
 				break;
 			}
 			case 9:
 			{
-				handleNine();
+				handleNine(p);
 				break;
 			}
 		}
@@ -321,7 +336,7 @@ public class Agonia extends CardGame
 		switchTurn();
 		//TODO: Other exception should throwed here (in the end of method)
 		if (p.getHand().isEmpty()
-		&& c.getRank() != 7				// v2.1 added
+		&& ((c.getRank() != 7) || sevenFinish)	// v2.5 modified
 		&& !Card.NULL_CARD.equals(c)	// v2.1 added
 		&& !p.equals(turn))
 		{
@@ -539,6 +554,21 @@ public class Agonia extends CardGame
 	public static void setDeckFinishOption(int deckFinishOption)
 	{
 		Agonia.deckFinishOption = deckFinishOption;
+	}
+
+	public static void setNineFinish(boolean nineFinish)
+	{
+		Agonia.nineFinish = nineFinish;
+	}
+
+	public static void setSevenFinish(boolean sevenFinish)
+	{
+		Agonia.sevenFinish = sevenFinish;
+	}
+
+	public static void setEightFinish(boolean eightFinish)
+	{
+		Agonia.eightFinish = eightFinish;
 	}
 
 //	/**

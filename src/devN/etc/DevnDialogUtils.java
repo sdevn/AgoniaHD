@@ -46,13 +46,13 @@ public final class DevnDialogUtils
 	public static void embedAd(Dialog dialog, Activity activity)
 	{
 		AdView ad = (AdView) dialog.findViewById(R.id.adViewInDialog);
+		Window dw = dialog.getWindow();
+		FrameLayout rootView = (FrameLayout) dw.findViewById(Window.ID_ANDROID_CONTENT);
 		
 		if (ad == null)
 		{	
-			Window dw = dialog.getWindow();
 			WindowManager.LayoutParams wlp = dw.getAttributes();
-
-			FrameLayout rootView = (FrameLayout) dw.findViewById(Window.ID_ANDROID_CONTENT);
+			
 			rootView.measure(WRAP_CONTENT, WRAP_CONTENT);
 
 			DisplayMetrics dm = activity.getResources().getDisplayMetrics();
@@ -77,6 +77,8 @@ public final class DevnDialogUtils
 				return;
 			}
 		}
+		
+		rootView.requestLayout();
 		
 		ad.loadAd(new AdRequest()
 					.addTestDevice(AdRequest.TEST_EMULATOR)

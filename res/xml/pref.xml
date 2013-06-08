@@ -92,6 +92,13 @@
             android:title="@string/pref_nine_title" />
         
         <CheckBoxPreference
+            android:dependency="@string/key_is_nine_special"
+            android:defaultValue="false"
+            android:key="@string/key_nine_finish"
+            android:summary="@string/pref_nine_finish_summ"
+            android:title="@string/pref_nine_finish_title" />
+        
+        <CheckBoxPreference
             android:defaultValue="false"
             android:key="@string/key_ace_on_ace"
             android:summary="@string/pref_ace_on_ace_summ"
@@ -102,6 +109,18 @@
             android:key="@string/key_ace_finish"
             android:summary="@string/pref_ace_finish_summ"
             android:title="@string/pref_ace_finish_title" />
+        
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="@string/key_eight_finish"
+            android:summary="@string/pref_eight_finish_summ"
+            android:title="@string/pref_eight_finish_title" />
+        
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="@string/key_seven_finish"
+            android:summary="@string/pref_seven_finish_summ"
+            android:title="@string/pref_seven_finish_title" />
     </PreferenceCategory>
 
 </PreferenceScreen>

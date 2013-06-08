@@ -144,9 +144,9 @@ public class AgoniaGame extends Activity implements DragSource, OnTouchListener,
        	useSFX = prefs.getBoolean(getString(R.string.key_game_sfx), true);
        	initSoundPool(this, useSFX);
        	useMusic = prefs.getBoolean(getString(R.string.key_game_music), false);
-       	
+
+       	/* default values should be same as res/xml/pref.xml */
        	// v2.4c
-       	// default values should be same as res/xml/pref.xml
        	boolean oldDeck = prefs.getBoolean(getString(R.string.key_old_deck), false);
        	boolean oldAnim = prefs.getBoolean(getString(R.string.key_old_anim), false);
        	boolean colorHints = prefs.getBoolean(getString(R.string.key_color_hints), true);
@@ -154,6 +154,10 @@ public class AgoniaGame extends Activity implements DragSource, OnTouchListener,
        	boolean aceOnAce = prefs.getBoolean(getString(R.string.key_ace_on_ace), false);
        	boolean aceFinish = prefs.getBoolean(getString(R.string.key_ace_finish), false);
        	int deckFinishOption = Integer.parseInt(prefs.getString(getString(R.string.key_deck_finish), "0"));
+       	// v2.5
+       	boolean nineFinish = prefs.getBoolean(getString(R.string.key_nine_finish), false);
+       	boolean sevenFinish = prefs.getBoolean(getString(R.string.key_seven_finish), false);
+       	boolean eightFinish = prefs.getBoolean(getString(R.string.key_eight_finish), false);
        	
        	UICard.setUseOldDeck(oldDeck);
        	UIPlayer.setUseOldAnim(oldAnim);
@@ -162,6 +166,9 @@ public class AgoniaGame extends Activity implements DragSource, OnTouchListener,
        	Agonia.setAceOnAce(aceOnAce);
        	Agonia.setAceFinish(aceFinish);
        	Agonia.setDeckFinishOption(deckFinishOption);
+       	Agonia.setNineFinish(nineFinish);
+       	Agonia.setSevenFinish(sevenFinish);
+       	Agonia.setEightFinish(eightFinish);
        	
        	AgoniaAI cpuAI;
 		String p1Name;
@@ -757,9 +764,13 @@ public class AgoniaGame extends Activity implements DragSource, OnTouchListener,
 					game.play(ucp.getPlayer(), ucp.playSeven());
 				}
 				catch (GameFinished e)
-				{	/*
-					* will handled on sevenDraw()
-					*/
+				{	// v2.5 modified, if sevenFinish is enabled 
+					// the exception will thrown and handled
+					
+					stackTop.postSetImage("", cpuDelay - 200);
+					gameFinished();
+					
+					return;
 				}
 				sevenDraw();
 			}

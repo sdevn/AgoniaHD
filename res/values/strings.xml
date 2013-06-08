@@ -131,8 +131,8 @@
     <string name="key_game_sfx">key_sfx</string>
     <string name="pref_game_sfx_title">Game sound effects</string>
 	
-    <string name="dlg_whats_new_message">➤game history when game finished\n\n<b>Coming soon!</b>\n➤online games\n</string>
-    <string name="key_dlg_whats_new_once">key_dlg_whats_new_once_v2.4</string>
+    <string name="dlg_whats_new_message">➤Players can go out with nine, eight or seven\n\n<b>Coming soon!</b>\n➤online games\n</string>
+    <string name="key_dlg_whats_new_once">key_dlg_whats_new_once_v2.5</string>
     
     <!-- v2.2 -->
     <string name="dlg_set_load_title">Load game</string>
@@ -150,4 +150,17 @@
 	<string name="dlg_finish_btn_history">Game history. . .</string>
 	<string name="dlg_history_title">Game history</string>
 	<string name="drew_cards">drew %d</string>
+	
+	<!-- 2.5 -->
+	<string name="key_nine_finish">nine_finish</string>
+	<string name="pref_nine_finish_title">Nine The Last</string>
+    <string name="pref_nine_finish_summ">Players can go out with Nine</string>
+    
+	<string name="key_seven_finish">seven_finish</string>
+	<string name="pref_seven_finish_title">Seven The Last</string>
+    <string name="pref_seven_finish_summ">If a player go out with Seven, next player will not draw card</string>
+    
+	<string name="key_eight_finish">eight_finish</string>
+	<string name="pref_eight_finish_title">Eight The Last</string>
+    <string name="pref_eight_finish_summ">Allow players to go out with Eight</string>
 </resources>
