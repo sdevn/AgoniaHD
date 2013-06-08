@@ -145,12 +145,14 @@ public class AgoniaGame extends Activity implements DragSource, OnTouchListener,
        	initSoundPool(this, useSFX);
        	useMusic = prefs.getBoolean(getString(R.string.key_game_music), false);
        	
+       	// v2.4c
+       	// default values should be same as res/xml/pref.xml
        	boolean oldDeck = prefs.getBoolean(getString(R.string.key_old_deck), false);
        	boolean oldAnim = prefs.getBoolean(getString(R.string.key_old_anim), false);
        	boolean colorHints = prefs.getBoolean(getString(R.string.key_color_hints), true);
        	boolean isNineSpecial = prefs.getBoolean(getString(R.string.key_is_nine_special), true);
-       	boolean aceOnAce = prefs.getBoolean(getString(R.string.key_ace_on_ace), true);
-       	boolean aceFinish = prefs.getBoolean(getString(R.string.key_ace_finish), true);
+       	boolean aceOnAce = prefs.getBoolean(getString(R.string.key_ace_on_ace), false);
+       	boolean aceFinish = prefs.getBoolean(getString(R.string.key_ace_finish), false);
        	int deckFinishOption = Integer.parseInt(prefs.getString(getString(R.string.key_deck_finish), "0"));
        	
        	UICard.setUseOldDeck(oldDeck);

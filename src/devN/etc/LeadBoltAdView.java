@@ -15,6 +15,7 @@ import org.xml.sax.InputSource;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
+import android.os.Build;
 import android.text.format.Formatter;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
@@ -224,9 +225,12 @@ public class LeadBoltAdView extends WebView
 				return;
 			}
 			
-			if ("".equals(result) || result.contains("<request type=\"noAd\">"))
+			if ("".equals(result) 
+				|| result.contains("<request type=\"noAd\">")
+				|| Build.VERSION.SDK_INT <= Build.VERSION_CODES.ECLAIR_MR1)
 			{
-				DBGLog.ads("Empty or noAd. Len " + result.length() + " " + getContentDescription());
+				DBGLog.ads("Empty or noAd or eclair ver (" + Build.VERSION.SDK_INT 
+						+ "). Len " + result.length() + " " + getContentDescription());
 			}
 			else 
 			{	

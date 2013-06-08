@@ -2,8 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="devN.games.agonia"
     android:installLocation="preferExternal"
-    android:versionCode="15"
-    android:versionName="2.4b" >
+    android:versionCode="16"
+    android:versionName="2.5" >
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -89,9 +89,6 @@
         <!-- v2.4 added -->
         <activity android:name="devN.etc.AdManagerActivity"
             android:theme="@android:style/Theme.Translucent.NoTitleBar.Fullscreen" />
-		
-		<activity android:name="com.zjfjslbwndvj.AdIdActivity"
-			android:theme="@android:style/Theme.Translucent.NoTitleBar.Fullscreen" />
 		
 		<activity android:name="com.google.ads.AdActivity"
               android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"/>

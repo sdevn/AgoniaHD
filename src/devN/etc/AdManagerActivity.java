@@ -16,8 +16,6 @@ import com.google.gson.reflect.TypeToken;
 import com.ironsource.mobilcore.ConfirmationResponse;
 import com.ironsource.mobilcore.MobileCore;
 import com.ironsource.mobilcore.MobileCore.LOG_TYPE;
-import com.zjfjslbwndvj.AdController;
-import com.zjfjslbwndvj.AdListener;
 import android.app.Activity;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -33,7 +31,7 @@ public class AdManagerActivity extends Activity
 	public static final long AUTO_FINISH_TIMEOUT = 3500;
 	
 	/** show ads every {@link #SHOW_AD_PERIOD} days */
-	public static final int SHOW_AD_PERIOD = 1;
+	public static final double SHOW_AD_PERIOD = .5;
 	
 	private static final String KEY_ADS = "key_AdManagerActivity_adStats";
 	private static final String KEY_LAST_AD = "key_AdManagerActivity_lastAd";
@@ -43,7 +41,6 @@ public class AdManagerActivity extends Activity
 	
 	private List<ShowAdStats> adStats = null;
 	private long lastAdShown = 0;
-	private AdController lbAdController;
 	
 	private static final String appid = "2vIcTLl5OAAhgvFv";
 	private static final String secretkey = "y854qZjI9c0L517f9a59";
@@ -60,7 +57,7 @@ public class AdManagerActivity extends Activity
 		initAdStats();
 
 		long remaining, now = Calendar.getInstance().getTime().getTime();
-		remaining = now - lastAdShown - DAY_MILLIS * SHOW_AD_PERIOD;
+		remaining = now - lastAdShown - (int) (DAY_MILLIS * SHOW_AD_PERIOD);
 		
 		if (remaining > 0)
 		{
@@ -76,12 +73,7 @@ public class AdManagerActivity extends Activity
 
 	@Override
 	protected void onDestroy()
-	{	
-		if (lbAdController != null)
-		{
-			lbAdController.destroyAd();
-		}
-		
+	{		
 		AppFlood.destroy();
 		
 		saveAdStats();
@@ -138,63 +130,16 @@ public class AdManagerActivity extends Activity
 			});
 		}
 		else if ("leadbolt".equals(ad.provider))
-		{
-			lbAdController = new AdController(this, "417718844", new AdListener(){
-				
-				@Override
-				public void onAdResumed()
-				{ }
-				
-				@Override
-				public void onAdProgress()
-				{ }
-				
-				@Override
-				public void onAdPaused()
-				{ }
-				
-				@Override
-				public void onAdLoaded()
-				{
-					ad.shown();	
-					lastAdShown = ad.lastShown.getTime();
-				}
-				
-				@Override
-				public void onAdFailed()
-				{
-					if (index < adStats.size() - 1)
-					{
-						showAd(adStats.get(index + 1) , index + 1);
-					}
-					else 
-					{
-						finish();						
-					}
-				}
-				
-				@Override
-				public void onAdCompleted()
-				{ }
-				
-				@Override
-				public void onAdClosed()
-				{
-					finish();
-				}
-				
-				@Override
-				public void onAdClicked()
-				{
-					ad.clicked();
-				}
-				
-				@Override
-				public void onAdAlreadyCompleted()
-				{ }
-			});
-
-			lbAdController.loadAd();
+		{// Deprecated
+			ad.shown();
+			if (index < adStats.size() - 1)
+			{
+				showAd(adStats.get(index + 1) , index + 1);
+			}
+			else 
+			{
+				finish();						
+			}
 		}
 		else if ("appflood_fullscreen".equals(ad.provider))
 		{

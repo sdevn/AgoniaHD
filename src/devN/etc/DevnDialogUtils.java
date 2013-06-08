@@ -66,11 +66,11 @@ public final class DevnDialogUtils
 				
 				FrameLayout.LayoutParams lParams =  new FrameLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT, 
 																				Gravity.BOTTOM);
-				dialog.addContentView(adContainer, lParams);
-
 				wlp.height = newHeight;
 				wlp.width = FILL_PARENT; // align dialog in center of screen
 				dw.setAttributes(wlp);
+				
+				dialog.addContentView(adContainer, lParams);
 			}
 			else 
 			{// can't embed ad, its not fit on screen... :(
@@ -80,6 +80,7 @@ public final class DevnDialogUtils
 		
 		ad.loadAd(new AdRequest()
 					.addTestDevice(AdRequest.TEST_EMULATOR)
-					.addTestDevice("3D600443E10074BF066B583607BB1B80"));
+					.addTestDevice("3D600443E10074BF066B583607BB1B80")	// neo V
+					.addTestDevice("2916D128B56D865EEFC199FD7084CBE6"));	// ray with CM
 	}
 }
