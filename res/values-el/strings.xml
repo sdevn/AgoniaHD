@@ -123,7 +123,7 @@
     <string name="toast_signin">Συνδεθείτε για να παίξετε online</string>
     <string name="toast_signout">Αποσυνδεθήκατε</string>
     <string name="elo_localized_format" formatted="false">Νίκες:%d Παιχνίδια:%d ELO:%d</string>
-    <string name="elo_localized_long_format" formatted="false">Νίκες:%d \t Παιχνίδια:%d\nΠαιχνίδια σήμερα:%d of %d (%d+%d)\nELO:%d\nΣυνολικοί πόντοι:%d\nΣυνεχόμενες νίκες:%d\nΜέγιστο σερί νικών:%d\n\nΙστορικό παιχνιδιών\n-------------\n%s</string>
+    <string name="elo_localized_long_format" formatted="false">Νίκες:%d \t Παιχνίδια:%d\nΠαιχνίδια σήμερα:%d από %d (%d+%d)\nELO:%d\nΣυνολικοί πόντοι:%d\nΣυνεχόμενες νίκες:%d\nΜέγιστο σερί νικών:%d\n\nΙστορικό παιχνιδιών\n-------------\n%s</string>
     <string name="elo_date_format">dd/MM/yyyy</string>
     <string name="won">Νίκη</string>
     <string name="lost">Ηττα</string>

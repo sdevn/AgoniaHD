@@ -37,7 +37,12 @@ public class TextColorAnimationGroup
 	
 	public void start(int playerId)
 	{
-		animations.get(playerId).start();
+		try
+		{
+			animations.get(playerId).start();
+		}
+		catch (Exception ex)
+		{ }
 	}
 	
 	public void pauseAll()

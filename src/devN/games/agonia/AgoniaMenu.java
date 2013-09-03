@@ -1,5 +1,6 @@
 package devN.games.agonia;
 
+import static devN.games.agonia.Const.CLOUD_SLOT_ELO;
 import java.util.Random;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -599,6 +600,16 @@ public class AgoniaMenu extends BaseGameActivity implements OnStateLoadedListene
 		if (statusCode == AppStateClient.STATUS_OK)
 		{
 			myEloEntity = new EloEntity(localData);
+		}
+		else if (statusCode == AppStateClient.STATUS_STATE_KEY_NOT_FOUND) 
+		{
+			myEloEntity = new EloEntity();
+			getAppStateClient().updateState(CLOUD_SLOT_ELO, myEloEntity.getBytes());
+		}
+		else 
+		{
+			myEloEntity = new EloEntity();
+			Toast.makeText(this, "Connection error!! " + statusCode, Toast.LENGTH_SHORT).show();
 		}
 	}
 	
