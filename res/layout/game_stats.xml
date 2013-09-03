@@ -15,13 +15,27 @@
         android:layout_gravity="center"
         android:background="#00000000"
         android:contentDescription="Stats ad" />
-    
+
     <Spinner
         android:id="@+id/spn_stats_profile"
         android:layout_width="185dp"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
         android:layout_below="@id/adView" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_below="@id/spn_stats_profile" >
+
+        <TextView
+            android:id="@+id/txv_stats_content"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/stats_games_infos_emptry"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
+    </ScrollView>
 
     <ImageButton
         android:id="@+id/ibt_stats_delete"
@@ -30,20 +44,4 @@
         android:layout_alignParentRight="true"
         android:contentDescription="@string/blank"
         android:src="@drawable/ic_delete" />
-
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/spn_stats_profile"
-        android:layout_above="@id/ibt_stats_delete" >
-
-        <TextView
-            android:id="@+id/txv_stats_content"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/stats_games_infos_emptry"
-            android:textAppearance="?android:attr/textAppearanceLarge" />
-
-    </ScrollView>
-
-</RelativeLayout>
+</RelativeLayout>

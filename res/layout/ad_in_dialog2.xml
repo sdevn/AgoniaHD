@@ -11,7 +11,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         ads:adSize="SMART_BANNER"
-        ads:testDevices="TEST_EMULATOR, 3D600443E10074BF066B583607BB1B80, 2916D128B56D865EEFC199FD7084CBE6"
         ads:adUnitId="a151a12b484819b"
-        ads:loadAdOnCreate="true" />
+        ads:loadAdOnCreate="true"
+        ads:testDevices="TEST_EMULATOR, 3D600443E10074BF066B583607BB1B80, 2916D128B56D865EEFC199FD7084CBE6, 0D03ACAC00FC3E232AC476294FF0A41D, 398795D7A94672AE1C66702B849E7DA9" />
+
 </FrameLayout>

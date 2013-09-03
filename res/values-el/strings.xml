@@ -25,7 +25,7 @@
     <string name="pref_deck_finish_title">Οταν τελειώσει η τράπουλα</string>
     <string name="deck_finish_recycle">Χρησημοποιησε τις ήδη πεταμένες κάρτες για τράπουλα</string>
     <string name="deck_finish_pick_new">Βάλε μια νέα τράπουλα</string>
-    <string name="deck_finish_finish_game">Τελείωσε το πααιχνίδι</string>
+    <string name="deck_finish_finish_game">Τελείωσε το παιχνίδι</string>
     <string name="points">Πόντοι</string>
     <string name="draw">Ισσοπαλία</string>
     <string name="wins">Νίκες</string>
@@ -56,25 +56,25 @@
     <string name="pref_ace_finish_summ">Οι παίκτες μπορούν να βγουν με Άσσο</string>
     <string name="dlg_exit_title">Θα εγκαταλείψεις;</string>
     <string name="dlg_exit_message">Αν εγκαταλειψεις το παιχνίδι θα μετρήσει ως ήττα!!\nΕίσαι σίγουρος;</string>
-	<string name="cpu1">Υπολ1</string>
-	<string name="cpu2">Υπολ2</string>
-	<string name="cpu3">Υπολ3</string>
-	<string name="friend">Φίλος</string>
-	<string name="set_type_goal">Παρτίδα με:</string>
-	<string name="players">Παίκτες:</string>
-	<string name="set_btn_start">Νέα παρτίδα</string>
-	<string name="set_btn_continue_next">Επόμενο παιχνίδι</string>
-	<string name="set_btn_continue_winner">Δείξε το νικητή</string>
-	<string name="winner_team">Νικήτρια ομάδα: %s</string>
-	<string name="teams">Ομάδες</string>
-	<string name="set_info" formatted="false">Τύπος: %s, Στόχος: %d, Γύρος: %d</string>
-	<string name="dlg_rate_title">Σου αρέσει η Αγωνία;</string>
+    <string name="cpu1">Υπολ1</string>
+    <string name="cpu2">Υπολ2</string>
+    <string name="cpu3">Υπολ3</string>
+    <string name="friend">Φίλος</string>
+    <string name="set_type_goal">Παρτίδα με:</string>
+    <string name="players">Παίκτες:</string>
+    <string name="set_btn_start">Νέα παρτίδα</string>
+    <string name="set_btn_continue_next">Επόμενο παιχνίδι</string>
+    <string name="set_btn_continue_winner">Δείξε το νικητή</string>
+    <string name="winner_team">Νικήτρια ομάδα: %s</string>
+    <string name="teams">Ομάδες</string>
+    <string name="set_info" formatted="false">Τύπος: %s, Στόχος: %d, Γύρος: %d</string>
+    <string name="dlg_rate_title">Σου αρέσει η Αγωνία;</string>
     <string name="dlg_rate_message">Αν σου αρέσει η Αγωνία βαθμολόγισε την με πέντε αστεράκια και ένα καλό σχόλιο!!\nΑν πιστεύεις οτι λείπει κατι ή κάτι δεν σου αρέσει, πες το μου και θα το φτιάξω.\nΕυχαριστώ!!</string>
-    
+
     <!-- unused!! -->
     <string name="dlg_comming_soon_message">Η επόμενη έκδοση θα βγει στα τέλη του Μάη.\nΘα έχει δυνατότητα αποθήκευσης Παιχνιδιού αλλά και Παρτίδας και στατιστικά από νίκες/ήττες.\nΕυχαριστώ πολύ για τη στήριξη σας!! :)</string>
 
-	<!-- v2.1 -->
+    <!-- v2.1 -->
     <string name="custom_font">fonts/GFSOlga.otf</string>
     <string name="dlg_change_name_title">Νέο όνομα για τον/την "%s"</string>
     <string name="pref_old_deck_summ">Χρήση κλασικής τράπουλας</string>
@@ -84,39 +84,55 @@
     <string name="pref_player_turn_color_title1">Χρώμα παίκτη που παίζει</string>
     <string name="pref_player_turn_color_title2">Δεύτερο χρώμα παίκτη που παίζει</string>
     <string name="color_red">Κόκκινο</string>
-	<string name="color_blue">Μπλε</string>
-	<string name="color_yellow">Κίτρινο</string>
-	<string name="color_green">Πράσινο</string>
-	<string name="color_cyan">Γαλάζιο</string>
-	<string name="color_magenta">Μωβ</string>
-	<string name="color_black">Μαύρο</string>
-	<string name="color_none">Κανένα</string>
+    <string name="color_blue">Μπλε</string>
+    <string name="color_yellow">Κίτρινο</string>
+    <string name="color_green">Πράσινο</string>
+    <string name="color_cyan">Γαλάζιο</string>
+    <string name="color_magenta">Μωβ</string>
+    <string name="color_black">Μαύρο</string>
+    <string name="color_none">Κανένα</string>
     <string name="pref_game_music_title">Μουσική υπόκρουση</string>
     <string name="pref_game_sfx_title">Ηχητικά εφέ</string>
 
-    <string name="dlg_whats_new_message">Νέες επιλογές στις προτιμήσεις για να βγαίνεις με Επτά, Οχτώ κι Εννιά\n\n<b>Στην επόμενη αναβάθμιση!</b>\nΠαιχνιδια με αντιπαλους online\n\nΗ εποενη αναβαθιση θα βγει στο τελος Αυγουστου, αν ενδιαφερεσαι να γινεις beta tester στειλε μου email.\nΚαλή διασκέδαση!! :)</string>
-
     <!-- v2.2 -->
-	<string name="dlg_set_load_title">Συνέχιση παιχνιδιού</string>
+    <string name="dlg_set_load_title">Συνέχιση παιχνιδιού</string>
     <string name="dlg_set_delete_games_title">Επέλεξε τα παιχνίδια που θα διαγράψεις</string>
     <string name="dlg_btn_set_delete_games_delete">Διαγραφή</string>
     <string name="set_toast_on_delete_games">%d αποθηκευμένα παιχνίδια διαγράφηκαν</string>
     <string name="set_toast_on_save_game">Αποθηκεύτηκε ως %s</string>
     <string name="set_toast_no_saved_games">Δε βρέθηκαν αποθηκευμένα παιχνίδια. . .</string>
-    
+
     <!-- v2.3 -->
     <string name="stats_games_infos_emptry">\n\n\n\n\nΔεν υπάρχουν στατιστικά ακόμη. . .</string>
-	<string name="stats_games_infos" formatted="false">Παιχνίδια: %d\n\t\t\t\t\t\tΝίκες / Ήττες\n\t1v1:%12d / %d\n\t1v1v1:%8d / %d\n\t2v2:%12d / %d\n\nΠαρτίδες: %d\n\t\t\t\t\t\tΝίκες / Ήττες\n\t1v1:%12d / %d\n\t1v1v1:%8d / %d\n\t2v2:%12d / %d\n\nΦύλλα που πέταξε: %d\nΆσσοι: %d\nΕφτάρια: %d\nΟκτάρια: %d\nΕννιάρια: %d\n\nΦύλλα που τράβηξε: %d (εξαιρούνται αυτά από Εφτά)\nΤράβηξε από εφτά: %d\n\nΠάσο %d φορές\n\nΣυνολικοί πόντοι: %d\nΜέγιστο σκορ: %d</string>
+    <string name="stats_games_infos" formatted="false">Παιχνίδια: %d\n\t\t\t\t\t\tΝίκες / Ήττες\n\t1v1:%12d / %d\n\t1v1v1:%8d / %d\n\t2v2:%12d / %d\n\nΠαρτίδες: %d\n\t\t\t\t\t\tΝίκες / Ήττες\n\t1v1:%12d / %d\n\t1v1v1:%8d / %d\n\t2v2:%12d / %d\n\nΦύλλα που πέταξε: %d\nΆσσοι: %d\nΕφτάρια: %d\nΟκτάρια: %d\nΕννιάρια: %d\n\nΦύλλα που τράβηξε: %d (εξαιρούνται αυτά από Εφτά)\nΤράβηξε από εφτά: %d\n\nΠάσο %d φορές\n\nΣυνολικοί πόντοι: %d\nΜέγιστο σκορ: %d</string>
 
-	<!-- v2.4 -->
-	<string name="dlg_finish_btn_history">Ιστορ. παιχνιδιού. . .</string>
-	<string name="dlg_history_title">Ιστορικό παιχνιδιού</string>
-	<string name="drew_cards">τράβηξε %d</string>
-	
-	<!-- 2.5 -->
+    <!-- v2.4 -->
+    <string name="dlg_finish_btn_history">Ιστορ. παιχνιδιού. . .</string>
+    <string name="dlg_history_title">Ιστορικό παιχνιδιού</string>
+    <string name="drew_cards">τράβηξε %d</string>
+
+    <!-- 2.5 -->
     <string name="pref_nine_finish_summ">Οι παίκτες μπορούν να βγουν με Εννιά</string>
-    
     <string name="pref_seven_finish_summ">Αν ο παίκτης πετα΄ξει τελευταίο φυλλο Εφτα΄, βγαίνει κι ο επόμενος δεν τραβα ΄φύλλα</string>
-    
     <string name="pref_eight_finish_summ">Οι παίκτες μπορούν να βγουν με Οχτώ</string>
+
+    <!-- v3.0 -->
+    <string name="pref_online_title">Online</string>
+    <string name="pref_publish_name_title">Δημοσίευση ονόματος</string>
+    <string name="pref_publish_name_summ">Χρήση του ονόματός σας απ το Google+ αντί για συνθηματικό</string>
+    <string name="toast_signin">Συνδεθείτε για να παίξετε online</string>
+    <string name="toast_signout">Αποσυνδεθήκατε</string>
+    <string name="elo_localized_format" formatted="false">Νίκες:%d Παιχνίδια:%d ELO:%d</string>
+    <string name="elo_localized_long_format" formatted="false">Νίκες:%d \t Παιχνίδια:%d\nΠαιχνίδια σήμερα:%d of %d (%d+%d)\nELO:%d\nΣυνολικοί πόντοι:%d\nΣυνεχόμενες νίκες:%d\nΜέγιστο σερί νικών:%d\n\nΙστορικό παιχνιδιών\n-------------\n%s</string>
+    <string name="elo_date_format">dd/MM/yyyy</string>
+    <string name="won">Νίκη</string>
+    <string name="lost">Ηττα</string>
+    <string name="dlg_extra_games_title">Εφτασες το ημερήσιο όριο!</string>
+    <string name="dlg_extra_games_message">Επαιξες αρκετά παιχνίδια σήμερα.\nΑν θες να παίξεις κιάλλα παιχνίδια, διάλλεξε μια προσφορά.</string>
+    <string name="dlg_exit_message_not_started">Εξοδος από το παιχνίδι.\nΕίστε σίγορος?</string>
+    <string name="please_wait">Αναζήτηση αντιπάλου, παρακαλώ περιμένετε...</string>
+
+    <!-- TODO: change in every version -->
+    <string name="dlg_whats_new_message">Συνδεθείτε με το Google+ λογαριασμό σας για να παίξετε online.\nΠρος το παρον μόνο οι συγκεκριμένες ρυθμίσεις ισχύουν για το online:\nNine Special\nRecycle deck\nSeven finish\nΕχεις 45 δευτερόλεπτα για να πετάξεις φύλλο στο online. Προσοχή!!\n\nΓια αναφορά bugs, πατήστε το κουμπί menu κατα τη διάρκεια του παιχνιδιού</string>
+
 </resources>

@@ -3,6 +3,7 @@ package devN.games;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Random;
 
 public class Deck
 {
@@ -120,6 +121,11 @@ public class Deck
 	public void shuffle()
 	{
 		Collections.shuffle(this.deck);
+	}
+	
+	public void shuffle(long seed)
+	{
+		Collections.shuffle(this.deck, new Random(seed));
 	}
 	
 	@Override

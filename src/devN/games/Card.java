@@ -1,5 +1,7 @@
 package devN.games;
 
+import java.util.Random;
+
 
 public class Card implements Comparable<Card>
 {
@@ -36,6 +38,12 @@ public class Card implements Comparable<Card>
 		this.suit = suit;
 	}
 
+	public Card(byte[] array)
+	{
+		this.rank = array[1];
+		this.suit = array[0];
+	}
+	
 	public Card(Card c)
 	{
 		this(c.getSuit(), c.getRank());
@@ -140,6 +148,16 @@ public class Card implements Comparable<Card>
 	public static boolean sameValue(Card a, Card b)
 	{
 		return a.getValue() == b.getValue();
+	}
+	
+	public byte[] toByteArray()
+	{
+		byte[] array = new byte[2];
+		
+		array[0] = (byte) suit;
+		array[1] = (byte) rank;
+		
+		return array;
 	}
 	
 	/*
@@ -247,5 +265,12 @@ public class Card implements Comparable<Card>
 		}
 		
 		return "[" + rank + pszSUITS[suit] + "]";
+	}
+	
+	public static Card getRandomCard()
+	{
+		Random random = new Random();
+		
+		return new Card(random.nextInt(MAX_SUIT), random.nextInt(MAX_RANK));
 	}
 }

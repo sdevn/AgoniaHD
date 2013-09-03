@@ -993,7 +993,7 @@ public class GameSetActivity extends Activity
 				vfpSetTypeSelection.showNext();
 			}
 			
-			RadioButton rbt = (RadioButton) argpSetGoal[state.getType()].findViewById(state.getGoal());
+			RadioButton rbt = (RadioButton) argpSetGoal[state.getType()].getChildAt(state.getGoal());
 			rbt.performClick();
 			
 			int[] modes = state.getModes();
@@ -1005,7 +1005,7 @@ public class GameSetActivity extends Activity
 			
 			sc.close();
 		}
-		catch (FileNotFoundException ex)
+		catch (Exception ex)
 		{
 			DBGLog.dbg("Can't load gameSet state. " + ex.getMessage());
 		}
@@ -1024,7 +1024,14 @@ public class GameSetActivity extends Activity
 			
 			type = spnSetType.getSelectedItemPosition();
 			
-			goal = argpSetGoal[type].getCheckedRadioButtonId();
+			for (int i = 0; i < argpSetGoal[type].getChildCount(); i++)
+			{
+				if (argpSetGoal[type].getChildAt(i).getId() == argpSetGoal[type].getCheckedRadioButtonId())
+				{
+					goal = i;
+					break;
+				}
+			}
 
 			modes = new int[cModes];
 			for (int i = 0; i < cModes; i++)

@@ -81,32 +81,35 @@
     <string name="pref_ace_finish_summ">Allow players to go out with Ace</string>
     <string name="dlg_exit_title">Quit game?</string>
     <string name="dlg_exit_message">If you quit the game, it will count as lose!!\nAre you sure?</string>
-	<string name="cpu1">Cpu1</string>
-	<string name="cpu2">Cpu2</string>
-	<string name="cpu3">Cpu3</string>
-	<string name="friend">Friend</string>
-	<string name="set_type_goal">Set Type/Goal</string>
-	<string name="players">Players</string>
-	<string name="set_btn_start">Start new set</string>
-	<string name="set_btn_continue_next">Start next game</string>
-	<string name="set_btn_continue_winner">Show winner team</string>
-	<string name="winner_team">Winner team: %s</string>
-	<string name="teams">Teams</string>
-	<string name="set_info" formatted="false">Type: %s, Goal: %d, Round: %d</string>
-	<string name="set_player_info" formatted="false">%d. %s [%s]</string> <!-- player.team, player.name, player.ai.string -->
-	<string name="set_team_info" formatted="false">%s: %d\n%s: %d</string> <!-- @string/wins, set.team.wins, @string/points, set.team.points -->
-	<string name="dlg_rate_title">You like Agonia?</string>
+    <string name="cpu1">Cpu1</string>
+    <string name="cpu2">Cpu2</string>
+    <string name="cpu3">Cpu3</string>
+    <string name="friend">Friend</string>
+    <string name="set_type_goal">Set Type/Goal</string>
+    <string name="players">Players</string>
+    <string name="set_btn_start">Start new set</string>
+    <string name="set_btn_continue_next">Start next game</string>
+    <string name="set_btn_continue_winner">Show winner team</string>
+    <string name="winner_team">Winner team: %s</string>
+    <string name="teams">Teams</string>
+    <string name="set_info" formatted="false">Type: %s, Goal: %d, Round: %d</string>
+    <string name="set_player_info" formatted="false">%d. %s [%s]</string>
+    <!-- player.team, player.name, player.ai.string -->
+    <string name="set_team_info" formatted="false">%s: %d\n%s: %d</string>
+    <!-- @string/wins, set.team.wins, @string/points, set.team.points -->
+    <string name="dlg_rate_title">You like Agonia?</string>
     <string name="dlg_rate_message">If you enjoy to play Agonia, please rate it with five stars and a good comment!!\nIf you dont, say me what you didn\'t like and i will fix it soon.\nThank you!!</string>
     <string name="dlg_about_message"><![CDATA[<font color="white">Old-style Deck icons downloaded from: <a href="http://freeware.esoterica.free.fr/html/freecards.html" target="_blank">freeware.esoterica.free.fr</a><br />(Authors: Jesse Fuchs and Tom Hart)<br /><br />This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by/3.0/gr/deed.en">Creative Commons Attribution 3.0 Greece License</a>.</font><br /> ]]></string>
-    
+
     <!-- unused -->
     <string name="dlg_comming_soon_message">➤save/load GameSet/Game\n➤hard mode\n➤more preferences for more special cards\n➤game history when game finished\n</string>
-    
+
     <!-- v2.1 -->
     <string name="custom_font">fonts/BLACKR.ttf</string>
     <string name="key_p3_name">p3_name</string>
-    <string name="key_p4_name">p4_name</string> <!-- friend -->
-    <string name="dlg_change_name_title">Set new name for "%s"</string>    
+    <string name="key_p4_name">p4_name</string>
+    <!-- friend -->
+    <string name="dlg_change_name_title">Set new name for "%s"</string>
     <string name="key_old_deck">old_deck</string>
     <string name="pref_old_deck_summ">Use old-style deck</string>
     <string name="pref_old_deck_title">Old-style deck</string>
@@ -119,21 +122,18 @@
     <string name="key_player_turn_color2">key_player_turn_color2</string>
     <string name="pref_player_turn_color_title2">Player\'s turn flashing color</string>
     <string name="color_red">Red</string>
-	<string name="color_blue">Blue</string>
-	<string name="color_yellow">Yellow</string>
-	<string name="color_green">Green</string>
-	<string name="color_cyan">Cyan</string>
-	<string name="color_magenta">Magenta</string>
-	<string name="color_black">Black</string>
-	<string name="color_none">None</string>
-	<string name="key_game_music">key_music</string>
+    <string name="color_blue">Blue</string>
+    <string name="color_yellow">Yellow</string>
+    <string name="color_green">Green</string>
+    <string name="color_cyan">Cyan</string>
+    <string name="color_magenta">Magenta</string>
+    <string name="color_black">Black</string>
+    <string name="color_none">None</string>
+    <string name="key_game_music">key_music</string>
     <string name="pref_game_music_title">Background music</string>
     <string name="key_game_sfx">key_sfx</string>
     <string name="pref_game_sfx_title">Game sound effects</string>
-	
-    <string name="dlg_whats_new_message">➤Players can go out with nine, eight or seven\n\n<b>Coming soon!</b>\n➤online games\n</string>
-    <string name="key_dlg_whats_new_once">key_dlg_whats_new_once_v2.5</string>
-    
+
     <!-- v2.2 -->
     <string name="dlg_set_load_title">Load game</string>
     <string name="dlg_set_delete_games_title">Select saved games to delete</string>
@@ -142,25 +142,51 @@
     <string name="set_toast_on_save_game">Saved as %s</string>
     <string name="set_toast_no_saved_games">No saved games found. . .</string>
 
-	<!-- v2.3 -->
-	<string name="stats_games_infos_emptry">\n\n\n\n\nNo stats recorded yet. . .</string>
-	<string name="stats_games_infos" formatted="false">Games: %d\n\t\t\t\t\t\tWon / Lost\n\t1v1:%12d / %d\n\t1v1v1:%8d / %d\n\t2v2:%12d / %d\n\nSets: %d\n\t\t\t\t\t\tWon / Lost\n\t1v1:%12d / %d\n\t1v1v1:%8d / %d\n\t2v2:%12d / %d\n\nCards Played: %d\nAces: %d\nSevens: %d\nEights: %d\nNines: %d\n\nCards drawn: %d (drawn from sevens are excluded)\nDrawn from sevens: %d\n\nPasso %d times\n\nTotal points: %d\nMax points gained: %d</string>
+    <!-- v2.3 -->
+    <string name="stats_games_infos_emptry">\n\n\n\n\nNo stats recorded yet. . .</string>
+    <string name="stats_games_infos" formatted="false">Games: %d\n\t\t\t\t\t\tWon / Lost\n\t1v1:%12d / %d\n\t1v1v1:%8d / %d\n\t2v2:%12d / %d\n\nSets: %d\n\t\t\t\t\t\tWon / Lost\n\t1v1:%12d / %d\n\t1v1v1:%8d / %d\n\t2v2:%12d / %d\n\nCards Played: %d\nAces: %d\nSevens: %d\nEights: %d\nNines: %d\n\nCards drawn: %d (drawn from sevens are excluded)\nDrawn from sevens: %d\n\nPasso %d times\n\nTotal points: %d\nMax points gained: %d</string>
 
-	<!-- v2.4 -->
-	<string name="dlg_finish_btn_history">Game history. . .</string>
-	<string name="dlg_history_title">Game history</string>
-	<string name="drew_cards">drew %d</string>
-	
-	<!-- 2.5 -->
-	<string name="key_nine_finish">nine_finish</string>
-	<string name="pref_nine_finish_title">Nine The Last</string>
+    <!-- v2.4 -->
+    <string name="dlg_finish_btn_history">Game history. . .</string>
+    <string name="dlg_history_title">Game history</string>
+    <string name="drew_cards">drew %d</string>
+
+    <!-- 2.5 -->
+    <string name="key_nine_finish">nine_finish</string>
+    <string name="pref_nine_finish_title">Nine The Last</string>
     <string name="pref_nine_finish_summ">Players can go out with Nine</string>
-    
-	<string name="key_seven_finish">seven_finish</string>
-	<string name="pref_seven_finish_title">Seven The Last</string>
+    <string name="key_seven_finish">seven_finish</string>
+    <string name="pref_seven_finish_title">Seven The Last</string>
     <string name="pref_seven_finish_summ">If a player go out with Seven, next player will not draw card</string>
-    
-	<string name="key_eight_finish">eight_finish</string>
-	<string name="pref_eight_finish_title">Eight The Last</string>
+    <string name="key_eight_finish">eight_finish</string>
+    <string name="pref_eight_finish_title">Eight The Last</string>
     <string name="pref_eight_finish_summ">Allow players to go out with Eight</string>
+    <string name="menu_btn_online">Online Game</string>
+
+    <!-- v3.0 -->
+    <string name="app_id">736079949741</string>
+    <string name="leaderboard_elo_points">CgkIrd-ijrYVEAIQAQ</string>
+    <string name="leaderboard_game_points">CgkIrd-ijrYVEAIQAg</string>
+    <string name="leaderboard_total_online_wins">CgkIrd-ijrYVEAIQAw</string>
+    <string name="leaderboard_best_winning_streak">CgkIrd-ijrYVEAIQBA</string>
+    <string name="pref_online_title">Online</string>
+    <string name="key_publish_name">publish_name</string>
+    <string name="pref_publish_name_title">Publish name</string>
+    <string name="pref_publish_name_summ">Allow other players to see your Google+ name</string>
+    <string name="toast_signin">Please sign in to play online</string>
+    <string name="toast_signout">Signed out</string>
+    <string name="elo_localized_format" formatted="false">Wins:%d Games:%d ELO:%d</string>
+    <string name="elo_localized_long_format" formatted="false">Wins:%d \t Games:%d\nToday games:%d of %d (%d+%d)\nELO:%d\nGame points:%d\nCurrent winning streak:%d\nMax winning streak:%d\n\nGames history\n-------------\n%s</string>
+    <string name="elo_date_format">dd/MM/yyyy</string>
+    <string name="won">Won</string>
+    <string name="lost">Lost</string>
+    <string name="dlg_extra_games_title">You reach the daily limit</string>
+    <string name="dlg_extra_games_message">You played a lot games for today.\nTo play more, please choose one from available offers.</string>
+    <string name="dlg_exit_message_not_started">Quit the game.\nAre you sure?</string>
+    <string name="please_wait">Searching for players please wait...</string>
+
+    <!-- TODO: change in every version -->
+    <string name="dlg_whats_new_message">Hit online and login with your google account to play online.\nFor now only default preferences is applied for online games:\nNine Special\nRecycle deck\nSeven finish\nYou have 45 seconds to play a card in online mode\n\nTo report bugs, press menu button while playing</string>
+    <string name="key_dlg_whats_new_once">key_dlg_whats_new_once_v3.0a</string>
+
 </resources>

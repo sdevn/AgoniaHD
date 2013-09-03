@@ -19,7 +19,8 @@ public class AgoniaGamesStatsManager implements AgoniaGameListener
 	private static final String KEYS_PREFIX = "key_prof_";
 	private static final String[] pszAI_KEYS =	{	KEYS_PREFIX + "Monkey_CPU",
 												 	KEYS_PREFIX + "Easy_CPU",
-												 	KEYS_PREFIX + "Moderate_CPU"
+												 	KEYS_PREFIX + "Moderate_CPU",
+												 	KEYS_PREFIX + "Online"
 												};
 	private static final Pattern PATTERN_OF_KEYS = Pattern.compile(KEYS_PREFIX);
 	
@@ -125,7 +126,11 @@ public class AgoniaGamesStatsManager implements AgoniaGameListener
 		{
 			profKey = KEYS_PREFIX + p.getName();
 		}
-		else 
+		else if (p.getMode() == AgoniaAI.MODE_ONLINE)
+		{
+			profKey = pszAI_KEYS[pszAI_KEYS.length - 1];
+		}
+		else
 		{
 			profKey = pszAI_KEYS[p.getMode()];
 		}

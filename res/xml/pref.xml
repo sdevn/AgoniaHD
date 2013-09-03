@@ -4,80 +4,87 @@
     <PreferenceCategory
         android:key="general"
         android:title="@string/pref_general_title" >
-         
-		<EditTextPreference
+        <EditTextPreference
             android:defaultValue="@string/default_p1_name"
             android:dialogTitle="@string/pref_p1_name_title"
             android:key="@string/key_p1_name"
             android:title="@string/pref_p1_name_title" />
-<!--
+        <!--
 		<EditTextPreference
             android:defaultValue="@string/default_p2_name"
             android:dialogTitle="@string/pref_p2_name_title"
             android:key="@string/key_p2_name"
-            android:title="@string/pref_p2_name_title" /> 
--->
+            android:title="@string/pref_p2_name_title" /> 
+        -->
         <CheckBoxPreference
             android:defaultValue="true"
             android:key="@string/key_color_hints"
             android:summary="@string/pref_color_hints_summ"
             android:title="@string/pref_color_hints_title" />
-        
-        <!-- v2.1 -->        
-		<CheckBoxPreference
+
+        <!-- v2.1 -->
+        <CheckBoxPreference
             android:defaultValue="false"
             android:key="@string/key_game_music"
             android:title="@string/pref_game_music_title" />
-        
-		<CheckBoxPreference
+        <CheckBoxPreference
             android:defaultValue="true"
             android:key="@string/key_game_sfx"
             android:title="@string/pref_game_sfx_title" />
-        
-		<devN.etc.pref.ComboBoxPreference
+
+        <devN.etc.pref.ComboBoxPreference
             android:defaultValue="@string/pref_player_turn_default_color"
             android:entries="@array/player_turn_colors"
             android:entryValues="@array/player_turn_color_values"
             android:key="@string/key_player_turn_color1"
             android:title="@string/pref_player_turn_color_title1" />
-		
-		<devN.etc.pref.ComboBoxPreference
+        <devN.etc.pref.ComboBoxPreference
             android:defaultValue="@string/pref_player_turn_default_color"
             android:entries="@array/player_turn_colors"
             android:entryValues="@array/player_turn_color_values"
             android:key="@string/key_player_turn_color2"
             android:title="@string/pref_player_turn_color_title2" />
-		
+
         <CheckBoxPreference
             android:defaultValue="false"
             android:key="@string/key_old_deck"
             android:summary="@string/pref_old_deck_summ"
             android:title="@string/pref_old_deck_title" />
-
-		<CheckBoxPreference
+        <CheckBoxPreference
             android:defaultValue="false"
             android:key="@string/key_old_anim"
             android:summary="@string/pref_old_anim_summ"
             android:title="@string/pref_old_anim_title" />
 
-<!--        <devN.games.agonia.pref.ResetScoresDlgPref
+        <!--
+            <devN.games.agonia.pref.ResetScoresDlgPref
             android:dialogIcon="@android:drawable/ic_dialog_alert"
             android:key="@string/key_reset_dlg"
             android:title="@string/pref_reset_title" /> 
-    	    android:dialogMessage="@string/pref_reset_dlg_message" 
--->
+    	    android:dialogMessage="@string/pref_reset_dlg_message"
+        -->
+    </PreferenceCategory>
+    <PreferenceCategory
+        android:key="online"
+        android:title="@string/pref_online_title" >
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="@string/key_publish_name"
+            android:summary="@string/pref_publish_name_summ"
+            android:title="@string/pref_publish_name_title" />
     </PreferenceCategory>
     <PreferenceCategory
         android:key="ingame"
         android:title="@string/pref_ingame_title" >
-<!--
+
+        <!--
         <ListPreference
             android:defaultValue="@string/default_difficult_mode"
             android:entries="@array/difficult_modes"
             android:entryValues="@array/difficult_modes_values"
             android:key="@string/key_difficult"
-            android:title="@string/pref_difficult_title" />
--->        
+            android:title="@string/pref_difficult_title" />
+        -->
         <devN.etc.pref.ComboBoxPreference
             android:defaultValue="0"
             android:entries="@array/deck_finish_options"
@@ -90,32 +97,27 @@
             android:key="@string/key_is_nine_special"
             android:summary="@string/pref_nine_summ"
             android:title="@string/pref_nine_title" />
-        
         <CheckBoxPreference
-            android:dependency="@string/key_is_nine_special"
             android:defaultValue="false"
+            android:dependency="@string/key_is_nine_special"
             android:key="@string/key_nine_finish"
             android:summary="@string/pref_nine_finish_summ"
             android:title="@string/pref_nine_finish_title" />
-        
         <CheckBoxPreference
             android:defaultValue="false"
             android:key="@string/key_ace_on_ace"
             android:summary="@string/pref_ace_on_ace_summ"
             android:title="@string/pref_ace_on_ace_title" />
-        
         <CheckBoxPreference
             android:defaultValue="false"
             android:key="@string/key_ace_finish"
             android:summary="@string/pref_ace_finish_summ"
             android:title="@string/pref_ace_finish_title" />
-        
         <CheckBoxPreference
             android:defaultValue="false"
             android:key="@string/key_eight_finish"
             android:summary="@string/pref_eight_finish_summ"
             android:title="@string/pref_eight_finish_title" />
-        
         <CheckBoxPreference
             android:defaultValue="false"
             android:key="@string/key_seven_finish"

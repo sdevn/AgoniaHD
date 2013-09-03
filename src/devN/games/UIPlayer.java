@@ -16,6 +16,7 @@ import android.view.animation.AnimationUtils;
 import android.view.animation.TranslateAnimation;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import com.google.android.gms.games.multiplayer.Participant;
 import devN.etc.dragdrop.DragSource;
 import devN.etc.dragdrop.DropTarget;
 import devN.games.agonia.AgoniaAI;
@@ -357,20 +358,20 @@ public class UIPlayer extends LinearLayout implements AnimationListener, DropTar
 
 		int childs = getChildCount();
 		
-		View v;
+		UICard v;
 
 		for (int i = 0; i < childs && atMost > 0; i++)
 		{
-			v = getChildAt(i);
-			if (v.getTag().equals(c))
+			v = (UICard) getChildAt(i);
+			if (v.getCard().equals(c))
 			{
 				animDeltaX = calcPlayDeltaX((UICard) v);
 				
 				if (bAnimOnRemove && !useOldAnim)
 				{
 					animOnRemove = getNewPlayAnim();
-					((UICard) v).setVisible(true);
-					((UICard) v).postSetImage("");
+					v.setVisible(true);
+					v.postSetImage("");
 				}
 				
 				removeFromContainer(i, success);
@@ -623,6 +624,7 @@ public class UIPlayer extends LinearLayout implements AnimationListener, DropTar
 	public void setName(String name)
 	{
 		player.setName(name);
+		refreshInfo();
 	}
 
 	public int getScore()
@@ -708,6 +710,12 @@ public class UIPlayer extends LinearLayout implements AnimationListener, DropTar
 		player.setSetWins(p.getSetWins());
 		player.setAI(AgoniaAIBuilder.createById(aiMode, player));
 		player.setPlayingInSet(true);
+	}
+	
+	public void setPlayerTo(Participant p)
+	{
+		player.id = p.getParticipantId().hashCode();
+		player.name = p.getDisplayName();
 	}
 		
 	public static boolean isUseOldAnim()

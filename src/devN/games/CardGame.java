@@ -1,8 +1,10 @@
 package devN.games;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Random;
 import java.util.Set;
 
 public abstract class CardGame
@@ -17,12 +19,18 @@ public abstract class CardGame
 	protected List<Player> players = new ArrayList<Player>();;
 	protected List<Card> stackTop;
 	
+	protected boolean isOnline;
+	protected long seed;
+	
 	/** v2.4b changed to Set<> to prevent duplicates */
 	protected static Set<GameListener> gameListeners = new HashSet<GameListener>();
 	
-	public CardGame(Deck d, List<Player> players, int startDeal, int stackTopSize)
+	public CardGame(Deck d, List<Player> players, int startDeal, int stackTopSize, 
+	                boolean isOnline, long seed)
 	{
 //		startDeal = DONT_DEAL;
+		this.isOnline = isOnline;
+		this.seed = isOnline ? seed : new Random().nextLong();
 		
 		init(d, players, startDeal);
 
@@ -32,8 +40,8 @@ public abstract class CardGame
 //		debugDraw.add(new Card(2, 7));
 //		debugDraw.add(new Card(3, 7));
 //
-//		players.get(0).draw(debugDraw.subList(0, 3));
-//		players.get(1).draw(debugDraw);
+//		deck.put(Arrays.asList(new Card[]{new Card(1, 7), new Card(0, 7), new Card(3, 7), new Card(2, 7)}), false);
+//		players.get(0).draw(Arrays.asList(new Card[]{new Card(3, 7), new Card(2, 7)}));
 		
 		STACK_TOP_COUNT = stackTopSize;		
 		
@@ -70,8 +78,16 @@ public abstract class CardGame
 		START_DEAL_COUNT = startDeal;
 		deck = d;
 		this.players = players;
-		deck.shuffle();
-
+		
+		if (isOnline)
+		{
+			deck.shuffle(seed);
+		}
+		else
+		{
+			deck.shuffle();
+		}
+		
 		for (Player p : players)
 		{
 			p.setDeck(deck);

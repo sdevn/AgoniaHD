@@ -6,6 +6,7 @@ import devN.games.Player;
 
 public interface AgoniaAI extends AIPlayer
 {
+	public static final int MODE_ONLINE		= -2;
 	public static final int MODE_NO_AI		= -1;
 	public static final int MODE_MONKEY 	= 0;
 	public static final int MODE_EASY 		= 1;
@@ -20,6 +21,33 @@ public interface AgoniaAI extends AIPlayer
 	
 	public static class AgoniaAIBuilder
 	{
+		public static final AgoniaAI ONLINE_AI = new AgoniaAI() {
+
+			@Override
+			public Card willPlay()
+			{
+				return Card.NULL_CARD;
+			}
+
+			@Override
+			public int getAceSuit()
+			{
+				return 0;
+			}
+
+			@Override
+			public Card playSeven()
+			{
+				return Card.NULL_CARD;
+			}
+
+			@Override
+			public int getMode()
+			{
+				return MODE_ONLINE;
+			}
+			
+		};
 		private static final int MODE_TO_STRING_LEN = 3;
 		
 		public static final String[] PSZAI_STRINGS = new String[4];
@@ -33,6 +61,10 @@ public interface AgoniaAI extends AIPlayer
 			
 			switch (mode)
 			{
+			case MODE_ONLINE:
+				cpuAI = ONLINE_AI;
+				break;
+				
 			case MODE_NO_AI:
 				cpuAI = null;
 				break;
@@ -63,7 +95,7 @@ public interface AgoniaAI extends AIPlayer
 		
 		public static String getAIString(int id)
 		{
-			if (id == MODE_NO_AI)
+			if (id < 0)
 			{
 				return "";
 			}

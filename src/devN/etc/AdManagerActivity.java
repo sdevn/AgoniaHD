@@ -9,17 +9,18 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import org.json.JSONObject;
-import com.appflood.AppFlood;
-import com.appflood.AppFlood.AFEventDelegate;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-import com.ironsource.mobilcore.ConfirmationResponse;
-import com.ironsource.mobilcore.MobileCore;
-import com.ironsource.mobilcore.MobileCore.LOG_TYPE;
 import android.app.Activity;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
+import com.appflood.AppFlood;
+import com.appflood.AppFlood.AFEventDelegate;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import com.ironsource.mobilcore.CallbackResponse;
+import com.ironsource.mobilcore.CallbackResponse.TYPE;
+import com.ironsource.mobilcore.MobileCore;
+import com.ironsource.mobilcore.MobileCore.LOG_TYPE;
 
 public class AdManagerActivity extends Activity
 {
@@ -112,7 +113,7 @@ public class AdManagerActivity extends Activity
 		
 		if ("mobilecore".equals(ad.provider))
 		{
-			MobileCore.showOfferWall(this, new ConfirmationResponse(){
+			MobileCore.showOfferWall(this, new CallbackResponse(){
 			
 				@Override
 				public void onConfirmation(TYPE resp)
@@ -120,7 +121,7 @@ public class AdManagerActivity extends Activity
 					ad.shown();
 					lastAdShown = ad.lastShown.getTime();
 
-					if (resp == TYPE.AGREED)
+					if (resp == TYPE.AGREEMENT_AGREE)
 					{
 						ad.clicked();
 					}

@@ -2,19 +2,19 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="devN.games.agonia"
     android:installLocation="preferExternal"
-    android:versionCode="16"
-    android:versionName="2.5" >
+    android:versionCode="18"
+    android:versionName="3.0a" >
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-	<uses-permission android:name="android.permission.READ_PHONE_STATE" />
-	<uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <!-- v2.3 -->
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
-	
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
     <uses-sdk
-        android:minSdkVersion="7"
-        android:targetSdkVersion="17" />
+        android:minSdkVersion="8"
+        android:targetSdkVersion="18" />
 
     <application
         android:name="AgoniaApp"
@@ -22,8 +22,14 @@
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/devn_theme" >
-        
-		<activity
+        <meta-data
+            android:name="com.google.android.gms.games.APP_ID"
+            android:value="@string/app_id" />
+        <meta-data
+            android:name="com.google.android.gms.appstate.APP_ID"
+            android:value="@string/app_id" />
+
+        <activity
             android:name="devN.etc.SplashScreen"
             android:label="@string/app_name" >
             <intent-filter>
@@ -40,20 +46,20 @@
             android:name=".AgoniaMenu"
             android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"
             android:screenOrientation="portrait" />
-         <activity
+        <activity
             android:name=".GameSetActivity"
             android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"
             android:screenOrientation="portrait" />
         <activity
             android:name=".AgoniaPref"
-            android:theme="@android:style/Theme.Black"
             android:configChanges="orientation|keyboardHidden|keyboard"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.Black" />
         <activity
             android:name=".HowToPlay"
             android:configChanges="orientation|keyboardHidden|keyboard"
             android:screenOrientation="portrait" />
-       
+
         <!-- v2.3 added -->
         <service
             android:name="com.ironsource.mobilcore.MobileCoreReport"
@@ -63,12 +69,12 @@
             android:name="com.ironsource.mobilcore.InstallationTracker"
             android:enabled="true"
             android:process=":installationTracker" />
-        
+
         <activity
             android:name=".GameStatsActivity"
             android:configChanges="orientation|keyboardHidden|keyboard"
             android:screenOrientation="portrait" />
-		<activity
+        <activity
             android:name="com.appflood.AFPanelActivity"
             android:configChanges="keyboardHidden"
             android:theme="@android:style/Theme.Translucent.NoTitleBar.Fullscreen" >
@@ -85,13 +91,39 @@
             android:launchMode="singleTask"
             android:theme="@android:style/Theme.Translucent.NoTitleBar.Fullscreen" >
         </activity>
-        
+
         <!-- v2.4 added -->
-        <activity android:name="devN.etc.AdManagerActivity"
+        <activity
+            android:name="devN.etc.AdManagerActivity"
             android:theme="@android:style/Theme.Translucent.NoTitleBar.Fullscreen" />
-		
-		<activity android:name="com.google.ads.AdActivity"
-              android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"/>
+        <activity
+            android:name="com.google.ads.AdActivity"
+            android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize" />
+
+        <!-- v3.0 added -->
+        <activity
+            android:name="com.tapjoy.TJCOffersWebView"
+            android:configChanges="orientation|keyboardHidden|screenSize" />
+        <activity
+            android:name="com.tapjoy.TapjoyFullScreenAdWebView"
+            android:configChanges="orientation|keyboardHidden|screenSize" />
+        <activity
+            android:name="com.tapjoy.TapjoyDailyRewardAdWebView"
+            android:configChanges="orientation|keyboardHidden|screenSize" />
+        <activity
+            android:name="com.tapjoy.TapjoyVideoView"
+            android:configChanges="orientation|keyboardHidden|screenSize" />
+        <activity
+            android:name="com.tapjoy.TJAdUnitView"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:hardwareAccelerated="true"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar.Fullscreen" />
+        <activity
+            android:name="com.tapjoy.mraid.view.ActionHandler"
+            android:configChanges="orientation|keyboardHidden|screenSize" />
+        <activity
+            android:name="com.tapjoy.mraid.view.Browser"
+            android:configChanges="orientation|keyboardHidden|screenSize" />
     </application>
 
 </manifest>

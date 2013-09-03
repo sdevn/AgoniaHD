@@ -152,8 +152,6 @@ public class UICard extends ImageButton
 			requestLayout();
 			invalidate();
 		}
-		
-		setTag(card);
 	}
 	
 	public void postSetImage(final String resName)

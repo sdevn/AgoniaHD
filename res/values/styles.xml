@@ -2,21 +2,19 @@
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
 
     <!-- 2.1 -->
-   	<style name="devn_spinner" parent="@android:style/Widget.Spinner">
-	    <item name="android:background">@drawable/sel_bkgr_spn</item>
-	</style>
-	
-    <!-- 2.1 -->
-   	<style name="devn_button" parent="@android:style/Widget.Button">
-	    <item name="android:background">@drawable/sel_bkgr_btn</item>
-	</style>
-    
-    <!-- 2.1 -->
-   	<style name="devn_dialog" parent="@android:style/Theme.Dialog">
+    <style name="devn_spinner" parent="@android:style/Widget.Spinner">
+        <item name="android:background">@drawable/sel_bkgr_spn</item>
+    </style>
 
-	</style>
-	
-   	<!-- 2.1 -->
+    <!-- 2.1 -->
+    <style name="devn_button" parent="@android:style/Widget.Button">
+        <item name="android:background">@drawable/sel_bkgr_btn</item>
+    </style>
+
+    <!-- 2.1 -->
+    <style name="devn_dialog" parent="@android:style/Theme.Dialog"></style>
+
+    <!-- 2.1 -->
     <style name="devn_theme" parent="android:Theme.Black.NoTitleBar.Fullscreen">
         <item name="android:buttonStyle">@style/devn_button</item>
         <item name="android:buttonStyleSmall">@style/devn_button</item>
@@ -27,22 +25,24 @@
     <style name="menu_button" parent="@android:style/Widget.Button">
         <item name="android:textAppearance">?android:attr/textAppearanceLarge</item>
         <item name="android:background">@drawable/btn_menu</item>
-        <!-- 2.1 removed 
+        <!--
+        2.1 removed 
         <item name="android:layout_marginBottom">@dimen/menu_btn_margin_bottom</item>
-        <item name="android:layout_centerHorizontal">true</item>
+        <item name="android:layout_centerHorizontal">true</item>
         -->
         <item name="android:layout_height">264dp</item>
-        <item name="android:layout_width">190dp</item>        
+        <item name="android:layout_width">190dp</item>
         <item name="android:gravity">top|center_horizontal</item>
         <item name="android:paddingTop">25dp</item>
     </style>
-    
+
     <style name="menu_side_icon" parent="@android:style/Widget.ImageButton">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_gravity">center_horizontal</item>
         <item name="android:background">@drawable/sel_bkgr_touched</item>
-	</style>
-    
+    </style>
+
     <style name="how_button" parent="devn_button">
         <item name="android:textAppearance">?android:attr/textAppearanceLarge</item>
         <item name="android:layout_height">wrap_content</item>
@@ -57,8 +57,7 @@
         <item name="android:scaleType">fitCenter</item>
     </style>
 
-	<style name="UIStackTop" parent="@style/UICard">
-    </style>
+    <style name="UIStackTop" parent="@style/UICard"></style>
 
     <style name="divider_horizontal">
         <item name="android:layout_width">fill_parent</item>
@@ -73,31 +72,32 @@
         <item name="android:background">@color/total_divider</item>
         <item name="android:src">@drawable/divider_trans</item>
     </style>
-    
+
     <style name="how_divider" parent="@style/divider_horizontal">
         <item name="android:layout_marginBottom">@dimen/how_divider_margin_bottom</item>
     </style>
-    
+
     <style name="how_title" parent="@android:style/Widget.TextView">
         <item name="android:textAppearance">?android:attr/textAppearanceLarge</item>
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
     </style>
-    
+
     <style name="how_title_special" parent="@style/how_title">
         <item name="android:textStyle">bold</item>
     </style>
-    
+
     <style name="how_content" parent="@android:style/Widget.TextView">
         <item name="android:textAppearance">?android:attr/textAppearanceMedium</item>
         <item name="android:layout_marginBottom">@dimen/how_content_margin_bottom</item>
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
     </style>
-    
-	<style name="dlg_ace_suits" parent="@android:style/Widget.ImageButton">
+
+    <style name="dlg_ace_suits" parent="@android:style/Widget.ImageButton">
         <item name="android:background">@drawable/sel_bkgr_touched</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_width">wrap_content</item>
-    </style>    
+    </style>
+
 </resources>

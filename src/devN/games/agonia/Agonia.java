@@ -37,11 +37,13 @@ public class Agonia extends CardGame
 	 * 
 	 * @param firstPlayerId the id of player that was playing first in previous game
 	 */
-	public Agonia(Deck d, List<Player> players, boolean shufflePlayers, int firstPlayerId)
+	public Agonia(Deck d, List<Player> players, boolean shufflePlayers, int firstPlayerId, 
+	              boolean isOnline, long seed)
 	{
 		super(d, players,
 		      START_DEAL_COUNT, 	
-		      1); 	// STACK_TOP_COUNT
+		      1, 	// STACK_TOP_COUNT
+		      isOnline, seed);
 	
 		init(shufflePlayers, firstPlayerId);
 	}
@@ -50,8 +52,9 @@ public class Agonia extends CardGame
 	{
 		super(d, players, 
 			customInitDeal, 	
-			1); 	// STACK_TOP_COUNT
-
+			1, 	// STACK_TOP_COUNT
+			false, 0);
+		
 		init(false, -1);
 	}
 
@@ -78,7 +81,7 @@ public class Agonia extends CardGame
 
 		if (i == -1)
 		{
-			Random r = new Random();
+			Random r = new Random(seed);
 			i = r.nextInt(n); // index of first player
 		}
 		else 
@@ -291,13 +294,15 @@ public class Agonia extends CardGame
 				
 				recycled.draw(top);
 
-				deck.put(recycled.cards(), true);
+				deck.put(recycled.cards(), false);
+				deck.shuffle(seed);
 				}
 				break;
 
 			case DECK_FINISH_PICK_NEW:
 				{
-				deck.put(new Deck().cards(), true);	
+				deck.put(new Deck().cards(), false);	
+				deck.shuffle(seed);
 				}
 				break;
 			

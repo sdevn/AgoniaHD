@@ -1,6 +1,5 @@
 package devN.etc;
 
-import static java.lang.String.format;
 import java.io.ByteArrayInputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.InetAddress;
@@ -13,12 +12,17 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Build;
 import android.text.format.Formatter;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
@@ -36,6 +40,9 @@ public class LeadBoltAdView extends WebView
 	private final String mobFoxURL;
 	private long nextRefresh = AD_REFRESH_INTERVAL;
 	private boolean visible;
+	private boolean useIntent;
+	private boolean loaded;
+	private String intentUrl;
 	private boolean fixed;
 	
 	public LeadBoltAdView(Context context, AttributeSet attrs, int defStyle)
@@ -109,6 +116,13 @@ public class LeadBoltAdView extends WebView
 		}
 
 		setWebViewClient(new AutoHideClient());
+		setWebChromeClient(new WebChromeClient(){
+			public void onProgressChanged(WebView view, int progress)
+			{
+				loaded = 100 == progress;
+			}
+		});
+
 		setVisibility(GONE);
 	}
 
@@ -149,6 +163,7 @@ public class LeadBoltAdView extends WebView
 //			data = format(DATA, myAdId);
 		}
 		
+		loaded = false;
 		loadData(data, "text/html", "UTF-8");		
 	}
 	
@@ -207,8 +222,19 @@ public class LeadBoltAdView extends WebView
 		@Override
 		public void onPageStarted(WebView view, String url, Bitmap favicon)
 		{
-			view.setVisibility(GONE);
-			super.onPageStarted(view, url, favicon);
+			DBGLog.ads("Clicked! " + useIntent);
+			
+			if (useIntent && loaded)
+			{
+				Uri appUri = Uri.parse(intentUrl);
+				Intent intent = new Intent(Intent.ACTION_VIEW, appUri);
+				getContext().startActivity(intent);
+			}	
+			else 
+			{
+				view.setVisibility(GONE);
+				super.onPageStarted(view, url, favicon);
+			}
 		}	
 	}
 	
@@ -245,6 +271,21 @@ public class LeadBoltAdView extends WebView
 					data = doc.getElementsByTagName("htmlString")
 								.item(0)
 								.getTextContent();
+					
+					useIntent = doc.getElementsByTagName("clicktype")
+									.item(0).getTextContent().equals("safari");
+					
+					if (useIntent)
+					{
+						intentUrl = doc.getElementsByTagName("clickurl").item(0).getTextContent();
+						
+						DBGLog.ads("ad on browser. URL: " + intentUrl.substring(0, 30) + "...");
+					}
+					else 
+					{
+						DBGLog.ads(doc.getElementsByTagName("clicktype")
+									.item(0).getTextContent());
+					}
 					
 					nextRefresh = Long.parseLong(doc.getElementsByTagName("refresh")
 													.item(0).getTextContent()) * 1000;

@@ -7,6 +7,7 @@
     android:layoutAnimation="@anim/menu_in_delayed" >
 
     <!-- inner layout -->
+
     <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
@@ -14,35 +15,22 @@
         android:layoutAnimation="@anim/menu_in"
         android:orientation="vertical" >
 
-		<devN.etc.LeadBoltAdView
-		    android:layout_width="wrap_content"
-		    android:layout_height="wrap_content"
-		    android:layout_gravity="center"
-		    android:contentDescription="Menu ad"
-		    android:background="#00000000" />
-
-<!--         
-        <com.adsdk.sdk.banner.AdView
+        <devN.etc.LeadBoltAdView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            animation="true"
-            location="false"
-            publisherId="819563d36a65ebca90245302554ddb33"
-            request_url="http://my.mobfox.com/request.php"
-            android:background="#00000000" />
--->
-        <ImageView
-            android:id="@+id/imageView1"
-            android:layout_width="fill_parent"
-            android:layout_height="@dimen/menu_ic_deck_height"
-            android:contentDescription="@string/blank"
-            android:scaleType="fitXY"
-            android:src="@drawable/ic_deck" />
+            android:background="#00000000"
+            android:contentDescription="Menu ad" />
+
+        <Button
+            android:id="@+id/btnOnlineGame"
+            style="@style/menu_button"
+            android:text="@string/menu_btn_online" />
 
         <Button
             android:id="@+id/btGame"
             style="@style/menu_button"
+            android:layout_marginTop="@dimen/menu_btn_top_marg"
             android:text="@string/menu_btn_new_game" />
 
         <Button
@@ -66,18 +54,12 @@
         android:layout_alignParentRight="true"
         android:orientation="vertical" >
 
-        <!--
-        	android:layout_gravity="right"
-        	android:gravity="right"
-       		android:layout_marginTop="@dimen/menu_side_icon_top_marg"
-        -->
-
-		<ImageButton 
-		    android:id="@+id/ibtStats"
+        <ImageButton
+            android:id="@+id/ibtStats"
             style="@style/menu_side_icon"
             android:contentDescription="@string/blank"
             android:src="@drawable/ic_stats" />
-		
+
         <ImageButton
             android:id="@+id/ibtFacebook"
             style="@style/menu_side_icon"
@@ -99,9 +81,58 @@
         <ImageButton
             android:id="@+id/ibtExit"
             style="@style/menu_side_icon"
-            android:layout_height="wrap_content"
             android:contentDescription="@string/blank"
             android:src="@drawable/ic_x" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/menu_left_side_icons_container"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:orientation="vertical"
+        android:visibility="gone" >
+
+        <ImageButton
+            android:id="@+id/ibtn_player"
+            style="@style/menu_side_icon"
+            android:contentDescription="@string/blank"
+            android:src="@drawable/ic_player" />
+
+        <ImageButton
+            android:id="@+id/ibtn_leaderboards_elo"
+            style="@style/menu_side_icon"
+            android:contentDescription="@string/blank"
+            android:src="@drawable/ic_crown_elo"
+            android:tag="@string/leaderboard_elo_points" />
+
+        <ImageButton
+            android:id="@+id/ibtn_leaderboards_winning_streak"
+            style="@style/menu_side_icon"
+            android:contentDescription="@string/blank"
+            android:src="@drawable/ic_crown_winning_streak"
+            android:tag="@string/leaderboard_best_winning_streak" />
+
+        <ImageButton
+            android:id="@+id/ibtn_leaderboards_wins"
+            style="@style/menu_side_icon"
+            android:contentDescription="@string/blank"
+            android:src="@drawable/ic_crown_wins"
+            android:tag="@string/leaderboard_total_online_wins" />
+
+        <ImageButton
+            android:id="@+id/ibtn_leaderboards_points"
+            style="@style/menu_side_icon"
+            android:contentDescription="@string/blank"
+            android:src="@drawable/ic_crown_points"
+            android:tag="@string/leaderboard_game_points" />
+
+        <ImageButton
+            android:id="@+id/ibtn_signout"
+            style="@style/menu_side_icon"
+            android:contentDescription="@string/blank"
+            android:src="@drawable/ic_signout" />
     </LinearLayout>
 
 </RelativeLayout>

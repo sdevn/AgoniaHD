@@ -23,4 +23,9 @@ public final class DBGLog
 	{
 		Log.v("srlz", msg);
 	}
+	
+	public static void rltm(String msg)
+	{
+		Log.d("rltm", msg);
+	}
 }
