@@ -2179,8 +2179,11 @@ public class AgoniaGame extends BaseGameActivity implements DragSource, OnTouchL
 	@Override
 	public void onSignInFailed()
 	{
-		finish();
-		overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+		if (isOnline)
+		{
+			finish();
+			overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+		}
 	}
 
 	@Override
@@ -2189,8 +2192,6 @@ public class AgoniaGame extends BaseGameActivity implements DragSource, OnTouchL
 		if (isOnline && !isGameStarted)
 		{
 			getAppStateClient().loadState(this, CLOUD_SLOT_ELO);
-			
-			Toast.makeText(AgoniaGame.this, "Search players", Toast.LENGTH_SHORT).show();
 			
 			Bundle am = RoomConfig.createAutoMatchCriteria(1, 1, 0);
 	

@@ -585,6 +585,7 @@ public class AgoniaMenu extends BaseGameActivity implements OnStateLoadedListene
 	public void onSignInFailed()
 	{
 		Toast.makeText(this, R.string.toast_signin, Toast.LENGTH_SHORT).show();
+		findViewById(R.id.menu_left_side_icons_container).setVisibility(View.INVISIBLE);
 	}
 
 	@Override
@@ -609,7 +610,7 @@ public class AgoniaMenu extends BaseGameActivity implements OnStateLoadedListene
 		else 
 		{
 			myEloEntity = new EloEntity();
-			Toast.makeText(this, "Connection error!! " + statusCode, Toast.LENGTH_SHORT).show();
+			Toast.makeText(this, "Connection error!! (" + statusCode +")", Toast.LENGTH_SHORT).show();
 		}
 	}
 	
