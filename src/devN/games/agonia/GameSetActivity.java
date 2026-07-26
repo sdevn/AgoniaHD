@@ -16,7 +16,6 @@ import java.util.Calendar;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Scanner;
-import com.appflood.AppFlood;
 import com.google.gson.Gson;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -49,7 +48,6 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ViewFlipper;
-import devN.etc.AdManagerActivity;
 import devN.etc.DBGLog;
 import devN.etc.DevnDialogUtils;
 import devN.etc.TypefaceUtils;
@@ -136,12 +134,6 @@ public class GameSetActivity extends Activity
 		((AgoniaApp)getApplication()).getManager().saveStats(GameSetActivity.this, false);	// v2.3
 	}
 	
-	@Override
-	protected void onDestroy()
-	{
-		AppFlood.destroy();
-		super.onDestroy();
-	}
 
 	@Override
 	public void onBackPressed()
@@ -764,9 +756,6 @@ public class GameSetActivity extends Activity
 		{
 			if (set.isSetFinished())
 			{
-				Intent adIntent = new Intent(GameSetActivity.this, AdManagerActivity.class);
-				startActivity(adIntent); // v2.4 added
-
 				showDialog(DIALOG_SET_FINISH_ID);
 			}
 			else

@@ -19,14 +19,10 @@ import android.webkit.WebView;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.Toast;
-import com.google.android.gms.appstate.AppStateClient;
-import com.google.android.gms.appstate.OnStateLoadedListener;
-import com.google.android.gms.games.OnSignOutCompleteListener;
-import com.google.example.games.basegameutils.BaseGameActivity;
-import com.tapjoy.TapjoyConnect;
-import com.tapjoy.TapjoyEarnedPointsNotifier;
-import com.tapjoy.TapjoyFullScreenAdNotifier;
-import com.tapjoy.TapjoyNotifier;
+import devN.games.gamestub.AppStateClient;
+import devN.games.gamestub.OnStateLoadedListener;
+import devN.games.gamestub.OnSignOutCompleteListener;
+import devN.games.gamestub.BaseGameActivity;
 import devN.etc.DBGLog;
 import devN.etc.DevnDialogUtils;
 import devN.games.GameSet;
@@ -39,7 +35,6 @@ public class AgoniaMenu extends BaseGameActivity implements OnStateLoadedListene
 	private static final int DIALOG_WHATS_NEW_ID = 3;
 	@SuppressWarnings("unused")
 	private static final int DIALOG_PLAYER_ID = 4;
-	private static final int DIALOG_EXTRAGAMES_ID = 5;
 	
 	private static final double CHANCE_COMMING_DIALOG = 0.0D / 9.5D;
 	
@@ -75,21 +70,7 @@ public class AgoniaMenu extends BaseGameActivity implements OnStateLoadedListene
 	{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.menu);
-		
-		TapjoyConnect.requestTapjoyConnect(getApplicationContext(), 
-				Const.TAPJOY_APPID, 
-				Const.TAPJOY_SECRET, 
-				null);
-		
-		TapjoyConnect.getTapjoyConnectInstance().setEarnedPointsNotifier(new TapjoyEarnedPointsNotifier() {
-			@Override
-			public void earnedTapPoints(int amount)
-			{
-				Toast.makeText(AgoniaMenu.this, "You get " + amount + " more extra games!" ,  
-						Toast.LENGTH_SHORT).show();
-			}
-		});
-	
+
 		btnPref = (Button) findViewById(R.id.btPref);
 		btnGame = (Button) findViewById(R.id.btGame);
 		btnHow = (Button) findViewById(R.id.btHow);
@@ -221,10 +202,6 @@ public class AgoniaMenu extends BaseGameActivity implements OnStateLoadedListene
 					{
 						startOnlineGame();
 					}
-					else
-					{
-						showDialog(DIALOG_EXTRAGAMES_ID);
-					}
 				}
 				else 
 				{
@@ -267,24 +244,7 @@ public class AgoniaMenu extends BaseGameActivity implements OnStateLoadedListene
 	
 	@Override
 	protected void onResume()
-	{ 
-		TapjoyConnect.getTapjoyConnectInstance().getTapPoints(new TapjoyNotifier()
-		{
-			@Override
-			public void getUpdatePointsFailed(String error)
-			{
-				extraGames = 0;
-				DBGLog.dbg("get tap points error!! " + error);
-			}
-			
-			@Override
-			public void getUpdatePoints(String currencyName, int pointTotal)
-			{
-				extraGames = pointTotal;
-				DBGLog.dbg("tap points " + extraGames);
-			}
-		});
-		
+	{
 		if (getGamesClient().isConnected())
 		{
 			getAppStateClient().loadState(AgoniaMenu.this, Const.CLOUD_SLOT_ELO);
@@ -466,57 +426,6 @@ public class AgoniaMenu extends BaseGameActivity implements OnStateLoadedListene
 					}
 				})
 				.setCancelable(false)
-				;
-				dialog = builder.create();
-			}
-			break;
-			
-		case DIALOG_EXTRAGAMES_ID:
-			{
-				DialogInterface.OnClickListener docl = new DialogInterface.OnClickListener(){
-					
-					@Override
-					public void onClick(DialogInterface dialog, int which)
-					{
-						switch (which)
-						{
-						case DialogInterface.BUTTON_POSITIVE:
-							TapjoyConnect.getTapjoyConnectInstance().getFullScreenAd(new TapjoyFullScreenAdNotifier()
-							{
-								@Override
-								public void getFullScreenAdResponseFailed(int error)
-								{
-									runOnUiThread(new Runnable(){
-										public void run()
-										{
-											Toast.makeText(AgoniaMenu.this,
-													"Offer unavailable, please choose an other offer.",
-													Toast.LENGTH_LONG).show();
-										}
-									});
-								}
-								
-								@Override
-								public void getFullScreenAdResponse()
-								{
-									TapjoyConnect.getTapjoyConnectInstance().showFullScreenAd();
-								}
-							});
-							break;
-						case DialogInterface.BUTTON_NEUTRAL:
-							TapjoyConnect.getTapjoyConnectInstance().showOffers();
-							break;
-						default:
-							break;
-						}
-					}
-				};
-				
-				AlertDialog.Builder builder = new AlertDialog.Builder(this)
-				.setTitle(R.string.dlg_extra_games_title)
-				.setMessage(R.string.dlg_extra_games_message)
-				.setPositiveButton("Offer 1", docl)
-				.setNeutralButton("Offer 2", docl)
 				;
 				dialog = builder.create();
 			}

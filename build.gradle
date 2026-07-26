@@ -1,0 +1,41 @@
+plugins {
+    id 'com.android.application' version '8.0.2'
+}
+
+android {
+    namespace 'devN.games.agonia'
+    compileSdk 34
+
+    defaultConfig {
+        applicationId "devN.games.agonia"
+        minSdk 21
+        targetSdk 34
+        versionCode 20
+        versionName "3.0c"
+    }
+
+    // keep the original Eclipse-era project layout
+    sourceSets {
+        main {
+            manifest.srcFile 'AndroidManifest.xml'
+            java.srcDirs = ['src']
+            res.srcDirs = ['res']
+            assets.srcDirs = ['assets']
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+}
+
+dependencies {
+    implementation 'androidx.gridlayout:gridlayout:1.0.0'
+    implementation files('libs/gson-2.2.3.jar')
+}

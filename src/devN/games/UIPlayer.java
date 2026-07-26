@@ -16,7 +16,7 @@ import android.view.animation.AnimationUtils;
 import android.view.animation.TranslateAnimation;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import com.google.android.gms.games.multiplayer.Participant;
+import devN.games.gamestub.Participant;
 import devN.etc.dragdrop.DragSource;
 import devN.etc.dragdrop.DropTarget;
 import devN.games.agonia.AgoniaAI;

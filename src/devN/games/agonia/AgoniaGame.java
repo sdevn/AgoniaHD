@@ -62,19 +62,17 @@ import android.widget.RelativeLayout.LayoutParams;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
-import com.google.android.gms.appstate.AppStateClient;
-import com.google.android.gms.appstate.OnStateLoadedListener;
-import com.google.android.gms.games.multiplayer.Participant;
-import com.google.android.gms.games.multiplayer.realtime.RealTimeMessage;
-import com.google.android.gms.games.multiplayer.realtime.RealTimeMessageReceivedListener;
-import com.google.android.gms.games.multiplayer.realtime.RealTimeReliableMessageSentListener;
-import com.google.android.gms.games.multiplayer.realtime.Room;
-import com.google.android.gms.games.multiplayer.realtime.RoomConfig;
-import com.google.android.gms.games.multiplayer.realtime.RoomStatusUpdateListener;
-import com.google.android.gms.games.multiplayer.realtime.RoomUpdateListener;
-import com.google.example.games.basegameutils.BaseGameActivity;
-import com.tapjoy.TapjoyConnect;
-import com.tapjoy.TapjoySpendPointsNotifier;
+import devN.games.gamestub.AppStateClient;
+import devN.games.gamestub.OnStateLoadedListener;
+import devN.games.gamestub.Participant;
+import devN.games.gamestub.RealTimeMessage;
+import devN.games.gamestub.RealTimeMessageReceivedListener;
+import devN.games.gamestub.RealTimeReliableMessageSentListener;
+import devN.games.gamestub.Room;
+import devN.games.gamestub.RoomConfig;
+import devN.games.gamestub.RoomStatusUpdateListener;
+import devN.games.gamestub.RoomUpdateListener;
+import devN.games.gamestub.BaseGameActivity;
 import devN.etc.DBGLog;
 import devN.etc.DevnDialogUtils;
 import devN.etc.TextColorAnimation;
@@ -762,26 +760,8 @@ public class AgoniaGame extends BaseGameActivity implements DragSource, OnTouchL
 				}
 				
 				getAppStateClient().updateState(CLOUD_SLOT_ELO, myEloEntity.getBytes());
-				getGamesClient().submitScore(getString(R.string.leaderboard_elo_points), 
+				getGamesClient().submitScore(getString(R.string.leaderboard_elo_points),
 												myEloEntity.getElo());
-				
-				if (myEloEntity.getTodayGames() > Const.MAX_DAILY_GAMES)
-				{
-					TapjoyConnect.getTapjoyConnectInstance().spendTapPoints(1,
-							new TapjoySpendPointsNotifier(){
-								@Override
-								public void getSpendPointsResponseFailed(String error)
-								{ 
-									DBGLog.dbg("Tapjoy spend points error. " + error);
-								}
-
-								@Override
-								public void getSpendPointsResponse(String currencyName, int pointTotal)
-								{
-									DBGLog.dbg("Tapjooy spend! New points: " + pointTotal);
-								}
-							});
-				}
 			}
 			catch (Exception ex)
 			{
@@ -1174,9 +1154,7 @@ public class AgoniaGame extends BaseGameActivity implements DragSource, OnTouchL
 		}
 		
 		DevnDialogUtils.customize(dialog);
-		
-		DevnDialogUtils.embedAd(dialog, this);
-		
+
 		super.onPrepareDialog(id, dialog);
 	}
 
